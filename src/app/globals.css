@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+/* ════════════════════════════════════════════════════════════════
+   BCA FutureTry — design tokens (Tailwind v4 CSS-first)
+   Palet resmi brief: navy/blue/cyan/aqua + accent pink.
+   ════════════════════════════════════════════════════════════════ */
+@theme {
+  --color-navy: #0b426c;
+  --color-bcablue: #0d70b4;
+  --color-cyan: #08bbd4;
+  --color-aqua: #2cc7dd;
+  --color-lightcyan: #8cdde7;
+  --color-pink: #f467b0;
+
+  --color-sky-soft: #eaf7fb;
+  --color-ink: #0a2a43;
+  --color-paper: #f6fbfd;
+
+  --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection { background: color-mix(in srgb, var(--color-cyan) 30%, transparent); }
+
+/* Focus state terlihat (keyboard nav) */
+:focus-visible {
+  outline: 2px solid var(--color-bcablue);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Gradient text utk headline aksen */
+.text-brand-gradient {
+  background: linear-gradient(90deg, var(--color-bcablue), var(--color-cyan) 60%, var(--color-aqua));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Kaca lembut utk panel peta */
+.glass {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(11, 66, 108, 0.08);
+}
+
+/* Animasi checkpoint */
+@keyframes pulse-ring {
+  0% { transform: scale(1); opacity: .7; }
+  70% { transform: scale(1.9); opacity: 0; }
+  100% { transform: scale(1.9); opacity: 0; }
+}
+.pulse-ring { animation: pulse-ring 2s cubic-bezier(0.2, 0.6, 0.4, 1) infinite; transform-origin: center; }
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.float-slow { animation: float-slow 5s ease-in-out infinite; }
+
+/* Hormati reduced motion (kualiti requirement) */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .pulse-ring, .float-slow { animation: none; }
+  *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+}

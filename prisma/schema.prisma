@@ -1,0 +1,105 @@
+// Prisma schema — BCA FutureTry
+// PostgreSQL. Untuk demo tanpa DB, frontend pakai localStorage fallback.
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String   @id @default(cuid())
+  name        String?
+  email       String?  @unique
+  createdAt   DateTime @default(now())
+  progress    UserMissionProgress?
+  reflections Reflection[]
+  chatMessages ChatMessage[]
+}
+
+model Mission {
+  id        String   @id @default(cuid())
+  slug      String   @unique   // m-anomaly, dst
+  title     String
+  program   String             // PPBP | PPTI
+  district  String
+  role      String
+  duration  String
+  summary   String
+  intro     String
+  steps     Json               // array MissionStep
+  reflectionHints Json
+  createdAt DateTime @default(now())
+  progress  UserMissionProgress[]
+}
+
+model MissionChoice {
+  id          String  @id @default(cuid())
+  missionSlug String
+  stepId      String
+  choiceId    String
+  label       String
+  consequence String
+  skills      Json
+}
+
+model UserMissionProgress {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  missionId         String
+  mission           Mission  @relation(fields: [missionId], references: [id])
+  completedMissions Json     @default("[]")
+  unlocked          Json     @default("[]")
+  updatedAt         DateTime @updatedAt
+}
+
+model Reflection {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  missionId String
+  enjoyed   Json
+  challenged Json
+  nextTry   String
+  note      String?
+  createdAt DateTime @default(now())
+}
+
+model Story {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  name      String
+  program   String
+  role      String
+  title     String
+  excerpt   String
+  dayInLife Json
+  expectationVsReality Json
+  hardestPart String
+  favoriteMoment String
+  createdAt DateTime @default(now())
+}
+
+model FuturePathContent {
+  id        String   @id @default(cuid())
+  kind      String   // learn | faq | eligibility
+  program   String?
+  title     String
+  body      String
+  source    String
+  tags      Json     @default("[]")
+  updatedAt DateTime @updatedAt
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  role      String   // user | assistant
+  content   String
+  sources   Json?    // sitasi utk jawaban assistant
+  createdAt DateTime @default(now())
+}
