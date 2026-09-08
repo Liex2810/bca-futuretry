@@ -2,15 +2,19 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Clock, Filter, Sun, UserRound } from "lucide-react";
+import { Clock, Filter, Sun, UserRound, Camera } from "lucide-react";
 import type { Story } from "@/types";
 
 type Prog = "ALL" | "PPBP" | "PPTI";
 
 export function StoriesExplorer({ stories }: { stories: Story[] }) {
   const [prog, setProg] = useState<Prog>("ALL");
+  const [role, setRole] = useState<string>("ALL");
   const [open, setOpen] = useState<string | null>(null);
-  const visible = prog === "ALL" ? stories : stories.filter((s) => s.program === prog);
+  const roles = ["ALL", ...Array.from(new Set(stories.map((s) => s.role)))];
+  const visible = stories.filter(
+    (s) => (prog === "ALL" || s.program === prog) && (role === "ALL" || s.role === role)
+  );
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10">
@@ -30,6 +34,15 @@ export function StoriesExplorer({ stories }: { stories: Story[] }) {
             {p === "ALL" ? "Semua" : p}
           </button>
         ))}
+        <div className="flex items-center gap-2 mt-3 flex-wrap" role="group" aria-label="Filter peran">
+          <UserRound size={15} className="text-navy/40" />
+          {roles.map((r) => (
+            <button key={r} onClick={() => setRole(r)} aria-pressed={role === r}
+              className={`px-3 py-1 rounded-full text-xs font-semibold transition ${role === r ? "bg-cyan/90 text-navy" : "bg-navy/5 text-navy/55 hover:bg-navy/10"}`}>
+              {r === "ALL" ? "Semua peran" : r}
+            </button>
+          ))}
+        </div>
         <span className="ml-auto text-xs text-navy/40 font-mono">{visible.length} cerita</span>
       </div>
 
@@ -58,6 +71,11 @@ export function StoriesExplorer({ stories }: { stories: Story[] }) {
                   {isOpen && (
                     <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
                       <div className="px-5 pb-5 space-y-5 border-t border-navy/8 pt-4">
+                        {/* placeholder foto/video (brief §8.5) */}
+                        <div className="rounded-xl border border-dashed border-navy/20 bg-sky-soft/40 p-6 text-center">
+                          <Camera size={22} className="mx-auto text-navy/35" />
+                          <p className="text-xs text-navy/50 mt-2">Foto / video “{s.name}” — slot aset, menunggu materi asli + izin publikasi.</p>
+                        </div>
                         <section>
                           <p className="font-mono text-[11px] tracking-widest text-navy/45 mb-2 flex items-center gap-1.5"><Sun size={13} className="text-pink" /> EXPEKTASI vs REALITA</p>
                           <div className="grid sm:grid-cols-2 gap-3 text-sm">

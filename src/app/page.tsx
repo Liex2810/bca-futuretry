@@ -220,15 +220,29 @@ export default function Home() {
             alt="BCA FutureTry"
             className="w-full max-w-[806px] object-contain drop-shadow-lg px-8"
           />
-          <Link
-            href="/world"
-            className="-skew-x-12 mt-8 inline-flex items-center px-8 py-2.5 border border-[#0066ae] bg-white/60 backdrop-blur-sm text-[#0066ae] hover:bg-[#0066ae] hover:text-white transition-colors duration-200"
-          >
-            <span className="skew-x-12 inline-flex items-center gap-2 font-[family-name:var(--font-display)] text-sm sm:text-base font-extrabold tracking-[0.25em] uppercase">
-              Coba Sekarang
-              <ArrowRight size={14} strokeWidth={2.5} />
-            </span>
-          </Link>
+          <p className="mt-4 font-[family-name:var(--font-display)] text-lg sm:text-2xl italic text-white/90 drop-shadow">
+            Try before you choose.
+          </p>
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+            <Link
+              href="/world"
+              className="-skew-x-12 inline-flex items-center px-8 py-2.5 border border-[#0066ae] bg-white text-[#0066ae] hover:bg-[#0066ae] hover:text-white transition-colors duration-200"
+            >
+              <span className="skew-x-12 inline-flex items-center gap-2 font-[family-name:var(--font-display)] text-sm sm:text-base font-extrabold tracking-[0.25em] uppercase">
+                Start FutureTry
+                <ArrowRight size={14} strokeWidth={2.5} />
+              </span>
+            </Link>
+            <Link
+              href="/world"
+              className="-skew-x-12 inline-flex items-center px-8 py-2.5 border border-white/70 bg-transparent text-white hover:bg-white/15 transition-colors duration-200"
+            >
+              <span className="skew-x-12 inline-flex items-center gap-2 font-[family-name:var(--font-display)] text-sm sm:text-base font-extrabold tracking-[0.25em] uppercase">
+                Explore Future World
+                <Compass size={14} strokeWidth={2.5} />
+              </span>
+            </Link>
+          </div>
         </div>
         {/* Gradient transition at the bottom of the image into the page background */}
         <div

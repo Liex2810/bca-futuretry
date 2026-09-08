@@ -26,6 +26,7 @@ export const emptyProgress = (): JourneyProgress => ({
   completedMissions: [],
   unlocked: [],
   reflections: {},
+  completedAt: {},
 });
 
 /** Misi mana yang boleh dimulai, diberikan progress saat ini. */
@@ -55,7 +56,12 @@ export function completeMission(progress: JourneyProgress, missionId: string): J
   if (progress.completedMissions.includes(missionId)) return progress;
   if (!missions.some((m) => m.id === missionId)) return progress;
   const completedMissions = [...progress.completedMissions, missionId];
-  const next = { ...progress, startedAt: progress.startedAt ?? new Date().toISOString(), completedMissions };
+  const next = {
+    ...progress,
+    startedAt: progress.startedAt ?? new Date().toISOString(),
+    completedMissions,
+    completedAt: { ...progress.completedAt, [missionId]: new Date().toISOString() },
+  };
   return { ...next, unlocked: Array.from(new Set([...progress.unlocked, ...availableMissions(next)])) };
 }
 
@@ -77,6 +83,22 @@ export function progressSummary(progress: JourneyProgress) {
   return { done, total, percent: total ? Math.round((done / total) * 100) : 0 };
 }
 
+/** Entri Journey Log: misi selesai + waktu, terbaru di atas. */
+export function journeyLog(progress: JourneyProgress) {
+  return progress.completedMissions
+    .flatMap((id) => {
+      const mission = missions.find((m) => m.id === id);
+      return mission ? [{ mission, at: progress.completedAt?.[id] }] : [];
+    })
+    .sort((a, b) => (b.at ?? "").localeCompare(a.at ?? ""));
+}
+
+/** Pemandu aktif = karakter dari program yang paling sering dijelajahi; default: Fino. */
+export function guideForDistrict(district: string | undefined, characters: { program: string }[]) {
+  const program = district === "business" ? "PPBP" : district === "technology" ? "PPTI" : undefined;
+  return characters.find((c) => c.program === program) ?? null;
+}
+
 // ── Persistensi (client-side only) ──────────────────────────────
 export function loadProgress(): JourneyProgress {
   if (typeof window === "undefined") return emptyProgress();
@@ -89,6 +111,7 @@ export function loadProgress(): JourneyProgress {
       unlocked: Array.isArray(parsed.unlocked) ? parsed.unlocked : [],
       reflections: parsed.reflections && typeof parsed.reflections === "object" ? parsed.reflections : {},
       startedAt: parsed.startedAt,
+      completedAt: parsed.completedAt && typeof parsed.completedAt === "object" ? parsed.completedAt : {},
     };
   } catch {
     return emptyProgress();

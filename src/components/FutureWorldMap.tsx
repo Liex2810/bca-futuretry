@@ -3,11 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Lock, Check, Play, RotateCcw, Sparkles, X, Clock, ArrowRight } from "lucide-react";
+import { Lock, Check, Play, RotateCcw, Sparkles, X, Clock, ArrowRight, ScrollText } from "lucide-react";
 import { checkpoints, mapPaths, districtMeta } from "@/lib/content/map";
 import { missionById } from "@/lib/content/missions";
+import { characters } from "@/lib/content/characters";
 import { useJourney } from "@/components/JourneyProvider";
-import { progressSummary } from "@/lib/progress";
+import { progressSummary, journeyLog } from "@/lib/progress";
 import type { Checkpoint } from "@/types";
 
 const W = 1000, H = 640;
@@ -19,6 +20,12 @@ export function FutureWorldMap() {
   const { done, total, percent } = progressSummary(progress);
 
   const byId = (id: string) => checkpoints.find((c) => c.id === id)!;
+
+  // ── Journey Log + pemandu aktif (brief §8.2) ──
+  const log = journeyLog(progress);
+  const lastMission = log[0]?.mission;
+  const guideChar =
+    (lastMission ? characters.find((c) => c.program === lastMission.program) : null) ?? characters[0];
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
@@ -115,6 +122,45 @@ export function FutureWorldMap() {
           <p className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-bcablue inline-block" /> Completed</p>
           <p className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-slate-400 inline-block" /> Locked</p>
         </div>
+
+        {/* pemandu aktif (brief §8.2 "Current guide character") */}
+        <div className="absolute bottom-3 left-3 glass rounded-xl px-3 py-2 shadow-sm pointer-events-none select-none max-w-[240px]">
+          <p className="font-mono text-[10px] tracking-widest text-navy/45">PEMANDU KAMU</p>
+          <p className="flex items-center gap-2 mt-1">
+            <span className="grid place-items-center w-7 h-7 rounded-full text-white text-[11px] font-extrabold" style={{ background: guideChar.accent }}>
+              {guideChar.emojiSeed}
+            </span>
+            <span className="text-xs text-navy/75 leading-snug">
+              <b>{guideChar.name}</b> ({guideChar.program}) menemani perjalananmu{lastMission ? ` — habis ngobrol soal “${lastMission.title}”.` : ". Klik checkpoint untuk mulai."}
+            </span>
+          </p>
+        </div>
+      </div>
+
+      {/* ═══════════ JOURNEY LOG (brief §8.2) ═══════════ */}
+      <div className="mt-6 rounded-2xl border border-navy/10 bg-white p-5">
+        <p className="flex items-center gap-2 font-mono text-xs tracking-[0.25em] text-navy/50">
+          <ScrollText size={14} className="text-pink" /> JOURNEY LOG
+        </p>
+        {log.length === 0 ? (
+          <p className="text-sm text-navy/55 mt-2">Belum ada misi selesai. Klik checkpoint biru di peta, selesaikan satu misi — catatannya muncul di sini.</p>
+        ) : (
+          <ol className="mt-3 space-y-2">
+            {log.map((e) => {
+              const r = progress.reflections[e.mission.id];
+              const when = e.at ? new Date(e.at) : null;
+              return (
+                <li key={e.mission.id} className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+                  <Check size={14} className="text-green-600 shrink-0" />
+                  <span className="font-semibold text-navy">{e.mission.title}</span>
+                  <span className={`font-mono text-[11px] ${e.mission.program === "PPTI" ? "text-cyan" : "text-bcablue"}`}>{e.mission.program} · {e.mission.role}</span>
+                  {when && <span className="text-xs text-navy/45">{when.toLocaleDateString("id-ID", { day: "numeric", month: "short" })} {when.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}</span>}
+                  {r?.enjoyed?.length ? <span className="text-xs text-navy/55">senang: {r.enjoyed.slice(0, 2).join(", ")}</span> : null}
+                </li>
+              );
+            })}
+          </ol>
+        )}
       </div>
 
       {/* ═══════════ CHECKPOINT POPOVER ═══════════ */}

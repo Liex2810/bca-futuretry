@@ -111,4 +111,6 @@ export interface JourneyProgress {
   unlocked: string[];
   reflections: Record<string, Reflection>;
   startedAt?: string;
+  /** waktu selesai per misi ( utk Journey Log ) */
+  completedAt?: Record<string, string>;
 }
