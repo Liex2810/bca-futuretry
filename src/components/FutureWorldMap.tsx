@@ -43,7 +43,7 @@ export function FutureWorldMap() {
 
       {/* progress bar */}
       <div className="h-2 rounded-full bg-navy/10 mb-6 overflow-hidden" role="progressbar" aria-valuenow={percent} aria-valuemin={0} aria-valuemax={100}>
-        <motion.div className="h-full rounded-full bg-gradient-to-r from-bcablue to-cyan" initial={{ width: 0 }} animate={{ width: `${percent}%` }} transition={{ duration: 0.6 }} />
+        <motion.div className="h-full rounded-full bg-gradient-to-r from-bcadark to-neon" initial={{ width: 0 }} animate={{ width: `${percent}%` }} transition={{ duration: 0.6 }} />
       </div>
 
       {/* ═══════════ MAP ═══════════ */}
@@ -147,7 +147,7 @@ export function FutureWorldMap() {
                         <span className="inline-flex items-center gap-1"><Sparkles size={13} /> Role: {mission.role}</span>
                       </div>
                       <Link href={`/mission/${mission.id}`}
-                        className="mt-6 w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-bcablue to-cyan text-white font-bold shadow-lg shadow-cyan/25 hover:-translate-y-0.5 transition">
+                        className="mt-6 w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-neon text-navy font-bold shadow-lg shadow-neon/25 hover:-translate-y-0.5 transition">
                         ENTER MISSION <ArrowRight size={17} />
                       </Link>
                     </>
@@ -156,7 +156,7 @@ export function FutureWorldMap() {
                       <p className="text-sm text-navy/70 mt-3 leading-relaxed">{meta.desc}</p>
                       <Link href={selected.district === "story" ? "/stories" : selected.district === "futurepath" ? "/futurepath" : "/world#characters"}
                         onClick={() => setSelected(null)}
-                        className="mt-6 w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-bcablue to-cyan text-white font-bold shadow-lg shadow-cyan/25 hover:-translate-y-0.5 transition">
+                        className="mt-6 w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-neon text-navy font-bold shadow-lg shadow-neon/25 hover:-translate-y-0.5 transition">
                         BUKA {selected.label.toUpperCase()} <ArrowRight size={17} />
                       </Link>
                     </>

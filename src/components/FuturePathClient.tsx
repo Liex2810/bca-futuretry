@@ -161,7 +161,7 @@ function Connect() {
           placeholder="misal: apa yang paling bikin kaget di bulan pertama PPTI?"
           className="w-full px-4 py-3 rounded-xl bg-white border border-navy/15 text-sm focus:outline-none focus:border-cyan resize-none" />
       </div>
-      <button type="submit" className="mt-5 w-full px-6 py-3.5 rounded-2xl bg-gradient-to-r from-bcablue to-cyan text-white font-bold shadow-lg shadow-cyan/25 hover:-translate-y-0.5 transition">
+      <button type="submit" className="mt-5 w-full px-6 py-3.5 rounded-full bg-neon text-navy font-bold shadow-lg shadow-neon/25 hover:-translate-y-0.5 transition">
         KIRIM PERTANYAAN
       </button>
     </form>

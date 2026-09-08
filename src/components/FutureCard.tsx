@@ -104,7 +104,7 @@ export function FutureCard({ mission, progress }: { mission: Mission; progress: 
         <Link href="/world" className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-2xl border-2 border-navy/15 text-navy font-bold hover:border-cyan transition text-sm">
           <Compass size={16} /> LANJUT EKSPLORASI
         </Link>
-        <Link href="/futurepath" className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-2xl bg-gradient-to-r from-bcablue to-cyan text-white font-bold shadow-lg shadow-cyan/25 hover:-translate-y-0.5 transition text-sm">
+        <Link href="/futurepath" className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-neon text-navy font-bold shadow-lg shadow-neon/25 hover:-translate-y-0.5 transition text-sm">
           <Route size={16} /> FUTUREPATH <ArrowRight size={14} />
         </Link>
         <button onClick={download} className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-2xl border-2 border-navy/15 text-navy font-bold hover:border-pink hover:text-pink transition text-sm">

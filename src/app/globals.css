@@ -6,8 +6,11 @@
    ════════════════════════════════════════════════════════════════ */
 @theme {
   --color-navy: #0b426c;
+  --color-bcadark: #0342b4;
   --color-bcablue: #0d70b4;
   --color-cyan: #08bbd4;
+  --color-neon: #00c7ff;
+  --color-skyblue: #72c1fc;
   --color-aqua: #2cc7dd;
   --color-lightcyan: #8cdde7;
   --color-pink: #f467b0;

@@ -83,7 +83,10 @@ async function aiReply(question: string, history: { role: string; content: strin
   });
   if (!res.ok) throw new Error(`AI provider ${res.status}`);
   const data = await res.json();
-  const content: string = data?.choices?.[0]?.message?.content ?? "";
+  let content: string = data?.choices?.[0]?.message?.content ?? "";
+  // beberapa model (minimax dkk) menyisipkan blok penalaran <think>…</think> — buang,
+  // dan ambil hanya bagian setelahnya kalau terlanjur dicampur.
+  content = content.replace(/<think>[\s\S]*?<\/think>/gi, "").trim() || content.split(/<\/think>/i).pop()!.trim();
   if (!content) throw new Error("AI balas kosong");
   return { content, sources: ["Knowledge base FutureTry"], mode: "ai" };
 }
