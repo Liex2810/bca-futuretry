@@ -7,6 +7,7 @@ import { ArrowLeft, ArrowRight, Check, Clock, Lightbulb, Sparkles } from "lucide
 import type { Mission } from "@/types";
 import { useJourney } from "./JourneyProvider";
 import { checkpoints } from "@/lib/content/map";
+import { Events } from "@/lib/analytics";
 import { FutureCard } from "./FutureCard";
 
 type Phase = "intro" | "step" | "done" | "reflect" | "card";
@@ -98,7 +99,7 @@ export function MissionPlayer({ mission }: { mission: Mission }) {
                 </p>
               </div>
             </div>
-            <button onClick={() => setPhase("step")} className="mt-6 w-full inline-flex items-center justify-center gap-2 px-6 py-4 rounded-full bg-neon text-navy font-bold shadow-lg shadow-neon/25 hover:-translate-y-0.5 transition">
+            <button onClick={() => { Events.missionStart(mission.id, mission.program); setPhase("step"); }} className="mt-6 w-full inline-flex items-center justify-center gap-2 px-6 py-4 rounded-full bg-neon text-navy font-bold shadow-lg shadow-neon/25 hover:-translate-y-0.5 transition">
               MULAI MISI <ArrowRight size={17} />
             </button>
           </motion.div>

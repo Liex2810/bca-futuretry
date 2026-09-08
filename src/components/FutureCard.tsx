@@ -1,11 +1,14 @@
 "use client";
 
 import Link from "next/link";
+import { useRef, useState } from "react";
+import { toPng } from "html-to-image";
 import { motion } from "framer-motion";
-import { ArrowRight, Compass, Download, MessagesSquare, Route, Sparkles } from "lucide-react";
+import { ArrowRight, Compass, FileText, Image as ImageIcon, MessagesSquare, Route, Sparkles } from "lucide-react";
 import type { JourneyProgress, Mission } from "@/types";
 import { missions } from "@/lib/content/missions";
 import { districtMeta } from "@/lib/content/map";
+import { Events } from "@/lib/analytics";
 
 // Saran eksplorasi berikutnya: misi lain di distrik sama (belum selesai),
 // lalu cabang seberang. Deterministik, bukan "rekomendasi AI".
@@ -16,6 +19,8 @@ function nextSuggestions(mission: Mission, progress: JourneyProgress) {
 }
 
 export function FutureCard({ mission, progress }: { mission: Mission; progress: JourneyProgress }) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [busy, setBusy] = useState(false);
   const reflection = progress.reflections[mission.id];
   const meta = districtMeta[mission.district];
   const next = nextSuggestions(mission, progress);
@@ -44,12 +49,36 @@ export function FutureCard({ mission, progress }: { mission: Mission; progress: 
     a.download = `future-card-${mission.id}.txt`;
     a.click();
     URL.revokeObjectURL(a.href);
+    Events.cardDownload(mission.id, "txt");
+  };
+
+  // PNG: render DOM kartu -> gambar, bisa langsung di-share ke IG/WA.
+  const downloadPng = async () => {
+    if (!cardRef.current || busy) return;
+    setBusy(true);
+    try {
+      const dataUrl = await toPng(cardRef.current, {
+        pixelRatio: 2,
+        cacheBust: true,
+        backgroundColor: "#ffffff",
+      });
+      const a = document.createElement("a");
+      a.href = dataUrl;
+      a.download = `future-card-${mission.id}.png`;
+      a.click();
+      Events.cardDownload(mission.id, "png");
+    } catch (e) {
+      alert("Gagal bikin PNG di browser ini — coba tombol SIMPAN (.txt).");
+      console.error("toPng failed:", e);
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (
     <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
       <p className="font-mono text-xs tracking-widest text-pink mb-2 text-center">YOUR FUTURE CARD</p>
-      <div className="rounded-3xl overflow-hidden border border-navy/10 shadow-2xl shadow-navy/15 bg-white">
+      <div ref={cardRef} className="rounded-3xl overflow-hidden border border-navy/10 shadow-2xl shadow-navy/15 bg-white">
         <div className="p-6 text-white" style={{ background: `linear-gradient(120deg, #0b426c, ${meta.color})` }}>
           <div className="flex items-center justify-between">
             <p className="font-mono text-[11px] tracking-[0.3em] text-white/70">FUTURETRY</p>
@@ -100,15 +129,18 @@ export function FutureCard({ mission, progress }: { mission: Mission; progress: 
         </div>
       </div>
 
-      <div className="mt-6 grid sm:grid-cols-3 gap-3">
+      <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3">
         <Link href="/world" className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-2xl border-2 border-navy/15 text-navy font-bold hover:border-cyan transition text-sm">
           <Compass size={16} /> LANJUT EKSPLORASI
         </Link>
         <Link href="/futurepath" className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-neon text-navy font-bold shadow-lg shadow-neon/25 hover:-translate-y-0.5 transition text-sm">
           <Route size={16} /> FUTUREPATH <ArrowRight size={14} />
         </Link>
+        <button onClick={downloadPng} disabled={busy} className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-2xl border-2 border-navy/15 text-navy font-bold hover:border-bcadark hover:text-bcadark transition text-sm disabled:opacity-50">
+          {busy ? <Sparkles size={16} className="animate-spin" /> : <ImageIcon size={16} />} {busy ? "MEMBUAT…" : "SIMPAN PNG"}
+        </button>
         <button onClick={download} className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-2xl border-2 border-navy/15 text-navy font-bold hover:border-pink hover:text-pink transition text-sm">
-          <Download size={16} /> SIMPAN KARTU
+          <FileText size={16} /> SIMPAN TEKS
         </button>
       </div>
       <p className="text-center text-xs text-navy/45 mt-4 inline-flex items-center gap-1.5 w-full justify-center">

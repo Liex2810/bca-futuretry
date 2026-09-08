@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Space_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { ChatWidget } from "@/components/ChatWidget";
@@ -10,13 +11,24 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "sw
 const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jetbrains", display: "swap" });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://bca-futuretry.vercel.app"),
   title: "BCA FutureTry — Try before you choose",
   description:
     "Jelajahi role di balik PPBP & PPTI lewat misi interaktif, refleksi, dan cerita awardee. Bukan tes, bukan prediksi — tempat mencoba sebelum memilih.",
+  keywords: ["BCA", "PPBP", "PPTI", "beasiswa", "karier", "YNFEST", "futuretry", "eksplorasi karier"],
   openGraph: {
     title: "BCA FutureTry — Try before you choose",
     description: "Coba role PPBP/PPTI sebelum menentukan langkah. Interaktif, gratis, tanpa login.",
     type: "website",
+    url: "https://bca-futuretry.vercel.app",
+    siteName: "BCA FutureTry",
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "BCA FutureTry — Try before you choose" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "BCA FutureTry — Try before you choose",
+    description: "Coba role PPBP/PPTI sebelum menentukan langkah. Gratis, tanpa login.",
+    images: ["/og.png"],
   },
 };
 
@@ -35,6 +47,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           </footer>
           <ChatWidget />
         </JourneyProvider>
+        <Analytics />
       </body>
     </html>
   );

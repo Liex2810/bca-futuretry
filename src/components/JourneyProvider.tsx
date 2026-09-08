@@ -6,6 +6,8 @@ import {
   checkpointState, completeMission, emptyProgress, loadProgress,
   persistProgress, resetProgress as resetStore, saveReflection,
 } from "@/lib/progress";
+import { missionById } from "@/lib/content/missions";
+import { Events } from "@/lib/analytics";
 
 interface JourneyCtx {
   progress: JourneyProgress;
@@ -26,10 +28,13 @@ export function JourneyProvider({ children }: { children: React.ReactNode }) {
 
   const finishMission = useCallback((missionId: string) => {
     setProgress((p) => { const n = completeMission(p, missionId); persistProgress(n); return n; });
+    const m = missionById(missionId);
+    if (m) Events.missionComplete(m.id, m.program);
   }, []);
 
   const saveReflect = useCallback((r: Reflection) => {
     setProgress((p) => { const n = saveReflection(p, r); persistProgress(n); return n; });
+    Events.reflectionSave(r.missionId);
   }, []);
 
   const reset = useCallback(() => { setProgress(resetStore()); }, []);
