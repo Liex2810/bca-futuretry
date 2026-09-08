@@ -43,7 +43,7 @@ export function StoriesExplorer({ stories }: { stories: Story[] }) {
                 className={`rounded-2xl border bg-white overflow-hidden transition ${isOpen ? "md:col-span-2 border-cyan shadow-lg shadow-cyan/10" : "border-navy/10 hover:border-cyan/50"}`}>
                 <button onClick={() => setOpen(isOpen ? null : s.id)} className="w-full text-left p-5" aria-expanded={isOpen}>
                   <div className="flex items-center gap-3">
-                    <span className={`grid place-items-center w-11 h-11 rounded-2xl text-white font-extrabold ${s.program === "PPTI" ? "bg-gradient-to-br from-cyan to-bcablue" : "bg-gradient-to-br from-bcablue to-navy"}`}>
+                    <span className={`grid place-items-center w-11 h-11 rounded-2xl text-white font-extrabold ${s.program === "PPTI" ? "bg-bcablue" : "bg-navy"}`}>
                       {s.name[0]}
                     </span>
                     <div className="flex-1">

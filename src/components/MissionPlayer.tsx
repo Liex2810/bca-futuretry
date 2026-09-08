@@ -56,7 +56,7 @@ export function MissionPlayer({ mission }: { mission: Mission }) {
         <p className="font-mono text-xs tracking-widest text-pink mb-3">CHECKPOINT LOCKED</p>
         <h1 className="font-[family-name:var(--font-display)] text-2xl font-extrabold text-navy">Misi ini belum terbuka</h1>
         <p className="text-navy/60 mt-2 text-sm">Selesaikan misi sebelumnya di distrik ini untuk membuka jalur berikutnya.</p>
-        <Link href="/world" className="inline-flex items-center gap-2 mt-6 px-6 py-3 rounded-xl bg-gradient-to-r from-bcablue to-cyan text-white font-bold">
+        <Link href="/world" className="inline-flex items-center gap-2 mt-6 px-6 py-3 rounded-xl bg-bcablue text-white font-bold">
           <ArrowLeft size={16} /> Kembali ke Peta
         </Link>
       </div>
@@ -100,7 +100,7 @@ export function MissionPlayer({ mission }: { mission: Mission }) {
                 </p>
               </div>
             </div>
-            <button onClick={() => setPhase("step")} className="mt-6 w-full inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-gradient-to-r from-bcablue to-cyan text-white font-bold shadow-lg shadow-cyan/25 hover:-translate-y-0.5 transition">
+            <button onClick={() => setPhase("step")} className="mt-6 w-full inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-bcablue text-white font-bold shadow-lg shadow-cyan/25 hover:-translate-y-0.5 transition">
               MULAI MISI <ArrowRight size={17} />
             </button>
           </motion.div>
@@ -146,12 +146,12 @@ export function MissionPlayer({ mission }: { mission: Mission }) {
         {phase === "done" && (
           <motion.div key="done" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="text-center py-10">
             <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", bounce: 0.5 }}
-              className="mx-auto grid place-items-center w-20 h-20 rounded-3xl bg-gradient-to-br from-cyan to-bcablue text-white shadow-xl shadow-cyan/30">
+              className="mx-auto grid place-items-center w-20 h-20 rounded-3xl bg-bcablue text-white shadow-xl shadow-cyan/30">
               <Check size={36} strokeWidth={3} />
             </motion.div>
             <h2 className="font-[family-name:var(--font-display)] text-2xl font-extrabold text-navy mt-6">Misi selesai!</h2>
             <p className="text-navy/60 mt-2 text-sm">Checkpoint berikutnya di peta mungkin sudah terbuka. Tapi sebelum lanjut — 30 detik buat dirimu sendiri:</p>
-            <button onClick={() => setPhase("reflect")} className="mt-6 px-8 py-3.5 rounded-2xl bg-gradient-to-r from-bcablue to-cyan text-white font-bold shadow-lg shadow-cyan/25">
+            <button onClick={() => setPhase("reflect")} className="mt-6 px-8 py-3.5 rounded-2xl bg-bcablue text-white font-bold shadow-lg shadow-cyan/25">
               ISI REFLEKSI <ArrowRight size={16} className="inline ml-1" />
             </button>
           </motion.div>
@@ -221,7 +221,7 @@ function ReflectionForm({ mission, onSubmit }: { mission: Mission; onSubmit: (r:
           className="w-full px-4 py-3 rounded-xl bg-white border border-navy/15 text-sm focus:outline-none focus:border-cyan resize-none" />
       </div>
       <button type="submit" disabled={enjoyed.length === 0 && challenged.length === 0}
-        className="w-full px-6 py-4 rounded-2xl bg-gradient-to-r from-bcablue to-cyan text-white font-bold shadow-lg shadow-cyan/25 disabled:opacity-40 hover:-translate-y-0.5 transition">
+        className="w-full px-6 py-4 rounded-2xl bg-bcablue text-white font-bold shadow-lg shadow-cyan/25 disabled:opacity-40 hover:-translate-y-0.5 transition">
         BUAT FUTURE CARD <Sparkles size={16} className="inline ml-1" />
       </button>
     </motion.form>

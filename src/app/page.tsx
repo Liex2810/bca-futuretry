@@ -627,7 +627,7 @@ export default function Home() {
               href="/world"
               className="group rounded-2xl overflow-hidden border border-slate-200/80 bg-white hover:shadow-md hover:border-[#00c8eb] transition"
             >
-              <div className="h-28 bg-gradient-to-br from-[#063b66] via-[#0066ae] to-[#00c8eb] grid place-items-center">
+              <div className="h-28 bg-[#063b66] grid place-items-center">
                 <MapIcon className="text-white/90" size={28} />
               </div>
               <div className="p-5">
@@ -642,7 +642,7 @@ export default function Home() {
               href="/stories"
               className="group rounded-2xl overflow-hidden border border-slate-200/80 bg-white hover:shadow-md hover:border-[#00c8eb] transition"
             >
-              <div className="h-28 bg-gradient-to-br from-[#0066ae] via-[#00c8eb] to-[#8debfa] grid place-items-center">
+              <div className="h-28 bg-[#0066ae] grid place-items-center">
                 <MessagesSquare className="text-white/90" size={28} />
               </div>
               <div className="p-5">
@@ -657,7 +657,7 @@ export default function Home() {
               href="/futurepath"
               className="group rounded-2xl overflow-hidden border border-slate-200/80 bg-white hover:shadow-md hover:border-[#00c8eb] transition"
             >
-              <div className="h-28 bg-gradient-to-br from-[#00c8eb] via-[#19d9f5] to-[#ff75b8]/70 grid place-items-center">
+              <div className="h-28 bg-[#00c8eb] grid place-items-center">
                 <Route className="text-white/90" size={28} />
               </div>
               <div className="p-5">

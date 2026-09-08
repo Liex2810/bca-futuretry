@@ -58,7 +58,7 @@ export function ChatWidget() {
       <motion.button
         initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.6 }}
         onClick={() => setOpen(!open)}
-        className="fixed bottom-5 right-5 z-50 grid place-items-center w-14 h-14 rounded-2xl bg-gradient-to-br from-bcablue to-cyan text-white shadow-xl shadow-cyan/30 hover:scale-105 transition"
+        className="fixed bottom-5 right-5 z-50 grid place-items-center w-14 h-14 rounded-2xl bg-bcablue text-white shadow-xl shadow-cyan/30 hover:scale-105 transition"
         aria-label={open ? "Tutup Ask FutureTry" : "Buka Ask FutureTry"}
       >
         {open ? <X size={22} /> : <MessageCircleQuestion size={24} />}
@@ -72,7 +72,7 @@ export function ChatWidget() {
             className="fixed bottom-24 right-5 z-50 w-[min(92vw,380px)] h-[min(70vh,520px)] rounded-2xl glass shadow-2xl shadow-navy/20 flex flex-col overflow-hidden"
             role="dialog" aria-label="Ask FutureTry"
           >
-            <div className="px-4 py-3 bg-gradient-to-r from-navy to-bcablue text-white flex items-center gap-2">
+            <div className="px-4 py-3 bg-navy text-white flex items-center gap-2">
               <Sparkles size={16} className="text-lightcyan" />
               <div>
                 <p className="font-bold text-sm leading-tight">Ask FutureTry</p>
@@ -111,7 +111,7 @@ export function ChatWidget() {
               <input value={input} onChange={(e) => setInput(e.target.value)} placeholder="Tulis pertanyaan…" maxLength={500}
                 className="flex-1 px-3.5 py-2.5 rounded-xl bg-white border border-navy/15 text-sm focus:outline-none focus:border-cyan" />
               <button type="submit" disabled={busy || !input.trim()} aria-label="Kirim"
-                className="grid place-items-center w-10 rounded-xl bg-gradient-to-br from-bcablue to-cyan text-white disabled:opacity-40">
+                className="grid place-items-center w-10 rounded-xl bg-bcablue text-white disabled:opacity-40">
                 <Send size={16} />
               </button>
             </form>
