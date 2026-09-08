@@ -1,13 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, BookOpen, CheckCircle2, HelpCircle, MessagesSquare, Send, UserRound, XCircle } from "lucide-react";
 import { eligibilityRules, faqs, programInfo } from "@/lib/content/futurepath";
 import { useJourney } from "@/components/JourneyProvider";
 import { missions } from "@/lib/content/missions";
-import { Events } from "@/lib/analytics";
 
 const tabs = [
   { id: "learn", label: "Learn", icon: BookOpen },
@@ -21,7 +20,6 @@ type Tab = (typeof tabs)[number]["id"];
 
 export function FuturePathClient() {
   const [tab, setTab] = useState<Tab>("learn");
-  useEffect(() => { Events.futurepathOpen(); }, []);
   return (
     <div className="mx-auto max-w-5xl px-4 py-10">
       <p className="font-mono text-xs tracking-[0.25em] text-cyan mb-2">FUTUREPATH</p>
@@ -163,7 +161,7 @@ function Connect() {
           placeholder="misal: apa yang paling bikin kaget di bulan pertama PPTI?"
           className="w-full px-4 py-3 rounded-xl bg-white border border-navy/15 text-sm focus:outline-none focus:border-cyan resize-none" />
       </div>
-      <button type="submit" className="mt-5 w-full px-6 py-3.5 rounded-full bg-neon text-navy font-bold shadow-lg shadow-neon/25 hover:-translate-y-0.5 transition">
+      <button type="submit" className="mt-5 w-full px-6 py-3.5 rounded-2xl bg-gradient-to-r from-bcablue to-cyan text-white font-bold shadow-lg shadow-cyan/25 hover:-translate-y-0.5 transition">
         KIRIM PERTANYAAN
       </button>
     </form>
@@ -189,7 +187,7 @@ function Act() {
         <div><p className="font-bold text-navy">Save my journey</p><p className="text-xs text-navy/55 mt-0.5">Progresmu otomatis tersimpan di perangkat ini — tanpa akun.</p></div>
         <CheckCircle2 size={18} className="text-green-500" />
       </div>
-      <a href="https://www.bca.co.id" target="_blank" rel="noopener noreferrer" onClick={() => Events.applyClick("bca.co.id")} className="flex items-center justify-between rounded-2xl bg-gradient-to-r from-navy to-bcablue p-5 text-white hover:shadow-lg hover:shadow-bcablue/25 transition group">
+      <a href="https://www.bca.co.id" target="_blank" rel="noopener noreferrer" className="flex items-center justify-between rounded-2xl bg-gradient-to-r from-navy to-bcablue p-5 text-white hover:shadow-lg hover:shadow-bcablue/25 transition group">
         <div><p className="font-bold">Apply officially →</p><p className="text-xs text-white/70 mt-0.5">Pendaftaran resmi hanya melalui kanal BCA.</p></div>
         <ArrowRight size={18} className="group-hover:translate-x-1 transition" />
       </a>

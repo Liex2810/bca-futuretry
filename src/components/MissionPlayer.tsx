@@ -5,9 +5,9 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ArrowRight, Check, Clock, Lightbulb, Sparkles } from "lucide-react";
 import type { Mission } from "@/types";
+import { Events } from "@/lib/analytics";
 import { useJourney } from "./JourneyProvider";
 import { checkpoints } from "@/lib/content/map";
-import { Events } from "@/lib/analytics";
 import { FutureCard } from "./FutureCard";
 
 type Phase = "intro" | "step" | "done" | "reflect" | "card";
@@ -35,11 +35,12 @@ export function MissionPlayer({ mission }: { mission: Mission }) {
   const next = () => {
     setLastChoice(null);
     if (stepIdx + 1 < mission.steps.length) setStepIdx(stepIdx + 1);
-    else { finishMission(mission.id); setPhase("done"); }
+    else { finishMission(mission.id); Events.missionComplete(mission.id, mission.program ?? mission.id); setPhase("done"); }
   };
 
   const submitReflection = async (r: { enjoyed: string[]; challenged: string[]; nextTry: string; note?: string }) => {
     saveReflect({ missionId: mission.id, ...r });
+    Events.reflectionSave(mission.id);
     setPhase("card");
     try {
       await fetch("/api/mission/complete", {
@@ -55,7 +56,7 @@ export function MissionPlayer({ mission }: { mission: Mission }) {
         <p className="font-mono text-xs tracking-widest text-pink mb-3">CHECKPOINT LOCKED</p>
         <h1 className="font-[family-name:var(--font-display)] text-2xl font-extrabold text-navy">Misi ini belum terbuka</h1>
         <p className="text-navy/60 mt-2 text-sm">Selesaikan misi sebelumnya di distrik ini untuk membuka jalur berikutnya.</p>
-        <Link href="/world" className="inline-flex items-center gap-2 mt-6 px-6 py-3 rounded-full bg-neon text-navy font-bold">
+        <Link href="/world" className="inline-flex items-center gap-2 mt-6 px-6 py-3 rounded-xl bg-gradient-to-r from-bcablue to-cyan text-white font-bold">
           <ArrowLeft size={16} /> Kembali ke Peta
         </Link>
       </div>
@@ -99,7 +100,7 @@ export function MissionPlayer({ mission }: { mission: Mission }) {
                 </p>
               </div>
             </div>
-            <button onClick={() => { Events.missionStart(mission.id, mission.program); setPhase("step"); }} className="mt-6 w-full inline-flex items-center justify-center gap-2 px-6 py-4 rounded-full bg-neon text-navy font-bold shadow-lg shadow-neon/25 hover:-translate-y-0.5 transition">
+            <button onClick={() => setPhase("step")} className="mt-6 w-full inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-gradient-to-r from-bcablue to-cyan text-white font-bold shadow-lg shadow-cyan/25 hover:-translate-y-0.5 transition">
               MULAI MISI <ArrowRight size={17} />
             </button>
           </motion.div>
@@ -114,7 +115,7 @@ export function MissionPlayer({ mission }: { mission: Mission }) {
             <div className="mt-5 space-y-3">
               {step.choices.map((c) => (
                 <button key={c.id} onClick={() => pick(c.id)}
-                  className="w-full text-left rounded-2xl border-2 border-navy/10 bg-white p-4 hover:border-cyan hover:shadow-md hover:shadow-cyan/10 transition group">
+                  className="w-full text-left rounded-2xl border border-navy/10 bg-white p-4 hover:border-cyan hover:shadow-md hover:shadow-cyan/10 transition group">
                   <p className="font-semibold text-navy group-hover:text-bcablue transition">{c.label}</p>
                   {c.detail && <p className="text-xs text-navy/50 mt-1">{c.detail}</p>}
                 </button>
@@ -150,7 +151,7 @@ export function MissionPlayer({ mission }: { mission: Mission }) {
             </motion.div>
             <h2 className="font-[family-name:var(--font-display)] text-2xl font-extrabold text-navy mt-6">Misi selesai!</h2>
             <p className="text-navy/60 mt-2 text-sm">Checkpoint berikutnya di peta mungkin sudah terbuka. Tapi sebelum lanjut — 30 detik buat dirimu sendiri:</p>
-            <button onClick={() => setPhase("reflect")} className="mt-6 px-8 py-3.5 rounded-full bg-neon text-navy font-bold shadow-lg shadow-neon/25">
+            <button onClick={() => setPhase("reflect")} className="mt-6 px-8 py-3.5 rounded-2xl bg-gradient-to-r from-bcablue to-cyan text-white font-bold shadow-lg shadow-cyan/25">
               ISI REFLEKSI <ArrowRight size={16} className="inline ml-1" />
             </button>
           </motion.div>
@@ -220,7 +221,7 @@ function ReflectionForm({ mission, onSubmit }: { mission: Mission; onSubmit: (r:
           className="w-full px-4 py-3 rounded-xl bg-white border border-navy/15 text-sm focus:outline-none focus:border-cyan resize-none" />
       </div>
       <button type="submit" disabled={enjoyed.length === 0 && challenged.length === 0}
-        className="w-full px-6 py-4 rounded-full bg-neon text-navy font-bold shadow-lg shadow-neon/25 disabled:opacity-40 hover:-translate-y-0.5 transition">
+        className="w-full px-6 py-4 rounded-2xl bg-gradient-to-r from-bcablue to-cyan text-white font-bold shadow-lg shadow-cyan/25 disabled:opacity-40 hover:-translate-y-0.5 transition">
         BUAT FUTURE CARD <Sparkles size={16} className="inline ml-1" />
       </button>
     </motion.form>

@@ -5,23 +5,33 @@
    Palet resmi brief: navy/blue/cyan/aqua + accent pink.
    ════════════════════════════════════════════════════════════════ */
 @theme {
-  --color-navy: #0b426c;
-  --color-bcadark: #0342b4;
-  --color-bcablue: #0d70b4;
-  --color-cyan: #08bbd4;
-  --color-neon: #00c7ff;
-  --color-skyblue: #72c1fc;
-  --color-aqua: #2cc7dd;
-  --color-lightcyan: #8cdde7;
-  --color-pink: #f467b0;
+  --color-navy: #063b66;
+  --color-bcablue: #0066ae;
+  --color-cyan: #00c8eb;
+  --color-aqua: #19d9f5;
+  --color-lightcyan: #8debfa;
+  --color-pink: #ff75b8;
 
-  --color-sky-soft: #eaf7fb;
-  --color-ink: #0a2a43;
-  --color-paper: #f6fbfd;
+  --color-sky-soft: #f0f7fd;
+  --color-ink: #062b4c;
+  --color-paper: #f4f7fb;
 
-  --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
-  --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
+  /* Choose Your World — dark universe (shared palette) */
+  --color-cw-bg: #0b0c0e;
+  --color-cw-bg2: #141518;
+  --color-cw-surface: #18191b;
+  --color-cw-card: #1f2022;
+  --color-cw-border: #303236;
+  --color-cw-text: #f2f0ea;
+  --color-cw-muted: #a6a8ac;
+  --color-cw-accent: #00c8eb;
+  --color-cw-accent-bright: #8debfa;
+  --color-cw-accent-muted: #5f8ea9;
+
+  --font-display: var(--font-bca-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-bca-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-bca-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-bca-sans), ui-monospace, monospace;
 }
 
 html { scroll-behavior: smooth; }
@@ -29,8 +39,22 @@ html { scroll-behavior: smooth; }
 body {
   background: var(--color-paper);
   color: var(--color-ink);
-  font-family: var(--font-body);
+  font-family: var(--font-bca-sans), ui-sans-serif, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+}
+
+button, input, select, textarea {
+  font-family: inherit;
+}
+
+/* Hover lebih halus dan tidak terlalu cepat */
+.transition,
+.transition-all,
+.transition-colors,
+.transition-opacity,
+.transition-transform {
+  transition-duration: 800ms !important;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 ::selection { background: color-mix(in srgb, var(--color-cyan) 30%, transparent); }
@@ -70,6 +94,71 @@ body {
   50% { transform: translateY(-8px); }
 }
 .float-slow { animation: float-slow 5s ease-in-out infinite; }
+
+/* ════════════════════════════════════════════════════════════════
+   Falling leaves (hero background)
+   ════════════════════════════════════════════════════════════════ */
+@keyframes leaf-fall {
+  0% { transform: translate3d(0, -8vh, 0) rotate(0deg); opacity: 0; }
+  8% { opacity: 1; }
+  50% { transform: translate3d(var(--sway, 4vw), 48vh, 0) rotate(var(--spin, 180deg)); }
+  92% { opacity: 1; }
+  100% { transform: translate3d(calc(var(--sway, 4vw) * -0.6), 108vh, 0) rotate(calc(var(--spin, 180deg) * 2)); opacity: 0; }
+}
+.leaf {
+  position: absolute;
+  top: 0;
+  will-change: transform, opacity;
+  animation: leaf-fall var(--dur, 10s) linear infinite;
+  animation-delay: var(--delay, 0s);
+  pointer-events: none;
+}
+.leaf svg { display: block; }
+
+/* ════════════════════════════════════════════════════════════════
+   Choose Your World — micro-interactions & ambient motion
+   Custom classes memakai durasi sendiri (tidak terpengaruh override
+   durasi transisi global 800ms).
+   ════════════════════════════════════════════════════════════════ */
+@keyframes cw-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.cw-float { animation: cw-float 7s ease-in-out infinite; }
+
+@keyframes cw-glow {
+  0%, 100% { opacity: 0.45; }
+  50% { opacity: 0.85; }
+}
+.cw-glow { animation: cw-glow 5.5s ease-in-out infinite; }
+
+@keyframes cw-drift {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(8px); }
+}
+.cw-drift { animation: cw-drift 9s ease-in-out infinite; }
+
+.cw-char-inner { transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
+.cw-world:hover .cw-char-inner { transform: translateY(-6px); }
+
+.cw-border-frame { transition: border-color 0.5s ease, box-shadow 0.5s ease, background-color 0.5s ease; }
+.cw-world:hover .cw-border-frame {
+  border-color: rgba(0, 102, 174, 0.55);
+  box-shadow: 0 0 0 1px rgba(0, 102, 174, 0.22),
+    0 40px 90px -50px rgba(0, 102, 174, 0.35);
+}
+
+.cw-deco-strong { opacity: 0.32; transition: opacity 0.6s ease; }
+.cw-deco-weak { opacity: 0.16; transition: opacity 0.6s ease; }
+.cw-world:hover .cw-deco-strong { opacity: 0.7; }
+.cw-world:hover .cw-deco-weak { opacity: 0.38; }
+
+.cw-cta { transition: border-color 0.3s ease, color 0.3s ease, background-color 0.3s ease; }
+.cw-cta .cw-arrow { transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1); }
+.cw-cta:hover .cw-arrow { transform: translateX(5px); }
+
+.cw-link-arrow { transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1); }
+.cw-link:hover .cw-link-arrow { transform: translateX(4px); }
 
 /* Hormati reduced motion (kualiti requirement) */
 @media (prefers-reduced-motion: reduce) {
