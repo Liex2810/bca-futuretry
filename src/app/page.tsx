@@ -109,7 +109,7 @@ function HowItWorks() {
   return (
     <section className="mt-12 sm:mt-16 mb-16 sm:mb-28 scroll-mt-24">
       {/* ── Route / Journey ── */}
-      <div ref={lineRef} className="relative">
+      <div ref={lineRef} className="journey-route relative">
         {/* Base route line */}
         <div className="absolute top-7 sm:top-8 left-[10%] right-[10%] h-[2px] bg-[#063b66]/15" />
         {/* Animated fill route (scroll progress) */}
@@ -124,7 +124,7 @@ function HowItWorks() {
         />
 
         {/* Nodes */}
-        <div className="relative grid grid-cols-5 gap-2 sm:gap-4">
+        <div className="journey-nodes relative grid grid-cols-1 sm:grid-cols-5 gap-5 sm:gap-4">
           {journeySteps.map((s) => (
             <div key={s.title} className="group relative flex flex-col items-center text-center">
               {/* Node */}
@@ -205,16 +205,16 @@ export default function Home() {
     <div className="min-h-screen bg-[#f4f7fb] text-[#062b4c]">
 
       {/* ═══════════════ FULL-SCREEN HERO (full-page background, Yanmar style) ═══════════════ */}
-      <section className="relative w-full overflow-hidden bg-[#063b66] -mt-[68px]">
+      <section className="home-hero relative w-full overflow-hidden bg-[#063b66] lg:-mt-[68px]">
         {/* Background image: full from top to bottom, no cropping, pulled up under the navbar */}
         <img
           src="/hero-bg.png"
           alt="BCA FutureTry"
-          className="relative w-full h-auto block"
+          className="hero-image relative w-full h-auto block"
         />
         <FallingLeaves />
         {/* Center Main Logo */}
-        <div className="absolute inset-x-0 top-[10%] flex flex-col items-center">
+        <div className="hero-content relative lg:absolute inset-x-0 lg:top-[10%] flex flex-col items-center px-6 py-10 lg:p-0">
           <img
             src="/main-logo.svg"
             alt="BCA FutureTry"
@@ -223,7 +223,7 @@ export default function Home() {
           <p className="mt-4 font-[family-name:var(--font-display)] text-lg sm:text-2xl italic text-white/90 drop-shadow">
             Try before you choose.
           </p>
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+          <div className="mt-6 lg:mt-8 flex flex-col sm:flex-row flex-wrap items-center justify-center gap-4">
             <Link
               href="/world"
               className="-skew-x-12 inline-flex items-center px-8 py-2.5 border border-[#0066ae] bg-white text-[#0066ae] hover:bg-[#0066ae] hover:text-white transition-colors duration-200"
@@ -244,14 +244,7 @@ export default function Home() {
             </Link>
           </div>
         </div>
-        {/* Gradient transition at the bottom of the image into the page background */}
-        <div
-          className="absolute inset-x-0 bottom-0 h-96 pointer-events-none"
-          style={{
-            background:
-              "linear-gradient(to bottom, rgba(244,247,251,0) 0%, rgba(244,247,251,0.35) 40%, rgba(244,247,251,0.75) 70%, rgba(244,247,251,1) 100%)",
-          }}
-        />
+        {/* Solid edge keeps the illustration and page surface distinct. */}
       </section>
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-6 sm:py-8 space-y-6">

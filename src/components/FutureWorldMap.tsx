@@ -54,8 +54,8 @@ export function FutureWorldMap() {
       </div>
 
       {/* ═══════════ MAP ═══════════ */}
-      <div className="relative rounded-3xl overflow-hidden border border-navy/10 shadow-xl shadow-navy/10 bg-gradient-to-b from-sky-soft to-white">
-        <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto block" role="img" aria-label="Peta Future World dengan lima distrik">
+      <div className="relative rounded-3xl overflow-hidden border border-navy/10 shadow-xl shadow-navy/10 bg-sky-soft">
+        <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto hidden md:block" role="group" aria-label="Peta Future World dengan lima distrik">
           <defs>
             <radialGradient id="glowTech" cx="50%" cy="50%" r="50%"><stop offset="0%" stopColor="#08bbd4" stopOpacity="0.25" /><stop offset="100%" stopColor="#08bbd4" stopOpacity="0" /></radialGradient>
             <radialGradient id="glowBiz" cx="50%" cy="50%" r="50%"><stop offset="0%" stopColor="#0d70b4" stopOpacity="0.25" /><stop offset="100%" stopColor="#0d70b4" stopOpacity="0" /></radialGradient>
@@ -98,9 +98,10 @@ export function FutureWorldMap() {
               <g key={cp.id} transform={`translate(${cx},${cy})`} className="cursor-pointer"
                 onClick={() => st !== "locked" && setSelected(cp)}
                 role="button" tabIndex={st === "locked" ? -1 : 0}
-                aria-label={`${cp.label} — ${st}`}
-                onKeyDown={(e: React.KeyboardEvent) => { if (e.key === "Enter" && st !== "locked") setSelected(cp); }}>
-                {st === "available" && <circle r={26} fill={color} opacity={0.35} className="pulse-ring" />}
+                aria-label={`${cp.label} — ${st}`} aria-disabled={st === "locked"}
+                onKeyDown={(e: React.KeyboardEvent) => { if ((e.key === "Enter" || e.key === " ") && st !== "locked") { e.preventDefault(); setSelected(cp); } }}>
+                <circle r={32} fill="transparent" />
+                {st === "available" && <circle r={26} fill={color} opacity={0.35} className="pulse-ring pointer-events-none" />}
                 <circle r={22} fill={st === "locked" ? "#e2e8f0" : "#fff"} stroke={color} strokeWidth={3.5} />
                 {st === "completed" && <circle r={22} fill={color} opacity={0.15} />}
                 <g transform="translate(-11,-11)">
@@ -116,15 +117,35 @@ export function FutureWorldMap() {
           })}
         </svg>
 
+        {/* Phone-sized checkpoint controls: same state and actions, no tiny SVG targets. */}
+        <div className="md:hidden p-4 space-y-5">
+          <p className="text-sm text-navy/70">Pilih distrik dan ketuk checkpoint untuk mulai.</p>
+          {Object.entries(districtMeta).map(([district, meta]) => (
+            <section key={district}>
+              <h2 className="font-bold text-navy mb-2">{meta.name}</h2>
+              <div className="grid gap-2">
+                {checkpoints.filter((cp) => cp.district === district).map((cp) => {
+                  const state = stateOf(cp.id);
+                  return <button key={cp.id} disabled={state === "locked"} onClick={() => setSelected(cp)}
+                    className="min-h-14 w-full flex items-center justify-between gap-3 rounded-xl border border-navy/15 bg-white px-4 py-3 text-left text-sm text-navy disabled:bg-slate-100 disabled:text-slate-500">
+                    <span className="font-semibold">{cp.label}</span>
+                    <span className="shrink-0 text-xs">{state === "locked" ? "Terkunci" : state === "completed" ? "Selesai ✓" : "Buka →"}</span>
+                  </button>;
+                })}
+              </div>
+            </section>
+          ))}
+        </div>
+
         {/* legend */}
-        <div className="absolute top-3 left-3 glass rounded-xl px-3 py-2 text-[11px] space-y-1 shadow-sm pointer-events-none select-none">
+        <div className="hidden md:block absolute top-3 left-3 glass rounded-xl px-3 py-2 text-[11px] space-y-1 shadow-sm pointer-events-none select-none">
           <p className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-cyan inline-block" /> Available</p>
           <p className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-bcablue inline-block" /> Completed</p>
           <p className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-slate-400 inline-block" /> Locked</p>
         </div>
 
         {/* pemandu aktif (brief §8.2 "Current guide character") */}
-        <div className="absolute bottom-3 left-3 glass rounded-xl px-3 py-2 shadow-sm pointer-events-none select-none max-w-[240px]">
+        <div className="md:absolute md:bottom-3 md:left-3 m-3 md:m-0 glass rounded-xl px-3 py-2 shadow-sm pointer-events-none select-none max-w-[240px]">
           <p className="font-mono text-[10px] tracking-widest text-navy/45">PEMANDU KAMU</p>
           <p className="flex items-center gap-2 mt-1">
             <span className="grid place-items-center w-7 h-7 rounded-full text-white text-[11px] font-extrabold" style={{ background: guideChar.accent }}>
@@ -171,24 +192,24 @@ export function FutureWorldMap() {
           const st = stateOf(selected.id);
           return (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 grid place-items-center p-4 bg-navy/40 backdrop-blur-sm" onClick={() => setSelected(null)}>
+              role="dialog" aria-modal="true" aria-label="Detail checkpoint" className="fixed inset-0 z-[60] grid place-items-center p-4 bg-navy/40 backdrop-blur-sm" onClick={() => setSelected(null)}>
               <motion.div initial={{ y: 20, scale: 0.96 }} animate={{ y: 0, scale: 1 }} exit={{ y: 20, scale: 0.96 }}
                 onClick={(e) => e.stopPropagation()}
-                className="w-full max-w-md rounded-3xl bg-white shadow-2xl overflow-hidden">
-                <div className="h-2" style={{ background: `linear-gradient(90deg, ${meta.color}, #0b426c)` }} />
+                className="w-full max-w-md max-h-[calc(100dvh-32px)] rounded-3xl bg-white shadow-2xl overflow-y-auto">
+                <div className="h-2" style={{ background: meta.color }} />
                 <div className="p-6">
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="font-mono text-[11px] tracking-widest" style={{ color: meta.color }}>{meta.name.toUpperCase()}{meta.program ? ` · ${meta.program}` : ""}</p>
                       <h3 className="font-[family-name:var(--font-display)] text-xl font-extrabold text-navy mt-1">{mission?.title ?? selected.label}</h3>
                     </div>
-                    <button onClick={() => setSelected(null)} aria-label="Tutup" className="p-1.5 rounded-lg hover:bg-navy/5 text-navy/50"><X size={18} /></button>
+                    <button onClick={() => setSelected(null)} aria-label="Tutup" className="min-h-11 min-w-11 grid place-items-center shrink-0 p-1.5 rounded-lg hover:bg-navy/5 text-navy/50"><X size={18} /></button>
                   </div>
 
                   {mission ? (
                     <>
                       <p className="text-sm text-navy/70 mt-3 leading-relaxed">{mission.summary}</p>
-                      <div className="flex items-center gap-4 mt-4 text-xs text-navy/60">
+                      <div className="flex flex-wrap items-center gap-4 mt-4 text-xs text-navy/60">
                         <span className="inline-flex items-center gap-1"><Clock size={13} /> {mission.duration}</span>
                         <span className="inline-flex items-center gap-1"><Sparkles size={13} /> Role: {mission.role}</span>
                       </div>

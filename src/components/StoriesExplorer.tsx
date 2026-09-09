@@ -26,24 +26,24 @@ export function StoriesExplorer({ stories }: { stories: Story[] }) {
       </p>
 
       {/* filter */}
-      <div className="flex items-center gap-2 mt-8" role="group" aria-label="Filter program">
+      <div className="flex flex-wrap items-center gap-2 mt-8" role="group" aria-label="Filter program">
         <Filter size={15} className="text-navy/40" />
         {(["ALL", "PPBP", "PPTI"] as Prog[]).map((p) => (
           <button key={p} onClick={() => setProg(p)} aria-pressed={prog === p}
-            className={`px-4 py-1.5 rounded-full text-sm font-bold transition ${prog === p ? "bg-navy text-white" : "bg-navy/5 text-navy/60 hover:bg-navy/10"}`}>
+            className={`min-h-11 px-4 py-1.5 rounded-full text-sm font-bold transition ${prog === p ? "bg-navy text-white" : "bg-navy/5 text-navy/60 hover:bg-navy/10"}`}>
             {p === "ALL" ? "Semua" : p}
           </button>
         ))}
-        <div className="flex items-center gap-2 mt-3 flex-wrap" role="group" aria-label="Filter peran">
+        <div className="flex basis-full items-center gap-2 mt-3 flex-wrap" role="group" aria-label="Filter peran">
           <UserRound size={15} className="text-navy/40" />
           {roles.map((r) => (
             <button key={r} onClick={() => setRole(r)} aria-pressed={role === r}
-              className={`px-3 py-1 rounded-full text-xs font-semibold transition ${role === r ? "bg-cyan/90 text-navy" : "bg-navy/5 text-navy/55 hover:bg-navy/10"}`}>
+              className={`min-h-11 px-3 py-1 rounded-full text-xs font-semibold transition ${role === r ? "bg-cyan/90 text-navy" : "bg-navy/5 text-navy/55 hover:bg-navy/10"}`}>
               {r === "ALL" ? "Semua peran" : r}
             </button>
           ))}
         </div>
-        <span className="ml-auto text-xs text-navy/40 font-mono">{visible.length} cerita</span>
+        <span aria-live="polite" className="text-xs text-navy/40 font-mono">{visible.length} cerita</span>
       </div>
 
       {/* list */}

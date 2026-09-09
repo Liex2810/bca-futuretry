@@ -79,9 +79,9 @@ export function Navbar() {
   const selectedLang = languages.find((l) => l.code === currentLang) || languages[0];
 
   return (
-    <header className="sticky top-0 z-50 w-full select-none">
+    <header className="site-header sticky top-0 z-50 w-full select-none bg-white lg:bg-transparent">
       {/* ── Geometric Winged Background Shape (Miru / Anime console style) ── */}
-      <div className="absolute inset-0 w-full h-[68px] flex pointer-events-none filter drop-shadow-xs">
+      <div className="absolute inset-0 w-full h-[68px] hidden lg:flex pointer-events-none filter drop-shadow-xs">
         
         {/* Left Wing */}
         <svg
@@ -141,7 +141,7 @@ export function Navbar() {
             height={79}
             priority
             unoptimized
-            className="h-[38px] sm:h-[42px] w-auto object-contain"
+            className="h-[32px] sm:h-[42px] w-auto object-contain"
           />
         </Link>
 
@@ -174,7 +174,7 @@ export function Navbar() {
         </div>
 
         {/* Right CTA / Tracker & Language Dropdown */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 lg:gap-3">
           {done > 0 && (
             <span
               className="hidden md:inline-block text-[11px] font-medium px-2.5 py-1 rounded-full bg-[#00c8eb]/10 text-[#0066ae] border border-[#00c8eb]/20"
@@ -195,8 +195,8 @@ export function Navbar() {
           {/* ── Language Switcher Component ── */}
           <div className="relative">
             <button
-              onClick={() => setLangOpen(!langOpen)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white shadow-xs border border-slate-200/90 hover:border-[#0066ae] transition-colors duration-150 cursor-pointer"
+              onClick={() => { setLangOpen(!langOpen); setOpen(false); }}
+              className="min-h-11 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white shadow-xs border border-slate-200/90 hover:border-[#0066ae] transition-colors duration-150 cursor-pointer"
               aria-label="Pilih Bahasa"
               aria-expanded={langOpen}
             >
@@ -240,10 +240,11 @@ export function Navbar() {
 
           {/* Mobile Hamburger Toggle */}
           <button
-            className="lg:hidden p-2 text-[#063b66]"
-            onClick={() => setOpen(!open)}
+            className="lg:hidden min-h-11 min-w-11 grid place-items-center p-2 text-[#063b66]"
+            onClick={() => { setOpen(!open); setLangOpen(false); }}
             aria-label={open ? "Tutup menu" : "Buka menu"}
             aria-expanded={open}
+            aria-controls="mobile-navigation"
           >
             {open ? <X size={22} /> : <Menu size={22} />}
           </button>
@@ -252,7 +253,7 @@ export function Navbar() {
 
       {/* Mobile Drawer Menu */}
       {open && (
-        <div className="lg:hidden border-b border-[#0066ae] bg-white px-5 py-4 space-y-1 shadow-md">
+        <div id="mobile-navigation" className="absolute top-full inset-x-0 max-h-[calc(100dvh-68px)] overflow-y-auto lg:hidden border-b border-[#0066ae] bg-white px-5 py-4 space-y-1 shadow-md">
           {links.map((l) => {
             const isActive = pathname === l.href;
             return (
@@ -260,7 +261,7 @@ export function Navbar() {
                 key={l.href}
                 href={l.href}
                 onClick={() => setOpen(false)}
-                className={`block py-2 text-xs tracking-wide transition-colors ${
+                className={`flex items-center min-h-11 py-2 text-sm tracking-wide transition-colors ${
                   isActive
                     ? "text-[#0066ae] font-bold border-l-2 border-[#0066ae] pl-2.5"
                     : "text-[#063b66] font-medium hover:text-[#0066ae]"
