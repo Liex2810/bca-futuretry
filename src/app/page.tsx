@@ -233,15 +233,7 @@ export default function Home() {
                 <ArrowRight size={14} strokeWidth={2.5} />
               </span>
             </Link>
-            <Link
-              href="/world"
-              className="-skew-x-12 inline-flex items-center px-8 py-2.5 border border-white/70 bg-transparent text-white hover:bg-white/15 transition-colors duration-200"
-            >
-              <span className="skew-x-12 inline-flex items-center gap-2 font-[family-name:var(--font-display)] text-sm sm:text-base font-extrabold tracking-[0.25em] uppercase">
-                Explore Future World
-                <Compass size={14} strokeWidth={2.5} />
-              </span>
-            </Link>
+
           </div>
         </div>
         {/* Solid edge keeps the illustration and page surface distinct. */}
