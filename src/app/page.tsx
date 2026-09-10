@@ -205,38 +205,39 @@ export default function Home() {
     <div className="min-h-screen bg-[#f4f7fb] text-[#062b4c]">
 
       {/* ═══════════════ FULL-SCREEN HERO (full-page background, Yanmar style) ═══════════════ */}
-      <section className="home-hero relative w-full overflow-hidden bg-[#063b66] lg:-mt-[68px]">
+      <section className="relative w-full overflow-hidden bg-[#063b66] -mt-[68px]">
         {/* Background image: full from top to bottom, no cropping, pulled up under the navbar */}
         <img
           src="/hero-bg.png"
           alt="BCA FutureTry"
-          className="hero-image relative w-full h-auto block"
+          className="relative w-full h-auto block"
         />
         <FallingLeaves />
         {/* Center Main Logo */}
-        <div className="hero-content relative lg:absolute inset-x-0 lg:top-[10%] flex flex-col items-center px-6 py-10 lg:p-0">
+        <div className="absolute inset-x-0 top-[10%] flex flex-col items-center">
           <img
             src="/main-logo.svg"
             alt="BCA FutureTry"
             className="w-full max-w-[806px] object-contain drop-shadow-lg px-8"
           />
-          <p className="mt-4 font-[family-name:var(--font-display)] text-lg sm:text-2xl italic text-white/90 drop-shadow">
-            Try before you choose.
-          </p>
-          <div className="mt-6 lg:mt-8 flex flex-col sm:flex-row flex-wrap items-center justify-center gap-4">
-            <Link
-              href="/world"
-              className="-skew-x-12 inline-flex items-center px-8 py-2.5 border border-[#0066ae] bg-white text-[#0066ae] hover:bg-[#0066ae] hover:text-white transition-colors duration-200"
-            >
-              <span className="skew-x-12 inline-flex items-center gap-2 font-[family-name:var(--font-display)] text-sm sm:text-base font-extrabold tracking-[0.25em] uppercase">
-                Start FutureTry
-                <ArrowRight size={14} strokeWidth={2.5} />
-              </span>
-            </Link>
-
-          </div>
+          <Link
+            href="/world"
+            className="-skew-x-12 mt-8 inline-flex items-center px-8 py-2.5 border border-[#0066ae] bg-white/60 backdrop-blur-sm text-[#0066ae] hover:bg-[#0066ae] hover:text-white transition-colors duration-200"
+          >
+            <span className="skew-x-12 inline-flex items-center gap-2 font-[family-name:var(--font-display)] text-sm sm:text-base font-extrabold tracking-[0.25em] uppercase">
+              Start FutureTry
+              <ArrowRight size={14} strokeWidth={2.5} />
+            </span>
+          </Link>
         </div>
-        {/* Solid edge keeps the illustration and page surface distinct. */}
+        {/* Gradient transition at the bottom of the image into the page background */}
+        <div
+          className="absolute inset-x-0 bottom-0 h-96 pointer-events-none"
+          style={{
+            background:
+              "linear-gradient(to bottom, rgba(244,247,251,0) 0%, rgba(244,247,251,0.35) 40%, rgba(244,247,251,0.75) 70%, rgba(244,247,251,1) 100%)",
+          }}
+        />
       </section>
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-6 sm:py-8 space-y-6">

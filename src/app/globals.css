@@ -178,17 +178,7 @@ button, input, select, textarea {
   width: min(380px, calc(100vw - 32px - env(safe-area-inset-right) - env(safe-area-inset-left)));
   height: min(520px, calc(100dvh - 168px - env(safe-area-inset-bottom)));
 }
-@media (max-width: 1023px) {
-  .home-hero { min-height: 560px; }
-  .hero-image { position: absolute; inset: 0; height: 100%; object-fit: cover; object-position: center bottom; }
-  .hero-content { min-height: 560px; padding-bottom: 200px; background: rgba(6, 59, 102, .2); }
-  .hero-content > img { max-width: 580px; padding-inline: 0; }
-  .hero-content a { min-height: 48px; }
-}
 @media (max-width: 639px) {
-  .hero-content > img { max-width: 340px; }
-  .hero-content a { padding-inline: 16px; }
-  .hero-content a span { font-size: 12px; letter-spacing: .14em; }
   .journey-route > div:not(.journey-nodes) { display: none; }
   .journey-nodes > div { display: grid; grid-template-columns: 56px 1fr; text-align: left; column-gap: 16px; }
   .journey-nodes > div > div { grid-row: span 2; }

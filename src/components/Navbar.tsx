@@ -79,9 +79,9 @@ export function Navbar() {
   const selectedLang = languages.find((l) => l.code === currentLang) || languages[0];
 
   return (
-    <header className="site-header sticky top-0 z-50 w-full select-none bg-white lg:bg-transparent">
+    <header className="sticky top-0 z-50 w-full select-none">
       {/* ── Geometric Winged Background Shape (Miru / Anime console style) ── */}
-      <div className="absolute inset-0 w-full h-[68px] hidden lg:flex pointer-events-none filter drop-shadow-xs">
+      <div className="absolute inset-0 w-full h-[68px] flex pointer-events-none filter drop-shadow-xs">
         
         {/* Left Wing */}
         <svg
