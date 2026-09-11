@@ -42,7 +42,7 @@ export function FutureWorldMap() {
             <p className="font-bold text-navy">{done}/{total} misi · {percent}%</p>
           </div>
           <button onClick={() => { if (confirm("Reset seluruh perjalananmu? Misi yang selesai akan terkunci lagi.")) reset(); }}
-            className="inline-flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg border border-navy/15 text-navy/70 hover:border-pink hover:text-pink transition" title="Reset progress">
+            className="inline-flex items-center gap-1.5 text-xs px-3 py-2.5 rounded-lg border border-navy/15 text-navy/70 hover:border-pink hover:text-pink transition min-h-[44px]" title="Reset progress">
             <RotateCcw size={14} /> Reset
           </button>
         </div>

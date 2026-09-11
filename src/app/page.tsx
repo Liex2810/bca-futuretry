@@ -107,7 +107,21 @@ function HowItWorks() {
   }, []);
 
   return (
-    <section className="mt-12 sm:mt-16 mb-16 sm:mb-28 scroll-mt-24">
+    <section className="relative mt-12 sm:mt-16 mb-16 sm:mb-28 scroll-mt-24">
+      {/* Decorative accessory — right side */}
+      <img
+        src="/journey-accessory.svg"
+        alt=""
+        aria-hidden
+        className="pointer-events-none absolute -bottom-24 -right-20 z-0 hidden select-none md:block sm:-bottom-40 sm:-right-32 w-96 xl:w-[560px]"
+      />
+      {/* ── Heading ── */}
+      <div className="mx-auto max-w-3xl text-center mb-14">
+        <h2 className="font-[family-name:var(--font-display)] text-2xl md:text-[40px] font-semibold text-[#005cab]">
+          Kenali masa depanmu melalui pengalaman langsung
+        </h2>
+      </div>
+
       {/* ── Route / Journey ── */}
       <div ref={lineRef} className="journey-route relative">
         {/* Base route line */}
@@ -145,12 +159,9 @@ function HowItWorks() {
         </div>
       </div>
 
-      {/* ── Heading ── */}
-      <div className="mx-auto max-w-3xl text-center mt-14">
-        <h2 className="font-[family-name:var(--font-display)] text-2xl md:text-[40px] font-semibold text-[#005cab]">
-          Kenali masa depanmu melalui pengalaman langsung.
-        </h2>
-        <p className="mt-4 text-sm sm:text-base text-slate-500 leading-relaxed">
+      {/* Description */}
+      <div className="mx-auto max-w-3xl text-center mt-12">
+        <p className="text-sm sm:text-base text-slate-500 leading-relaxed">
           Pengalaman interaktif untuk menjelajahi peran, menyelesaikan misi, menemukan pengalaman
           nyata dari mahasiswa, dan memahami langkah berikutnya.
         </p>
@@ -215,6 +226,7 @@ export default function Home() {
         <FallingLeaves />
         {/* Center Main Logo */}
         <div className="absolute inset-x-0 top-[10%] flex flex-col items-center">
+          <h1 className="sr-only">BCA FutureTry — Coba simulasi kerja nyata PPBP &amp; PPTI sebelum memilih</h1>
           <img
             src="/main-logo.svg"
             alt="BCA FutureTry"
@@ -222,7 +234,7 @@ export default function Home() {
           />
           <Link
             href="/world"
-            className="-skew-x-12 mt-8 inline-flex items-center px-8 py-2.5 border border-[#0066ae] bg-white/60 backdrop-blur-sm text-[#0066ae] hover:bg-[#0066ae] hover:text-white transition-colors duration-200"
+            className="-skew-x-12 mt-8 inline-flex items-center px-8 py-3 border border-[#0066ae] bg-white/60 backdrop-blur-sm text-[#0066ae] hover:bg-[#0066ae] hover:text-white transition-colors duration-200 min-h-[44px]"
           >
             <span className="skew-x-12 inline-flex items-center gap-2 font-[family-name:var(--font-display)] text-sm sm:text-base font-extrabold tracking-[0.25em] uppercase">
               Start FutureTry
@@ -245,8 +257,12 @@ export default function Home() {
         {/* ═══════════════ HOW FUTURETRY WORKS ═══════════════ */}
         <HowItWorks />
 
-        {/* ═══════════════ CHOOSE YOUR WORLD ═══════════════ */}
-        <ChooseYourWorld />
+      </div>
+
+      {/* ═══════════════ CHOOSE YOUR WORLD (full width) ═══════════════ */}
+      <ChooseYourWorld />
+
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-6 sm:py-8 space-y-6">
 
         {/* ═══════════════ ROW 1: EDUKATIPS & PORTAL LOGIN ═══════════════ */}
         <div className="grid lg:grid-cols-12 gap-6 items-stretch">
@@ -265,7 +281,7 @@ export default function Home() {
                       EDUKA<span className="text-[#ff75b8]">TIPS</span>
                     </span>
                   </div>
-                  <Link href="/futurepath" className="block group mt-2">
+                  <Link href="/futurepath" className="inline-flex items-start min-h-[44px] block group mt-2 py-1">
                     <h2 className="text-sm sm:text-base font-bold text-[#063b66] group-hover:text-[#0066ae] transition line-clamp-2 leading-snug">
                       8 Tips Memilih Antara Beasiswa Bisnis (PPBP) &amp; Teknologi (PPTI)
                     </h2>
@@ -275,7 +291,7 @@ export default function Home() {
                   </p>
                   <Link
                     href="/futurepath"
-                    className="inline-flex items-center gap-1 text-xs font-bold text-[#0066ae] hover:text-[#063b66] mt-3 group"
+                    className="inline-flex items-center gap-1 text-xs font-bold text-[#0066ae] hover:text-[#063b66] mt-3 group min-h-[44px]"
                   >
                     Pelajari selengkapnya <ChevronRight size={14} className="group-hover:translate-x-0.5 transition" />
                   </Link>
@@ -289,7 +305,7 @@ export default function Home() {
                       #AWAS<span className="text-[#00c8eb]">SALAHJALUR</span>
                     </span>
                   </div>
-                  <Link href="/world" className="block group mt-2">
+                  <Link href="/world" className="inline-flex items-start min-h-[44px] block group mt-2 py-1">
                     <h2 className="text-sm sm:text-base font-bold text-[#063b66] group-hover:text-[#0066ae] transition line-clamp-2 leading-snug">
                       #AwasSalahJalur Kenali Potensi Nyata Sebelum Menentukan Jurusan
                     </h2>
@@ -299,7 +315,7 @@ export default function Home() {
                   </p>
                   <Link
                     href="/world"
-                    className="inline-flex items-center gap-1 text-xs font-bold text-[#0066ae] hover:text-[#063b66] mt-3 group"
+                    className="inline-flex items-center gap-1 text-xs font-bold text-[#0066ae] hover:text-[#063b66] mt-3 group min-h-[44px]"
                   >
                     Coba simulasi misi <ChevronRight size={14} className="group-hover:translate-x-0.5 transition" />
                   </Link>
@@ -363,7 +379,7 @@ export default function Home() {
                       <button
                         type="button"
                         onClick={() => setShowRoleInfo(!showRoleInfo)}
-                        className="text-[11px] text-[#0066ae] hover:underline flex items-center gap-1"
+                        className="text-[11px] text-[#0066ae] hover:underline flex items-center gap-1 min-h-[44px] px-1"
                       >
                         {showRoleInfo ? <EyeOff size={13} /> : <Eye size={13} />}
                         {showRoleInfo ? "Tutup Info" : "Lihat Info"}
@@ -389,13 +405,13 @@ export default function Home() {
 
                   {/* Links Row */}
                   <div className="flex items-center justify-between text-xs pt-1 text-[#0066ae]">
-                    <Link href="/world" className="hover:underline font-semibold">
+                    <Link href="/world" className="inline-flex items-center min-h-[44px] hover:underline font-semibold">
                       Lupa Progres?
                     </Link>
                     <button
                       type="button"
                       onClick={handleResetProgress}
-                      className="hover:underline font-semibold text-slate-500 hover:text-rose-600 transition"
+                      className="inline-flex items-center min-h-[44px] hover:underline font-semibold text-slate-500 hover:text-rose-600 transition"
                     >
                       Reset Simulasi
                     </button>
@@ -412,7 +428,7 @@ export default function Home() {
 
                 <div className="mt-4 text-center text-xs text-slate-500">
                   Belum punya progres?{" "}
-                  <Link href="/world" className="font-bold text-[#0066ae] hover:underline">
+                  <Link href="/world" className="inline-flex items-center min-h-[44px] font-bold text-[#0066ae] hover:underline">
                     Mulai Langsung Tanpa Akun
                   </Link>
                 </div>
@@ -425,7 +441,7 @@ export default function Home() {
                   <p>
                     Simulasi FutureTry <strong>100% bebas skor &amp; tanpa benar-salah</strong>. Coba berbagai skenario kerja perbankan untuk menemukan peran yang paling kamu sukai.
                   </p>
-                  <Link href="/futurepath" className="font-bold text-[#b45309] hover:underline mt-1 inline-block">
+                  <Link href="/futurepath" className="inline-flex items-center min-h-[44px] font-bold text-[#b45309] hover:underline mt-1">
                     Pelajari selengkapnya.
                   </Link>
                 </div>
@@ -575,7 +591,7 @@ export default function Home() {
                 </div>
                 <Link
                   href="/world"
-                  className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-[#0066ae] hover:text-[#063b66]"
+                  className="mt-4 pt-3 pb-1 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-[#0066ae] hover:text-[#063b66] min-h-[44px]"
                 >
                   <span>Ikuti misi {c.name}</span>
                   <ArrowRight size={13} />

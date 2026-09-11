@@ -67,7 +67,7 @@ export function MissionPlayer({ mission }: { mission: Mission }) {
     <div className="mx-auto max-w-2xl px-4 py-8">
       {/* header */}
       <div className="flex items-center justify-between mb-6">
-        <Link href="/world" className="inline-flex items-center gap-1.5 text-sm text-navy/60 hover:text-bcablue transition">
+        <Link href="/world" className="inline-flex items-center gap-1.5 text-sm text-navy/60 hover:text-bcablue transition min-h-[44px] pr-3">
           <ArrowLeft size={15} /> Peta
         </Link>
         <span className={`font-mono text-[11px] px-2.5 py-1 rounded-full border ${mission.program === "PPTI" ? "text-cyan border-cyan/30 bg-cyan/5" : "text-bcablue border-bcablue/30 bg-bcablue/5"}`}>

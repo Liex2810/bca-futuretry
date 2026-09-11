@@ -133,7 +133,7 @@ export function Navbar() {
         aria-label="Navigasi utama"
       >
         {/* Main Logo from User Assets */}
-        <Link href="/" className="shrink-0 flex items-center pr-2 transition-opacity hover:opacity-85">
+        <Link href="/" className="shrink-0 flex items-center min-h-[44px] pr-2 transition-opacity hover:opacity-85">
           <Image
             src="/horizontal-logo.png"
             alt="BCA FutureTry"

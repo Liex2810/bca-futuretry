@@ -41,6 +41,7 @@ body {
   color: var(--color-ink);
   font-family: var(--font-bca-sans), ui-sans-serif, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
 }
 
 button, input, select, textarea {
