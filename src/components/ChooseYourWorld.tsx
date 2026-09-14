@@ -119,7 +119,14 @@ function WorldSection({
 export function ChooseYourWorld() {
   return (
     <section aria-labelledby="choose-world-heading" className="relative w-full bg-[#eaf2f9] py-14 sm:py-20">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+      {/* Decorative accessory — right side, between the two cards */}
+      <img
+        src="/world-accessory.svg"
+        alt=""
+        aria-hidden
+        className="pointer-events-none absolute right-0 top-1/2 z-10 hidden -translate-y-1/2 select-none md:block w-48 xl:w-60"
+      />
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6">
         {/* Section header */}
         <div className="text-center">
           <h2
