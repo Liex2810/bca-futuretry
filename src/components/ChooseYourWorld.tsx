@@ -81,7 +81,7 @@ function WorldSection({
   children?: ReactNode;
 }) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+    <div className="relative z-10 overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm">
       <div className="grid items-center gap-8 p-6 sm:p-10 lg:grid-cols-2 lg:gap-12 lg:p-14">
         {/* Left — visual */}
         <div className="mx-auto flex w-full justify-center">
@@ -119,6 +119,12 @@ function WorldSection({
 export function ChooseYourWorld() {
   return (
     <section aria-labelledby="choose-world-heading" className="relative w-full bg-[#eaf2f9] py-14 sm:py-20">
+      <img
+        src="/world-accessory.svg"
+        alt=""
+        aria-hidden
+        className="pointer-events-none absolute -bottom-20 -right-20 z-20 hidden w-[360px] select-none lg:block xl:-bottom-28 xl:-right-24 xl:w-[420px]"
+      />
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         {/* Section header */}
         <div className="text-center">
@@ -131,7 +137,7 @@ export function ChooseYourWorld() {
         </div>
 
         {/* World 01 — PPBP */}
-        <div className="mx-auto mt-12 max-w-6xl sm:mt-14">
+        <div className="relative mx-auto mt-12 max-w-6xl sm:mt-14">
           <WorldSection
             title="Program Pendidikan Bisnis dan Perbankan (PPBP)"
             subtitle="Bangun strategi bisnis, kuasai keuangan, dan jadilah pemimpin masa depan perbankan digital."
@@ -142,8 +148,17 @@ export function ChooseYourWorld() {
           />
         </div>
 
+        {/* Large pattern peeks out from the left edge between both cards. */}
+        <div className="pointer-events-none relative z-20 mx-auto h-0 max-w-6xl" aria-hidden>
+          <img
+            src="/world-accessory.svg"
+            alt=""
+            className="absolute -left-64 -top-12 hidden w-[460px] -translate-y-1/2 select-none lg:block xl:-left-[28rem] xl:w-[560px]"
+          />
+        </div>
+
         {/* World 02 — PPTI */}
-        <div className="mx-auto mt-8 max-w-6xl sm:mt-10">
+        <div className="relative mx-auto mt-8 max-w-6xl sm:mt-10">
           <WorldSection
             title="Program Pendidikan Teknik Informatika (PPTI)"
             subtitle="Asah keterampilan teknologi, data, dan aplikasi untuk masa depan perbankan digital."
