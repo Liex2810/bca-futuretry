@@ -334,13 +334,13 @@ export default function Home() {
                 {/* Header */}
                 <div className="border-b border-slate-100 pb-5">
                   <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-[#f0f7fd] text-[#0066ae] text-xs font-bold mb-2">
-                    BCA ID / PORTAL AKSES
+                    EXPLORER LOKAL
                   </div>
                   <h2 className="text-xl sm:text-2xl font-extrabold text-[#063b66] tracking-tight">
                     Mulai Eksplorasi
                   </h2>
                   <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                    Masuk untuk menyimpan progres misi &amp; mencetak <strong>Future Card</strong> milikmu.
+                    Tanpa akun atau kata sandi. Progres dan <strong>Future Card</strong> disimpan di browser ini, bukan akun BCA. Menghapus data browser atau berganti perangkat tidak membawa progresmu.
                   </p>
                 </div>
 
@@ -354,7 +354,7 @@ export default function Home() {
                 <form onSubmit={handleStart} className="mt-5 space-y-5">
                   <div>
                     <label htmlFor="explorer-name" className="block text-xs font-bold text-[#063b66] mb-1.5">
-                      BCA ID / Nama Explorer
+                      Nama panggilan (opsional)
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -365,7 +365,9 @@ export default function Home() {
                         type="text"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        placeholder="Contoh: Budi Santoso / Siswa SMA"
+                        placeholder="Contoh: Budi"
+                        maxLength={60}
+                        autoComplete="nickname"
                         className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#0066ae] focus:ring-1 focus:ring-[#0066ae] transition bg-white"
                       />
                     </div>
@@ -374,7 +376,7 @@ export default function Home() {
                   <div>
                     <div className="flex items-center justify-between mb-1.5">
                       <label htmlFor="explorer-track" className="block text-xs font-bold text-[#063b66]">
-                        Jalur Pilihan / Kata Sandi Minat
+                        Minat jalur eksplorasi
                       </label>
                       <button
                         type="button"
@@ -406,7 +408,7 @@ export default function Home() {
                   {/* Links Row */}
                   <div className="flex items-center justify-between text-xs pt-1 text-[#0066ae]">
                     <Link href="/world" className="inline-flex items-center min-h-[44px] hover:underline font-semibold">
-                      Lupa Progres?
+                      Lihat progres lokal
                     </Link>
                     <button
                       type="button"
@@ -422,7 +424,7 @@ export default function Home() {
                     type="submit"
                     className="w-full py-3.5 px-6 rounded-full bg-[#0066ae] hover:bg-[#063b66] text-white font-bold text-sm tracking-wide shadow-md shadow-[#0066ae]/20 hover:shadow-lg transition flex items-center justify-center gap-2 cursor-pointer mt-2"
                   >
-                    Mulai Eksplorasi (Login)
+                    Mulai Eksplorasi
                   </button>
                 </form>
 

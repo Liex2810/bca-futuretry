@@ -142,7 +142,7 @@ function Connect() {
         <CheckCircle2 size={36} className="mx-auto text-cyan" />
         <h3 className="font-[family-name:var(--font-display)] text-xl font-extrabold text-navy mt-3">Terkirim (demo)</h3>
         <p className="text-sm text-navy/60 mt-2 max-w-sm mx-auto">Di versi produksi, pesan ini diteruskan ke pool awardee/counselor. Untuk sekarang, anggap ini proof-of-concept — pertanyaanmu tidak ke mana-mana. 😄</p>
-        <button onClick={() => setSent(false)} className="mt-4 text-sm font-bold text-bcablue hover:underline">Kirim pertanyaan lain</button>
+        <button onClick={() => setSent(false)} className="min-h-11 min-w-11 px-3 mt-4 text-sm font-bold text-bcablue hover:underline">Kirim pertanyaan lain</button>
       </div>
     );
   }

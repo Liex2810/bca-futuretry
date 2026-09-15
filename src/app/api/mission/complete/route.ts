@@ -33,6 +33,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Mission tidak ditemukan" }, { status: 404 });
   }
 
+  if (choices.length !== mission.steps.length || new Set(choices.map((p) => p.stepId)).size !== mission.steps.length) {
+    return NextResponse.json({ error: "Semua langkah misi harus dijawab tepat satu kali" }, { status: 400 });
+  }
   // Validasi setiap pilihan benar-benar ada di mission tsb (anti-rewriting).
   for (const pick of choices) {
     const step = mission.steps.find((s) => s.id === pick.stepId);
@@ -41,17 +44,20 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  if (dbEnabled) {
+  let saved = false;
+  if (dbEnabled && sessionId) {
     try {
-      await prisma.$transaction(async (tx: import("@prisma/client").Prisma.TransactionClient) => {
+      saved = await prisma.$transaction(async (tx: import("@prisma/client").Prisma.TransactionClient) => {
         const user = sessionId
           ? await tx.user.upsert({ where: { id: sessionId }, update: {}, create: { id: sessionId } })
           : null;
         const m = await tx.mission.findUnique({ where: { slug: missionId } });
         if (user && m) {
+          const previous = await tx.userMissionProgress.findUnique({ where: { userId: user.id } });
+          const completed = Array.isArray(previous?.completedMissions) ? previous.completedMissions.filter((id): id is string => typeof id === "string") : [];
           await tx.userMissionProgress.upsert({
             where: { userId: user.id },
-            update: { completedMissions: [missionId] as unknown as object[], unlocked: [] as unknown as object[] },
+            update: { completedMissions: Array.from(new Set([...completed, missionId])) },
             create: { userId: user.id, missionId: m.id, completedMissions: [missionId] as unknown as object[], unlocked: [] as unknown as object[] },
           });
         }
@@ -60,6 +66,7 @@ export async function POST(req: NextRequest) {
             data: { userId: user.id, missionId: m.id, enjoyed: reflection.enjoyed as unknown as object[], challenged: reflection.challenged as unknown as object[], nextTry: reflection.nextTry, note: reflection.note },
           });
         }
+        return Boolean(user && m);
       });
     } catch (e) {
       // DB error tidak boleh menghancurkan demo — log & tetap balas OK (client sudah simpan lokal).
@@ -67,5 +74,5 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  return NextResponse.json({ ok: true, missionId, saved: dbEnabled });
+  return NextResponse.json({ ok: true, missionId, saved });
 }

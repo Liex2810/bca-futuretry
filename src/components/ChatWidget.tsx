@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { MessageCircleQuestion, X, Send, Sparkles } from "lucide-react";
 import { Events } from "@/lib/analytics";
 
-interface Msg { role: "user" | "assistant"; content: string; sources?: string[] }
+interface Msg { role: "user" | "assistant"; content: string; sources?: string[]; mode?: "ai" | "mock" }
 
 const SUGGESTIONS = [
   "Apa bedanya PPBP dan PPTI?",
@@ -54,7 +54,7 @@ export function ChatWidget() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error ?? "Gagal");
-      setMsgs((m) => [...m, { role: "assistant", content: data.content, sources: data.sources }]);
+      setMsgs((m) => [...m, { role: "assistant", content: data.content, sources: data.sources, mode: data.mode }]);
     } catch {
       setMsgs((m) => [...m, { role: "assistant", content: "Hmm, ada gangguan sebentar. Coba lagi ya — atau langsung ke halaman FuturePath untuk info resmi.", sources: [] }]);
     } finally {
@@ -106,6 +106,7 @@ export function ChatWidget() {
                     m.role === "user" ? "bg-bcablue text-white rounded-br-md" : "bg-white border border-navy/10 text-ink rounded-bl-md"
                   }`}>
                     <p className="whitespace-pre-wrap break-words">{m.content}</p>
+                    {m.mode === "mock" && <p className="mt-2 text-xs text-navy/60">Mode referensi lokal — bukan jawaban AI. Layanan AI tidak aktif atau sedang tidak tersedia.</p>}
                     {m.sources && m.sources.length > 0 && (
                       <p className="mt-1.5 text-[10px] text-navy/45 font-mono">sumber: {m.sources.join(" · ")}</p>
                     )}

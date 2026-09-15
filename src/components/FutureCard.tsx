@@ -9,12 +9,14 @@ import type { JourneyProgress, Mission } from "@/types";
 import { missions } from "@/lib/content/missions";
 import { districtMeta } from "@/lib/content/map";
 import { Events } from "@/lib/analytics";
+import { availableMissions } from "@/lib/progress";
 
 // Saran eksplorasi berikutnya: misi lain di distrik sama (belum selesai),
 // lalu cabang seberang. Deterministik, bukan "rekomendasi AI".
 function nextSuggestions(mission: Mission, progress: JourneyProgress) {
-  const sameDistrict = missions.filter((m) => m.district === mission.district && m.id !== mission.id && !progress.completedMissions.includes(m.id));
-  const otherBranch = missions.filter((m) => m.program !== mission.program && !progress.completedMissions.includes(m.id));
+  const available = missions.filter((m) => availableMissions(progress).has(m.id));
+  const sameDistrict = available.filter((m) => m.district === mission.district && m.id !== mission.id && !progress.completedMissions.includes(m.id));
+  const otherBranch = available.filter((m) => m.program !== mission.program && !progress.completedMissions.includes(m.id));
   return [...sameDistrict.slice(0, 2), ...otherBranch.slice(0, 1)].map((m) => ({ id: m.id, title: m.title, program: m.program }));
 }
 
@@ -111,7 +113,7 @@ export function FutureCard({ mission, progress }: { mission: Mission; progress: 
               <p className="font-mono text-[11px] tracking-widest text-navy/45 mb-2">EXPLORE NEXT</p>
               <div className="space-y-2">
                 {next.map((n) => (
-                  <Link key={n.id} href={`/mission/${n.id}`} className="flex items-center justify-between rounded-xl border border-navy/10 px-4 py-2.5 hover:border-cyan hover:bg-sky-soft/50 transition">
+                  <Link key={n.id} href={`/mission/${n.id}`} className="min-h-11 flex items-center justify-between rounded-xl border border-navy/10 px-4 py-2.5 hover:border-cyan hover:bg-sky-soft/50 transition">
                     <span className="text-sm font-medium text-navy">{n.title}</span>
                     <span className="text-[10px] font-mono text-cyan">{n.program}</span>
                   </Link>

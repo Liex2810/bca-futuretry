@@ -71,7 +71,10 @@ export function saveReflection(progress: JourneyProgress, reflection: Reflection
 
 export function resetProgress(): JourneyProgress {
   if (typeof window !== "undefined") {
-    try { window.localStorage.removeItem(STORAGE_KEY); } catch { /* private mode */ }
+    try {
+      window.localStorage.removeItem(STORAGE_KEY);
+      Object.keys(window.localStorage).filter((key) => key.startsWith("ft.mission-draft.v1.")).forEach((key) => window.localStorage.removeItem(key));
+    } catch { /* private mode */ }
   }
   return emptyProgress();
 }

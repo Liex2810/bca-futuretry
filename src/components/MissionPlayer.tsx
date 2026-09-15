@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ArrowRight, Check, Clock, Lightbulb, Sparkles } from "lucide-react";
@@ -20,18 +20,52 @@ function sessionId() {
 }
 
 export function MissionPlayer({ mission }: { mission: Mission }) {
-  const { progress, finishMission, saveReflect, stateOf } = useJourney();
+  const { progress, ready, finishMission, saveReflect, stateOf } = useJourney();
   const [phase, setPhase] = useState<Phase>("intro");
   const [stepIdx, setStepIdx] = useState(0);
   const [picks, setPicks] = useState<{ stepId: string; choiceId: string }[]>([]);
   const [lastChoice, setLastChoice] = useState<string | null>(null);
+  const [loaded, setLoaded] = useState(false);
+  const [storageError, setStorageError] = useState(false);
+  const [reopened, setReopened] = useState(false);
+  const draftKey = `ft.mission-draft.v1.${mission.id}`;
+
+  useEffect(() => {
+    if (!ready) return;
+    try {
+      const raw = localStorage.getItem(draftKey);
+      const d = raw ? JSON.parse(raw) : null;
+      if (d && ["intro", "step", "done", "reflect", "card"].includes(d.phase)
+        && Number.isInteger(d.stepIdx) && d.stepIdx >= 0 && d.stepIdx < mission.steps.length
+        && Array.isArray(d.picks) && d.picks.every((p: { stepId: string; choiceId: string }) =>
+          mission.steps.some((s) => s.id === p.stepId && s.choices.some((c) => c.id === p.choiceId)))
+        && new Set(d.picks.map((p: { stepId: string }) => p.stepId)).size === d.picks.length) {
+        setPhase(d.phase); setStepIdx(d.stepIdx); setPicks(d.picks);
+        setLastChoice(d.picks.find((p: { stepId: string }) => p.stepId === mission.steps[d.stepIdx].id)?.choiceId ?? null);
+        setReopened(progress.completedMissions.includes(mission.id));
+      } else setReopened(progress.completedMissions.includes(mission.id));
+    } catch { setStorageError(true); }
+    setLoaded(true);
+    // Restore once after journey hydration, not after each completion update.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ready, draftKey]);
+
+  useEffect(() => {
+    if (!loaded) return;
+    try { localStorage.setItem(draftKey, JSON.stringify({ phase, stepIdx, picks })); }
+    catch { setStorageError(true); }
+  }, [loaded, draftKey, phase, stepIdx, picks]);
+
+  const replay = () => {
+    setPicks([]); setLastChoice(null); setStepIdx(0); setPhase("intro"); setReopened(false);
+  };
 
   const cpId = checkpoints.find((c) => c.missionId === mission.id)?.id;
   const locked = cpId ? stateOf(cpId) === "locked" : false;
   const step = mission.steps[stepIdx];
   const choice = lastChoice ? step?.choices.find((c) => c.id === lastChoice) : null;
 
-  const pick = (choiceId: string) => { setLastChoice(choiceId); setPicks((p) => [...p, { stepId: step.id, choiceId }]); };
+  const pick = (choiceId: string) => { setLastChoice(choiceId); setPicks((p) => [...p.filter((v) => v.stepId !== step.id), { stepId: step.id, choiceId }]); };
   const next = () => {
     setLastChoice(null);
     if (stepIdx + 1 < mission.steps.length) setStepIdx(stepIdx + 1);
@@ -50,6 +84,8 @@ export function MissionPlayer({ mission }: { mission: Mission }) {
     } catch { /* offline/demo: localStorage sudah menyimpan */ }
   };
 
+  if (!ready || !loaded) return <p className="p-8" role="status">Memuat progres lokal…</p>;
+
   if (locked) {
     return (
       <div className="mx-auto max-w-lg px-4 py-24 text-center">
@@ -65,6 +101,16 @@ export function MissionPlayer({ mission }: { mission: Mission }) {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-8">
+      <p role="status" className="text-xs text-navy/60 mb-4">{storageError ? "Penyimpanan browser tidak tersedia. Progres sesi ini bisa hilang saat refresh." : "Draft otomatis tersimpan di browser ini. Refresh untuk melanjutkan tidak menghapus pilihanmu."}</p>
+      {reopened && <section className="rounded-2xl border border-navy/15 p-5 mb-6">
+        <h1 className="font-bold text-navy">Misi ini sudah selesai</h1>
+        <p className="text-sm text-navy/70 mt-2">Lihat hasil sebelumnya atau coba lagi. Status selesai dan hasil lama tetap tersimpan sampai refleksi baru disimpan.</p>
+        <div className="flex flex-wrap gap-3 mt-4">
+          <button className="min-h-11 px-5 rounded-xl bg-bcablue text-white font-bold" onClick={() => { setPhase("card"); setReopened(false); }}>Lihat hasil</button>
+          <button className="min-h-11 px-5 rounded-xl border border-navy/20" onClick={replay}>Ulangi misi</button>
+          {phase !== "card" && phase !== "intro" && <button className="min-h-11 px-5 rounded-xl border border-navy/20" onClick={() => setReopened(false)}>Lanjutkan draft</button>}
+        </div>
+      </section>}
       {/* header */}
       <div className="flex items-center justify-between mb-6">
         <Link href="/world" className="inline-flex items-center gap-1.5 text-sm text-navy/60 hover:text-bcablue transition min-h-[44px] pr-3">
@@ -84,7 +130,7 @@ export function MissionPlayer({ mission }: { mission: Mission }) {
         </div>
       )}
 
-      <AnimatePresence mode="wait">
+      {!reopened && <AnimatePresence mode="wait">
         {/* ── INTRO ── */}
         {phase === "intro" && (
           <motion.div key="intro" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }}>
@@ -166,7 +212,8 @@ export function MissionPlayer({ mission }: { mission: Mission }) {
         {phase === "card" && (
           <FutureCard key="card" mission={mission} progress={progress} />
         )}
-      </AnimatePresence>
+      </AnimatePresence>}
+      {!reopened && phase === "card" && <button onClick={replay} className="min-h-11 mt-5 px-5 rounded-xl border border-navy/20">Ulangi misi</button>}
     </div>
   );
 }
@@ -199,7 +246,7 @@ function ReflectionForm({ mission, onSubmit }: { mission: Mission; onSubmit: (r:
           <div className="flex flex-wrap gap-2">
             {blk.opts.map((o) => (
               <button type="button" key={o} onClick={() => toggle(blk.val, blk.set, o)} aria-pressed={blk.val.includes(o)}
-                className={`px-4 py-2 rounded-full text-sm font-medium border-2 transition ${
+                className={`min-h-11 min-w-11 px-4 py-2 rounded-full text-sm font-medium border-2 transition ${
                   blk.val.includes(o) ? "bg-bcablue text-white border-bcablue" : "bg-white text-navy/70 border-navy/15 hover:border-cyan"
                 }`}>
                 {o}

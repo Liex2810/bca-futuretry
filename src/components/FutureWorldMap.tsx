@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Lock, Check, Play, RotateCcw, Sparkles, X, Clock, ArrowRight, ScrollText } from "lucide-react";
@@ -17,6 +17,26 @@ const px = (cp: Checkpoint) => ({ cx: (cp.x / 100) * W, cy: (cp.y / 100) * H });
 export function FutureWorldMap() {
   const { progress, stateOf, reset } = useJourney();
   const [selected, setSelected] = useState<Checkpoint | null>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!selected) return;
+    const trigger = document.activeElement as HTMLElement | SVGElement | null;
+    const dialog = dialogRef.current;
+    const controls = () => Array.from(dialog?.querySelectorAll<HTMLElement>('button, a[href], [tabindex="0"]') ?? []);
+    controls()[0]?.focus();
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") { e.preventDefault(); setSelected(null); }
+      if (e.key === "Tab") {
+        const items = controls(), first = items[0], last = items[items.length - 1];
+        if (e.shiftKey && (document.activeElement === first || !dialog?.contains(document.activeElement))) { e.preventDefault(); last?.focus(); }
+        else if (!e.shiftKey && (document.activeElement === last || !dialog?.contains(document.activeElement))) { e.preventDefault(); first?.focus(); }
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => { document.removeEventListener("keydown", onKey); document.body.style.overflow = previousOverflow; trigger?.focus(); };
+  }, [selected]);
   const { done, total, percent } = progressSummary(progress);
 
   const byId = (id: string) => checkpoints.find((c) => c.id === id)!;
@@ -53,110 +73,96 @@ export function FutureWorldMap() {
         <motion.div className="h-full rounded-full bg-bcablue" initial={{ width: 0 }} animate={{ width: `${percent}%` }} transition={{ duration: 0.6 }} />
       </div>
 
-      {/* ═══════════ MAP ═══════════ */}
-      <div className="relative rounded-3xl overflow-hidden border border-navy/10 shadow-xl shadow-navy/10 bg-sky-soft">
-        <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto hidden md:block" role="group" aria-label="Peta Future World dengan lima distrik">
-          <defs>
-            <radialGradient id="glowTech" cx="50%" cy="50%" r="50%"><stop offset="0%" stopColor="#08bbd4" stopOpacity="0.25" /><stop offset="100%" stopColor="#08bbd4" stopOpacity="0" /></radialGradient>
-            <radialGradient id="glowBiz" cx="50%" cy="50%" r="50%"><stop offset="0%" stopColor="#0d70b4" stopOpacity="0.25" /><stop offset="100%" stopColor="#0d70b4" stopOpacity="0" /></radialGradient>
-            <linearGradient id="pathDone" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stopColor="#0d70b4" /><stop offset="100%" stopColor="#08bbd4" /></linearGradient>
-          </defs>
+      {/* ═══════════ FUTURE DISTRICT ═══════════ */}
+      <section className="overflow-hidden border border-navy/15 bg-white" aria-labelledby="district-map-title">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-navy/10 bg-[#f4f8fb] px-4 py-3 sm:px-5">
+          <div>
+            <h2 id="district-map-title" className="font-bold text-navy">Peta perjalanan FutureTry</h2>
+            <p className="text-xs text-navy/55">Simulasi digital — bukan lokasi fisik BCA.</p>
+          </div>
+          <div className="flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-navy/65" aria-label="Legenda status">
+            <span className="inline-flex items-center gap-1.5"><i className="h-2.5 w-2.5 rounded-full bg-cyan" />Bisa dimulai</span>
+            <span className="inline-flex items-center gap-1.5"><i className="h-2.5 w-2.5 rounded-full bg-green-600" />Selesai</span>
+            <span className="inline-flex items-center gap-1.5"><i className="h-2.5 w-2.5 rounded-full bg-slate-400" />Terkunci</span>
+          </div>
+        </div>
 
-          {/* district blobs */}
-          <ellipse cx={280} cy={150} rx={250} ry={140} fill="url(#glowTech)" />
-          <ellipse cx={720} cy={150} rx={250} ry={140} fill="url(#glowBiz)" />
-          <ellipse cx={500} cy={540} rx={200} ry={110} fill="url(#glowTech)" opacity={0.5} />
-          <ellipse cx={840} cy={400} rx={150} ry={110} fill="url(#glowBiz)" opacity={0.4} />
-          <ellipse cx={160} cy={400} rx={150} ry={110} fill="url(#glowTech)" opacity={0.4} />
+        {/* Desktop: dua jalur program paralel dengan urutan bawah-ke-atas yang jelas. */}
+        <div className="relative hidden md:block bg-[#edf6fa]">
+          <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full" role="group" aria-label="Dua jalur eksplorasi: PPTI di kiri dan PPBP di kanan">
+            <defs>
+              <pattern id="districtGrid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="#0b426c" strokeOpacity=".055" /></pattern>
+              <linearGradient id="activeRoute" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stopColor="#0d70b4"/><stop offset="100%" stopColor="#08bbd4"/></linearGradient>
+            </defs>
+            <rect width={W} height={H} fill="url(#districtGrid)" />
+            <rect x="90" y="80" width="365" height="420" rx="20" fill="#ffffff" fillOpacity=".7" stroke="#08bbd4" strokeOpacity=".25" />
+            <rect x="545" y="80" width="365" height="420" rx="20" fill="#ffffff" fillOpacity=".7" stroke="#0d70b4" strokeOpacity=".25" />
+            <text x="272" y="114" textAnchor="middle" fill="#0b426c" fontSize="18" fontWeight="800">PPTI · TECHNOLOGY</text>
+            <text x="728" y="114" textAnchor="middle" fill="#0b426c" fontSize="18" fontWeight="800">PPBP · BUSINESS</text>
+            <text x="272" y="137" textAnchor="middle" fill="#527086" fontSize="12">3 checkpoint karier digital</text>
+            <text x="728" y="137" textAnchor="middle" fill="#527086" fontSize="12">3 checkpoint bisnis perbankan</text>
 
-          {/* district labels */}
-          <text x={280} y={40} textAnchor="middle" className="fill-[#0b426c]" fontSize={17} fontWeight={800} fontFamily="var(--font-display)">TECHNOLOGY &amp; DIGITAL</text>
-          <text x={280} y={58} textAnchor="middle" className="fill-[#08bbd4]" fontSize={12} fontFamily="var(--font-mono)">PPTI</text>
-          <text x={720} y={40} textAnchor="middle" className="fill-[#0b426c]" fontSize={17} fontWeight={800} fontFamily="var(--font-display)">BUSINESS &amp; BANKING</text>
-          <text x={720} y={58} textAnchor="middle" className="fill-[#0d70b4]" fontSize={12} fontFamily="var(--font-mono)">PPBP</text>
-          <text x={500} y={600} textAnchor="middle" className="fill-[#f467b0]" fontSize={13} fontWeight={700} fontFamily="var(--font-display)">CHARACTER PLAZA</text>
-          <text x={840} y={470} textAnchor="middle" className="fill-[#0d70b4]" fontSize={13} fontWeight={700} fontFamily="var(--font-display)">STORY QUARTER</text>
-          <text x={160} y={470} textAnchor="middle" className="fill-[#08bbd4]" fontSize={13} fontWeight={700} fontFamily="var(--font-display)">FUTUREPATH GATE</text>
+            {mapPaths.map(([a, b]) => {
+              const A = byId(a), B = byId(b), pa = px(A), pb = px(B);
+              const active = A.kind === "hub" || B.kind === "hub" || (stateOf(a) !== "locked" && stateOf(b) !== "locked");
+              return <line key={`${a}-${b}`} x1={pa.cx} y1={pa.cy} x2={pb.cx} y2={pb.cy} stroke={active ? "url(#activeRoute)" : "#7890a2"} strokeOpacity={active ? .85 : .35} strokeWidth={active ? 4 : 2} strokeDasharray={active ? "0" : "7 9"} strokeLinecap="round" />;
+            })}
 
-          {/* paths */}
-          {mapPaths.map(([a, b]) => {
-            const A = byId(a), B = byId(b);
-            const pa = px(A), pb = px(B);
-            const active = A.kind === "hub" || B.kind === "hub" || (stateOf(a) !== "locked" && stateOf(b) !== "locked");
-            return <line key={`${a}-${b}`} x1={pa.cx} y1={pa.cy} x2={pb.cx} y2={pb.cy}
-              stroke={active ? "url(#pathDone)" : "#0b426c"} strokeOpacity={active ? 0.7 : 0.15}
-              strokeWidth={active ? 3 : 2} strokeDasharray={active ? "0" : "6 8"} strokeLinecap="round" />;
-          })}
-
-          {/* checkpoints */}
-          {checkpoints.map((cp) => {
-            const { cx, cy } = px(cp);
-            const st = stateOf(cp.id);
-            const meta = districtMeta[cp.district];
-            const color = st === "locked" ? "#94a3b8" : meta.color;
-            return (
-              <g key={cp.id} transform={`translate(${cx},${cy})`} className="cursor-pointer"
-                onClick={() => st !== "locked" && setSelected(cp)}
-                role="button" tabIndex={st === "locked" ? -1 : 0}
-                aria-label={`${cp.label} — ${st}`} aria-disabled={st === "locked"}
+            {checkpoints.map((cp) => {
+              const { cx, cy } = px(cp), st = stateOf(cp.id), meta = districtMeta[cp.district];
+              const color = st === "locked" ? "#94a3b8" : st === "completed" ? "#16854b" : meta.color;
+              return <g key={cp.id} transform={`translate(${cx},${cy})`} className={st === "locked" ? "" : "cursor-pointer"}
+                onClick={() => st !== "locked" && setSelected(cp)} role="button" tabIndex={st === "locked" ? -1 : 0}
+                aria-label={`${cp.label}, ${st === "completed" ? "selesai" : st === "locked" ? "terkunci" : "bisa dimulai"}`} aria-disabled={st === "locked"}
                 onKeyDown={(e: React.KeyboardEvent) => { if ((e.key === "Enter" || e.key === " ") && st !== "locked") { e.preventDefault(); setSelected(cp); } }}>
-                <circle r={32} fill="transparent" />
-                {st === "available" && <circle r={26} fill={color} opacity={0.35} className="pulse-ring pointer-events-none" />}
-                <circle r={22} fill={st === "locked" ? "#e2e8f0" : "#fff"} stroke={color} strokeWidth={3.5} />
-                {st === "completed" && <circle r={22} fill={color} opacity={0.15} />}
-                <g transform="translate(-11,-11)">
-                  {st === "locked" ? <Lock size={22} color="#94a3b8" />
-                    : st === "completed" ? <Check size={22} color={color} strokeWidth={3} />
-                    : cp.kind === "hub" ? <Sparkles size={22} color={color} />
-                    : <Play size={22} color={color} />}
-                </g>
-                <text y={44} textAnchor="middle" fontSize={13} fontWeight={700} fontFamily="var(--font-display)"
-                  fill={st === "locked" ? "#94a3b8" : "#0b426c"}>{cp.label}</text>
-              </g>
-            );
-          })}
-        </svg>
-
-        {/* Phone-sized checkpoint controls: same state and actions, no tiny SVG targets. */}
-        <div className="md:hidden p-4 space-y-5">
-          <p className="text-sm text-navy/70">Pilih distrik dan ketuk checkpoint untuk mulai.</p>
-          {Object.entries(districtMeta).map(([district, meta]) => (
-            <section key={district}>
-              <h2 className="font-bold text-navy mb-2">{meta.name}</h2>
-              <div className="grid gap-2">
-                {checkpoints.filter((cp) => cp.district === district).map((cp) => {
-                  const state = stateOf(cp.id);
-                  return <button key={cp.id} disabled={state === "locked"} onClick={() => setSelected(cp)}
-                    className="min-h-14 w-full flex items-center justify-between gap-3 rounded-xl border border-navy/15 bg-white px-4 py-3 text-left text-sm text-navy disabled:bg-slate-100 disabled:text-slate-500">
-                    <span className="font-semibold">{cp.label}</span>
-                    <span className="shrink-0 text-xs">{state === "locked" ? "Terkunci" : state === "completed" ? "Selesai ✓" : "Buka →"}</span>
-                  </button>;
-                })}
-              </div>
-            </section>
-          ))}
+                <circle r="31" fill="transparent" />
+                {st === "available" && <circle r="28" fill={color} opacity=".18" className="pulse-ring pointer-events-none" />}
+                <circle r="23" fill="#fff" stroke={color} strokeWidth="4" />
+                <g transform="translate(-11,-11)">{st === "locked" ? <Lock size={22} color={color}/> : st === "completed" ? <Check size={22} color={color} strokeWidth={3}/> : cp.kind === "hub" ? <Sparkles size={22} color={color}/> : <Play size={22} color={color}/>}</g>
+                <rect x="-75" y="35" width="150" height="27" rx="5" fill="#fff" stroke="#dbe7ee" />
+                <text y="53" textAnchor="middle" fontSize="13" fontWeight="700" fill={st === "locked" ? "#718596" : "#0b426c"}>{cp.label}</text>
+              </g>;
+            })}
+            <rect x="445" y="612" width="110" height="22" rx="11" fill="#0b426c" />
+            <text x="500" y="627" textAnchor="middle" fill="#ffffff" fontSize="11" fontWeight="700">MULAI DI SINI</text>
+          </svg>
         </div>
 
-        {/* legend */}
-        <div className="hidden md:block absolute top-3 left-3 glass rounded-xl px-3 py-2 text-[11px] space-y-1 shadow-sm pointer-events-none select-none">
-          <p className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-cyan inline-block" /> Available</p>
-          <p className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-bcablue inline-block" /> Completed</p>
-          <p className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-slate-400 inline-block" /> Locked</p>
+        {/* Mobile: perjalanan vertikal, bukan desktop map yang dikecilkan. */}
+        <div className="md:hidden bg-[#edf6fa] p-4">
+          <button onClick={() => setSelected(byId("cp-characters"))} className="mb-4 min-h-12 w-full border border-pink/35 bg-white px-4 py-3 text-left">
+            <span className="block text-[11px] font-mono tracking-widest text-pink">START</span><span className="font-bold text-navy">Meet the Guides</span>
+          </button>
+          <div className="grid gap-4">
+            {(["technology", "business"] as const).map((district) => {
+              const meta = districtMeta[district];
+              return <section key={district} className="border border-navy/10 bg-white p-3">
+                <div className="mb-3"><h3 className="font-bold text-navy">{meta.program} · {meta.name}</h3><p className="text-xs text-navy/55">{meta.desc}</p></div>
+                <ol className="space-y-2">
+                  {checkpoints.filter(cp => cp.district === district).map((cp, index) => {
+                    const st = stateOf(cp.id);
+                    return <li key={cp.id} className="relative pl-7">
+                      {index > 0 && <span className="absolute -top-2 bottom-8 left-[10px] w-px bg-navy/20" />}
+                      <span className={`absolute left-0 top-[17px] h-5 w-5 rounded-full border-4 border-white ${st === "completed" ? "bg-green-600" : st === "locked" ? "bg-slate-400" : "bg-cyan"}`} />
+                      <button disabled={st === "locked"} onClick={() => setSelected(cp)} className="min-h-14 w-full border border-navy/10 bg-[#f8fbfd] px-3 py-2 text-left disabled:opacity-65">
+                        <span className="flex items-center justify-between gap-3"><span className="font-semibold text-navy">{index + 1}. {cp.label}</span><span className="shrink-0 text-xs text-navy/60">{st === "locked" ? "Terkunci" : st === "completed" ? "Selesai" : "Mulai →"}</span></span>
+                      </button>
+                    </li>;
+                  })}
+                </ol>
+              </section>;
+            })}
+          </div>
+          <div className="mt-4 grid grid-cols-2 gap-2">
+            {[byId("cp-futurepath"), byId("cp-stories")].map(cp => <button key={cp.id} onClick={() => setSelected(cp)} className="min-h-14 border border-navy/10 bg-white p-3 text-left text-sm font-semibold text-navy">{cp.label}<span className="mt-1 block text-xs font-normal text-navy/55">Resource hub →</span></button>)}
+          </div>
         </div>
 
-        {/* pemandu aktif (brief §8.2 "Current guide character") */}
-        <div className="md:absolute md:bottom-3 md:left-3 m-3 md:m-0 glass rounded-xl px-3 py-2 shadow-sm pointer-events-none select-none max-w-[240px]">
+        <div className="border-t border-navy/10 bg-white px-4 py-3">
           <p className="font-mono text-[10px] tracking-widest text-navy/45">PEMANDU KAMU</p>
-          <p className="flex items-center gap-2 mt-1">
-            <span className="grid place-items-center w-7 h-7 rounded-full text-white text-[11px] font-extrabold" style={{ background: guideChar.accent }}>
-              {guideChar.emojiSeed}
-            </span>
-            <span className="text-xs text-navy/75 leading-snug">
-              <b>{guideChar.name}</b> ({guideChar.program}) menemani perjalananmu{lastMission ? ` — habis ngobrol soal “${lastMission.title}”.` : ". Klik checkpoint untuk mulai."}
-            </span>
-          </p>
+          <p className="mt-1 text-xs leading-snug text-navy/70"><b>{guideChar.name}</b> ({guideChar.program}) menemani perjalananmu{lastMission ? ` — terakhir membahas “${lastMission.title}”.` : ". Mulai dari Meet the Guides, lalu pilih jalur program."}</p>
         </div>
-      </div>
+      </section>
 
       {/* ═══════════ JOURNEY LOG (brief §8.2) ═══════════ */}
       <div className="mt-6 rounded-2xl border border-navy/10 bg-white p-5">
@@ -192,7 +198,7 @@ export function FutureWorldMap() {
           const st = stateOf(selected.id);
           return (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              role="dialog" aria-modal="true" aria-label="Detail checkpoint" className="fixed inset-0 z-[60] grid place-items-center p-4 bg-navy/40 backdrop-blur-sm" onClick={() => setSelected(null)}>
+              ref={dialogRef} role="dialog" aria-modal="true" aria-label="Detail checkpoint" className="fixed inset-0 z-[60] grid place-items-center p-4 bg-navy/40 backdrop-blur-sm" onClick={() => setSelected(null)}>
               <motion.div initial={{ y: 20, scale: 0.96 }} animate={{ y: 0, scale: 1 }} exit={{ y: 20, scale: 0.96 }}
                 onClick={(e) => e.stopPropagation()}
                 className="w-full max-w-md max-h-[calc(100dvh-32px)] rounded-3xl bg-white shadow-2xl overflow-y-auto">
@@ -215,7 +221,7 @@ export function FutureWorldMap() {
                       </div>
                       <Link href={`/mission/${mission.id}`}
                         className="mt-6 w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-bcablue text-white font-bold shadow-lg shadow-cyan/25 hover:-translate-y-0.5 transition">
-                        ENTER MISSION <ArrowRight size={17} />
+                        {st === "completed" ? "LIHAT HASIL / ULANGI MISI" : "ENTER MISSION"} <ArrowRight size={17} />
                       </Link>
                     </>
                   ) : (

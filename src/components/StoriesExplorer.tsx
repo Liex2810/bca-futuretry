@@ -47,6 +47,11 @@ export function StoriesExplorer({ stories }: { stories: Story[] }) {
       </div>
 
       {/* list */}
+      {visible.length === 0 && <section className="mt-6 rounded-2xl border border-navy/10 bg-white p-6" role="status">
+        <h2 className="font-bold text-navy">Belum ada cerita untuk kombinasi filter ini</h2>
+        <p className="text-sm text-navy/60 mt-2">Coba program atau peran lain untuk menemukan cerita.</p>
+        <button onClick={() => { setProg("ALL"); setRole("ALL"); }} className="min-h-11 min-w-11 mt-4 px-5 rounded-xl bg-bcablue text-white font-bold">Reset filter</button>
+      </section>}
       <div className="mt-6 grid md:grid-cols-2 gap-4">
         <AnimatePresence mode="popLayout">
           {visible.map((s) => {

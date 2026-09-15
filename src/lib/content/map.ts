@@ -7,32 +7,29 @@ import type { Checkpoint } from "@/types";
 // ════════════════════════════════════════════════════════════════
 
 export const checkpoints: Checkpoint[] = [
-  // Character District (tengah bawah — pintu masuk)
-  { id: "cp-characters", label: "Meet the Guides", district: "character", x: 50, y: 82, kind: "hub" },
+  // Pintu masuk di tengah; dua jalur program bergerak ke atas secara paralel.
+  { id: "cp-characters", label: "Meet the Guides", district: "character", x: 50, y: 86, kind: "hub" },
 
-  // Technology & Digital District (kiri atas) — PPTI
-  { id: "cp-anomaly", label: "Security Ops", district: "technology", x: 16, y: 24, missionId: "m-anomaly", kind: "mission" },
-  { id: "cp-data", label: "Data Lab", district: "technology", x: 30, y: 13, missionId: "m-dashboard", kind: "mission" },
-  { id: "cp-ux", label: "Design Studio", district: "technology", x: 42, y: 27, missionId: "m-uxfix", kind: "mission" },
+  // Jalur PPTI — kiri, dibaca dari bawah ke atas.
+  { id: "cp-anomaly", label: "Security Ops", district: "technology", x: 27, y: 67, missionId: "m-anomaly", kind: "mission" },
+  { id: "cp-data", label: "Data Lab", district: "technology", x: 27, y: 49, missionId: "m-dashboard", kind: "mission" },
+  { id: "cp-ux", label: "Design Studio", district: "technology", x: 27, y: 31, missionId: "m-uxfix", kind: "mission" },
 
-  // Business & Banking District (kanan atas) — PPBP
-  { id: "cp-customer", label: "Customer Hall", district: "business", x: 58, y: 27, missionId: "m-customer", kind: "mission" },
-  { id: "cp-strategy", label: "Strategy Room", district: "business", x: 70, y: 13, missionId: "m-bizcase", kind: "mission" },
-  { id: "cp-invest", label: "Investment Desk", district: "business", x: 84, y: 24, missionId: "m-invest", kind: "mission" },
+  // Jalur PPBP — kanan, dibaca dari bawah ke atas.
+  { id: "cp-customer", label: "Customer Hall", district: "business", x: 73, y: 67, missionId: "m-customer", kind: "mission" },
+  { id: "cp-strategy", label: "Strategy Room", district: "business", x: 73, y: 49, missionId: "m-bizcase", kind: "mission" },
+  { id: "cp-invest", label: "Investment Desk", district: "business", x: 73, y: 31, missionId: "m-invest", kind: "mission" },
 
-  // Story District (kanan tengah)
-  { id: "cp-stories", label: "Story Quarter", district: "story", x: 82, y: 62, kind: "hub" },
-
-  // FuturePath District (kiri tengah)
-  { id: "cp-futurepath", label: "FuturePath Gate", district: "futurepath", x: 18, y: 62, kind: "hub" },
+  // Resource hub ditempatkan di sisi pintu masuk; bukan bagian urutan misi.
+  { id: "cp-stories", label: "Story Quarter", district: "story", x: 87, y: 84, kind: "hub" },
+  { id: "cp-futurepath", label: "FuturePath Gate", district: "futurepath", x: 13, y: 84, kind: "hub" },
 ];
 
-// Jalur antar checkpoint ( utk garis jalan di peta )
 export const mapPaths: [string, string][] = [
   ["cp-characters", "cp-anomaly"],
-  ["cp-characters", "cp-customer"],
   ["cp-anomaly", "cp-data"],
   ["cp-data", "cp-ux"],
+  ["cp-characters", "cp-customer"],
   ["cp-customer", "cp-strategy"],
   ["cp-strategy", "cp-invest"],
   ["cp-characters", "cp-stories"],
