@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Open_Sans } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
+import "maplibre-gl/dist/maplibre-gl.css";
 import { Navbar } from "@/components/Navbar";
 import { ChatWidget } from "@/components/ChatWidget";
 import { JourneyProvider } from "@/components/JourneyProvider";

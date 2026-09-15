@@ -4,15 +4,13 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Lock, Check, Play, RotateCcw, Sparkles, X, Clock, ArrowRight, ScrollText } from "lucide-react";
-import { checkpoints, mapPaths, districtMeta } from "@/lib/content/map";
+import { checkpoints, districtMeta } from "@/lib/content/map";
 import { missionById } from "@/lib/content/missions";
 import { characters } from "@/lib/content/characters";
 import { useJourney } from "@/components/JourneyProvider";
+import { FutureDistrictMap } from "@/components/FutureDistrictMap";
 import { progressSummary, journeyLog } from "@/lib/progress";
 import type { Checkpoint } from "@/types";
-
-const W = 1000, H = 640;
-const px = (cp: Checkpoint) => ({ cx: (cp.x / 100) * W, cy: (cp.y / 100) * H });
 
 export function FutureWorldMap() {
   const { progress, stateOf, reset } = useJourney();
@@ -73,95 +71,14 @@ export function FutureWorldMap() {
         <motion.div className="h-full rounded-full bg-bcablue" initial={{ width: 0 }} animate={{ width: `${percent}%` }} transition={{ duration: 0.6 }} />
       </div>
 
-      {/* ═══════════ FUTURE DISTRICT ═══════════ */}
-      <section className="overflow-hidden border border-navy/15 bg-white" aria-labelledby="district-map-title">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-navy/10 bg-[#f4f8fb] px-4 py-3 sm:px-5">
-          <div>
-            <h2 id="district-map-title" className="font-bold text-navy">Peta perjalanan FutureTry</h2>
-            <p className="text-xs text-navy/55">Simulasi digital — bukan lokasi fisik BCA.</p>
-          </div>
-          <div className="flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-navy/65" aria-label="Legenda status">
-            <span className="inline-flex items-center gap-1.5"><i className="h-2.5 w-2.5 rounded-full bg-cyan" />Bisa dimulai</span>
-            <span className="inline-flex items-center gap-1.5"><i className="h-2.5 w-2.5 rounded-full bg-green-600" />Selesai</span>
-            <span className="inline-flex items-center gap-1.5"><i className="h-2.5 w-2.5 rounded-full bg-slate-400" />Terkunci</span>
-          </div>
+      {/* ═══════════ MAPLIBRE FUTURE DISTRICT ═══════════ */}
+      <section className="overflow-hidden rounded-3xl border border-navy/10 bg-white shadow-xl shadow-navy/10" aria-labelledby="future-map-title">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-navy/10 px-4 py-3 sm:px-5">
+          <div><h2 id="future-map-title" className="font-bold text-navy">Future District</h2><p className="text-xs text-navy/60">Peta simulasi digital — bukan lokasi fisik BCA.</p></div>
+          <div className="flex flex-wrap gap-3 text-[11px] text-navy/65" aria-label="Legenda status"><span>● Bisa dimulai</span><span>✓ Selesai</span><span>○ Terkunci</span></div>
         </div>
-
-        {/* Desktop: dua jalur program paralel dengan urutan bawah-ke-atas yang jelas. */}
-        <div className="relative hidden md:block bg-[#edf6fa]">
-          <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full" role="group" aria-label="Dua jalur eksplorasi: PPTI di kiri dan PPBP di kanan">
-            <defs>
-              <pattern id="districtGrid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="#0b426c" strokeOpacity=".055" /></pattern>
-              <linearGradient id="activeRoute" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stopColor="#0d70b4"/><stop offset="100%" stopColor="#08bbd4"/></linearGradient>
-            </defs>
-            <rect width={W} height={H} fill="url(#districtGrid)" />
-            <rect x="90" y="80" width="365" height="420" rx="20" fill="#ffffff" fillOpacity=".7" stroke="#08bbd4" strokeOpacity=".25" />
-            <rect x="545" y="80" width="365" height="420" rx="20" fill="#ffffff" fillOpacity=".7" stroke="#0d70b4" strokeOpacity=".25" />
-            <text x="272" y="114" textAnchor="middle" fill="#0b426c" fontSize="18" fontWeight="800">PPTI · TECHNOLOGY</text>
-            <text x="728" y="114" textAnchor="middle" fill="#0b426c" fontSize="18" fontWeight="800">PPBP · BUSINESS</text>
-            <text x="272" y="137" textAnchor="middle" fill="#527086" fontSize="12">3 checkpoint karier digital</text>
-            <text x="728" y="137" textAnchor="middle" fill="#527086" fontSize="12">3 checkpoint bisnis perbankan</text>
-
-            {mapPaths.map(([a, b]) => {
-              const A = byId(a), B = byId(b), pa = px(A), pb = px(B);
-              const active = A.kind === "hub" || B.kind === "hub" || (stateOf(a) !== "locked" && stateOf(b) !== "locked");
-              return <line key={`${a}-${b}`} x1={pa.cx} y1={pa.cy} x2={pb.cx} y2={pb.cy} stroke={active ? "url(#activeRoute)" : "#7890a2"} strokeOpacity={active ? .85 : .35} strokeWidth={active ? 4 : 2} strokeDasharray={active ? "0" : "7 9"} strokeLinecap="round" />;
-            })}
-
-            {checkpoints.map((cp) => {
-              const { cx, cy } = px(cp), st = stateOf(cp.id), meta = districtMeta[cp.district];
-              const color = st === "locked" ? "#94a3b8" : st === "completed" ? "#16854b" : meta.color;
-              return <g key={cp.id} transform={`translate(${cx},${cy})`} className={st === "locked" ? "" : "cursor-pointer"}
-                onClick={() => st !== "locked" && setSelected(cp)} role="button" tabIndex={st === "locked" ? -1 : 0}
-                aria-label={`${cp.label}, ${st === "completed" ? "selesai" : st === "locked" ? "terkunci" : "bisa dimulai"}`} aria-disabled={st === "locked"}
-                onKeyDown={(e: React.KeyboardEvent) => { if ((e.key === "Enter" || e.key === " ") && st !== "locked") { e.preventDefault(); setSelected(cp); } }}>
-                <circle r="31" fill="transparent" />
-                {st === "available" && <circle r="28" fill={color} opacity=".18" className="pulse-ring pointer-events-none" />}
-                <circle r="23" fill="#fff" stroke={color} strokeWidth="4" />
-                <g transform="translate(-11,-11)">{st === "locked" ? <Lock size={22} color={color}/> : st === "completed" ? <Check size={22} color={color} strokeWidth={3}/> : cp.kind === "hub" ? <Sparkles size={22} color={color}/> : <Play size={22} color={color}/>}</g>
-                <rect x="-75" y="35" width="150" height="27" rx="5" fill="#fff" stroke="#dbe7ee" />
-                <text y="53" textAnchor="middle" fontSize="13" fontWeight="700" fill={st === "locked" ? "#718596" : "#0b426c"}>{cp.label}</text>
-              </g>;
-            })}
-            <rect x="445" y="612" width="110" height="22" rx="11" fill="#0b426c" />
-            <text x="500" y="627" textAnchor="middle" fill="#ffffff" fontSize="11" fontWeight="700">MULAI DI SINI</text>
-          </svg>
-        </div>
-
-        {/* Mobile: perjalanan vertikal, bukan desktop map yang dikecilkan. */}
-        <div className="md:hidden bg-[#edf6fa] p-4">
-          <button onClick={() => setSelected(byId("cp-characters"))} className="mb-4 min-h-12 w-full border border-pink/35 bg-white px-4 py-3 text-left">
-            <span className="block text-[11px] font-mono tracking-widest text-pink">START</span><span className="font-bold text-navy">Meet the Guides</span>
-          </button>
-          <div className="grid gap-4">
-            {(["technology", "business"] as const).map((district) => {
-              const meta = districtMeta[district];
-              return <section key={district} className="border border-navy/10 bg-white p-3">
-                <div className="mb-3"><h3 className="font-bold text-navy">{meta.program} · {meta.name}</h3><p className="text-xs text-navy/55">{meta.desc}</p></div>
-                <ol className="space-y-2">
-                  {checkpoints.filter(cp => cp.district === district).map((cp, index) => {
-                    const st = stateOf(cp.id);
-                    return <li key={cp.id} className="relative pl-7">
-                      {index > 0 && <span className="absolute -top-2 bottom-8 left-[10px] w-px bg-navy/20" />}
-                      <span className={`absolute left-0 top-[17px] h-5 w-5 rounded-full border-4 border-white ${st === "completed" ? "bg-green-600" : st === "locked" ? "bg-slate-400" : "bg-cyan"}`} />
-                      <button disabled={st === "locked"} onClick={() => setSelected(cp)} className="min-h-14 w-full border border-navy/10 bg-[#f8fbfd] px-3 py-2 text-left disabled:opacity-65">
-                        <span className="flex items-center justify-between gap-3"><span className="font-semibold text-navy">{index + 1}. {cp.label}</span><span className="shrink-0 text-xs text-navy/60">{st === "locked" ? "Terkunci" : st === "completed" ? "Selesai" : "Mulai →"}</span></span>
-                      </button>
-                    </li>;
-                  })}
-                </ol>
-              </section>;
-            })}
-          </div>
-          <div className="mt-4 grid grid-cols-2 gap-2">
-            {[byId("cp-futurepath"), byId("cp-stories")].map(cp => <button key={cp.id} onClick={() => setSelected(cp)} className="min-h-14 border border-navy/10 bg-white p-3 text-left text-sm font-semibold text-navy">{cp.label}<span className="mt-1 block text-xs font-normal text-navy/55">Resource hub →</span></button>)}
-          </div>
-        </div>
-
-        <div className="border-t border-navy/10 bg-white px-4 py-3">
-          <p className="font-mono text-[10px] tracking-widest text-navy/45">PEMANDU KAMU</p>
-          <p className="mt-1 text-xs leading-snug text-navy/70"><b>{guideChar.name}</b> ({guideChar.program}) menemani perjalananmu{lastMission ? ` — terakhir membahas “${lastMission.title}”.` : ". Mulai dari Meet the Guides, lalu pilih jalur program."}</p>
-        </div>
+        <FutureDistrictMap checkpoints={checkpoints} stateOf={stateOf} onSelect={setSelected} />
+        <div className="border-t border-navy/10 bg-white px-4 py-3"><p className="font-mono text-[10px] tracking-widest text-navy/45">PEMANDU KAMU</p><p className="mt-1 text-xs leading-snug text-navy/70"><b>{guideChar.name}</b> ({guideChar.program}) menemani perjalananmu{lastMission ? ` — terakhir membahas “${lastMission.title}”.` : ". Geser dan zoom peta, lalu pilih checkpoint."}</p></div>
       </section>
 
       {/* ═══════════ JOURNEY LOG (brief §8.2) ═══════════ */}
