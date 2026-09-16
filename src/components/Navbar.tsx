@@ -71,15 +71,11 @@ const languages = [
 export function Navbar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const [langOpen, setLangOpen] = useState(false);
-  const [currentLang, setCurrentLang] = useState("id");
   const [homeNavRevealed, setHomeNavRevealed] = useState(false);
   const { progress } = useJourney();
   const { done, total } = progressSummary(progress);
   const isHome = pathname === "/";
   const navVisible = !isHome || homeNavRevealed;
-
-  const selectedLang = languages.find((l) => l.code === currentLang) || languages[0];
 
   useEffect(() => {
     if (!isHome) {
@@ -177,7 +173,7 @@ export function Navbar() {
               <Link
                 key={l.href}
                 href={l.href}
-                className="relative py-2 group block"
+                className="relative flex min-h-11 items-center py-2 group"
               >
                 <span
                   className={`block tracking-wide text-xs xl:text-[13px] transition-colors duration-150 ${
@@ -211,60 +207,14 @@ export function Navbar() {
           {/* Clean BCA Pill CTA Button */}
           <Link
             href="/world"
-            className="hidden sm:inline-block px-5 py-2 rounded-full border border-[#0066ae] text-[#0066ae] hover:bg-[#0066ae] hover:text-white font-medium text-xs tracking-wider transition-colors duration-150"
+            className="hidden min-h-11 sm:inline-flex items-center px-5 py-2 rounded-full border border-[#0066ae] text-[#0066ae] hover:bg-[#0066ae] hover:text-white font-medium text-xs tracking-wider transition-colors duration-150"
           >
             MULAI SEKARANG
           </Link>
 
-          {/* ── Language Switcher Component ── */}
-          <div className="relative">
-            <button
-              onClick={() => setLangOpen(!langOpen)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white shadow-xs border border-slate-200/90 hover:border-[#0066ae] transition-colors duration-150 cursor-pointer"
-              aria-label="Pilih Bahasa"
-              aria-expanded={langOpen}
-            >
-              {selectedLang.flag}
-              <span className="text-xs font-bold text-[#063b66] tracking-wide">
-                {selectedLang.short}
-              </span>
-            </button>
-
-            {/* Dropdown Popover with Arrow */}
-            {langOpen && (
-              <div className="absolute right-0 top-full mt-2.5 z-50 animate-in fade-in duration-150">
-                {/* Arrow Caret */}
-                <div className="absolute -top-1.5 right-4 w-3.5 h-3.5 bg-white rotate-45 border-l border-t border-slate-200/80 shadow-xs" />
-                
-                {/* Popover Card */}
-                <div className="relative bg-white rounded-2xl shadow-xl border border-slate-200/80 overflow-hidden min-w-[210px] divide-y divide-slate-100 py-1">
-                  {languages.map((l) => (
-                    <button
-                      key={l.code}
-                      onClick={() => {
-                        setCurrentLang(l.code);
-                        setLangOpen(false);
-                      }}
-                      className="w-full px-4 py-3 flex items-center gap-3 text-left hover:bg-[#f0f7fd] transition-colors duration-150 cursor-pointer group"
-                    >
-                      <div className="shrink-0">{l.flag}</div>
-                      <span
-                        className={`text-sm font-bold transition-colors ${
-                          currentLang === l.code ? "text-[#0066ae]" : "text-[#0066ae] group-hover:text-[#063b66]"
-                        }`}
-                      >
-                        {l.label}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-
           {/* Mobile Hamburger Toggle */}
           <button
-            className="lg:hidden p-2 text-[#063b66]"
+            className="lg:hidden grid min-h-11 min-w-11 place-items-center rounded-full text-[#063b66] hover:bg-sky-50"
             onClick={() => setOpen(!open)}
             aria-label={open ? "Tutup menu" : "Buka menu"}
             aria-expanded={open}
@@ -284,7 +234,7 @@ export function Navbar() {
                 key={l.href}
                 href={l.href}
                 onClick={() => setOpen(false)}
-                className={`block py-2 text-xs tracking-wide transition-colors ${
+                className={`flex min-h-11 items-center py-2 text-sm tracking-wide transition-colors ${
                   isActive
                     ? "text-[#0066ae] font-bold border-l-2 border-[#0066ae] pl-2.5"
                     : "text-[#063b66] font-medium hover:text-[#0066ae]"

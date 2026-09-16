@@ -13,8 +13,6 @@ import {
   MessagesSquare,
   Route,
   AlertCircle,
-  Eye,
-  EyeOff,
   User,
   ShieldAlert,
   ChevronRight,
@@ -221,13 +219,13 @@ export default function Home() {
 
       {/* Full-screen hero */}
       <section className="relative w-full overflow-hidden bg-[#063b66] -mt-[68px]">
+        <h1 className="sr-only">BCA FutureTry — coba pengalaman PPBP dan PPTI sebelum menentukan pilihan</h1>
         {/* Background image: full from top to bottom, no cropping, pulled up under the navbar */}
         <img
           src="/hero-bg.png"
           alt="BCA FutureTry"
           className="relative w-full h-auto block"
         />
-        <FallingLeaves />
         {/* Center Main Logo */}
         <div className="absolute inset-x-0 top-[10%] flex flex-col items-center">
           <img
@@ -237,7 +235,7 @@ export default function Home() {
           />
           <Link
             href="/world"
-            className="-skew-x-12 mt-8 inline-flex items-center px-8 py-2.5 border border-[#0066ae] bg-white/60 backdrop-blur-sm text-[#0066ae] hover:bg-[#0066ae] hover:text-white transition-colors duration-200"
+            className="-skew-x-12 mt-8 inline-flex min-h-11 items-center px-8 py-2.5 border border-[#0066ae] bg-white/75 backdrop-blur-sm text-[#0066ae] hover:bg-[#0066ae] hover:text-white transition-colors duration-200"
           >
             <span className="skew-x-12 inline-flex items-center gap-2 font-[family-name:var(--font-display)] text-sm sm:text-base font-extrabold tracking-[0.25em] uppercase">
               Coba Sekarang
@@ -322,13 +320,13 @@ export default function Home() {
                 {/* Header */}
                 <div className="border-b border-slate-100 pb-4">
                   <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-[#f0f7fd] text-[#0066ae] text-xs font-bold mb-2">
-                    BCA ID / PORTAL AKSES
+                    PROFIL SIMULASI
                   </div>
                   <h2 className="text-xl sm:text-2xl font-extrabold text-[#063b66] tracking-tight">
                     Mulai Eksplorasi
                   </h2>
                   <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                    Masuk untuk menyimpan progres misi &amp; mencetak <strong>Future Card</strong> milikmu.
+                    Personalisasi perjalananmu. Progress hanya disimpan di browser perangkat ini.
                   </p>
                 </div>
 
@@ -342,7 +340,7 @@ export default function Home() {
                 <form onSubmit={handleStart} className="mt-5 space-y-4">
                   <div>
                     <label htmlFor="explorer-name" className="block text-xs font-bold text-[#063b66] mb-1.5">
-                      BCA ID / Nama Explorer
+                      Nama panggilan
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -362,15 +360,10 @@ export default function Home() {
                   <div>
                     <div className="flex items-center justify-between mb-1.5">
                       <label htmlFor="explorer-track" className="block text-xs font-bold text-[#063b66]">
-                        Jalur Pilihan / Kata Sandi Minat
+                        Jalur yang ingin dieksplorasi
                       </label>
-                      <button
-                        type="button"
-                        onClick={() => setShowRoleInfo(!showRoleInfo)}
-                        className="text-[11px] text-[#0066ae] hover:underline flex items-center gap-1"
-                      >
-                        {showRoleInfo ? <EyeOff size={13} /> : <Eye size={13} />}
-                        {showRoleInfo ? "Tutup Info" : "Lihat Info"}
+                      <button type="button" onClick={() => setShowRoleInfo(!showRoleInfo)} className="flex min-h-11 items-center px-2 text-xs font-semibold text-[#0066ae] hover:underline">
+                        {showRoleInfo ? "Tutup info" : "Tentang pilihan jalur"}
                       </button>
                     </div>
                     <select
@@ -391,15 +384,11 @@ export default function Home() {
                     )}
                   </div>
 
-                  {/* Links Row */}
-                  <div className="flex items-center justify-between text-xs pt-1 text-[#0066ae]">
-                    <Link href="/world" className="hover:underline font-semibold">
-                      Lupa Progres?
-                    </Link>
+                  <div className="flex items-center justify-end pt-1 text-xs text-[#0066ae]">
                     <button
                       type="button"
                       onClick={handleResetProgress}
-                      className="hover:underline font-semibold text-slate-500 hover:text-rose-600 transition"
+                      className="min-h-11 px-2 hover:underline font-semibold text-slate-500 hover:text-rose-600 transition"
                     >
                       Reset Simulasi
                     </button>
@@ -410,14 +399,14 @@ export default function Home() {
                     type="submit"
                     className="w-full py-3.5 px-6 rounded-full bg-[#0066ae] hover:bg-[#063b66] text-white font-bold text-sm tracking-wide shadow-md shadow-[#0066ae]/20 hover:shadow-lg transition flex items-center justify-center gap-2 cursor-pointer mt-2"
                   >
-                    Mulai Eksplorasi (Login)
+                    Mulai Eksplorasi
                   </button>
                 </form>
 
                 <div className="mt-4 text-center text-xs text-slate-500">
-                  Belum punya progres?{" "}
-                  <Link href="/world" className="font-bold text-[#0066ae] hover:underline">
-                    Mulai Langsung Tanpa Akun
+                  Tidak ingin mengisi profil?{" "}
+                  <Link href="/world" className="inline-flex min-h-11 items-center px-2 font-bold text-[#0066ae] hover:underline">
+                    Lewati dan mulai langsung
                   </Link>
                 </div>
               </div>
@@ -512,39 +501,9 @@ export default function Home() {
                 </button>
               ))}
             </div>
-          </div>
-        </div>
-
-        {/* Experience, Reflect, Act */}
-        <div>
-          <div className="rounded-2xl sm:rounded-3xl bg-[#063b66] text-white p-8 sm:p-12 shadow-sm">
-            <div className="grid md:grid-cols-3 gap-8">
-              {[
-                {
-                  icon: <Compass size={24} />,
-                  step: "01",
-                  title: "Experience",
-                  body: "Jalankan misi 5-15 menit yang diadaptasi dari skenario kerja riil divisi IT dan Bisnis BCA.",
-                },
-                {
-                  icon: <MessagesSquare size={24} />,
-                  step: "02",
-                  title: "Reflect",
-                  body: "Ceritakan apa yang kamu sukai dan apa yang menantang. Tidak ada skor atau ranking.",
-                },
-                {
-                  icon: <Route size={24} />,
-                  step: "03",
-                  title: "Act",
-                  body: "Dapatkan Future Card, tanyakan langsung ke chatbot AI, dan mantapkan pilihan beasiswamu.",
-                },
-              ].map((c) => (
-                <div key={c.title} className="relative">
-                  <p className="font-mono text-xs text-[#8debfa] font-bold mb-2 tracking-widest">{c.step}</p>
-                  <div className="text-[#00c8eb] mb-3">{c.icon}</div>
-                  <h3 className="font-[family-name:var(--font-display)] text-xl font-bold">{c.title}</h3>
-                  <p className="text-xs sm:text-sm text-white/75 mt-2 leading-relaxed">{c.body}</p>
-                </div>
+            <div className="absolute inset-x-4 bottom-4 z-40 flex gap-2 overflow-x-auto pb-1 lg:hidden" aria-label="Pilih guide">
+              {characters.map((guide, index) => (
+                <button key={guide.id} type="button" onClick={() => setActiveGuide(activeGuide === index ? null : index)} className="min-h-11 shrink-0 rounded-full border border-white/80 bg-white/90 px-4 text-sm font-bold text-[#063b66] shadow-sm" aria-pressed={activeGuide === index}>{guide.name}</button>
               ))}
             </div>
           </div>
@@ -562,9 +521,9 @@ export default function Home() {
               </div>
               <div className="p-5">
                 <p className="font-bold text-[#063b66] group-hover:text-[#0066ae] transition">
-                  Future World Map
+                  Peta Misi FutureTry
                 </p>
-                <p className="text-xs text-slate-500 mt-1">Jelajahi distrik, buka checkpoint, dan coba misi interaktif.</p>
+                <p className="text-xs text-slate-500 mt-1">Ikuti perjalanan, buka checkpoint, dan coba misi interaktif.</p>
               </div>
             </Link>
 
@@ -577,7 +536,7 @@ export default function Home() {
               </div>
               <div className="p-5">
                 <p className="font-bold text-[#063b66] group-hover:text-[#0066ae] transition">
-                  Real Awardee Stories
+                  Cerita Para Awardee
                 </p>
                 <p className="text-xs text-slate-500 mt-1">Ekspektasi vs realita beasiswa, diceritakan langsung oleh mahasiswa.</p>
               </div>
@@ -592,7 +551,7 @@ export default function Home() {
               </div>
               <div className="p-5">
                 <p className="font-bold text-[#063b66] group-hover:text-[#0066ae] transition">
-                  FuturePath &amp; Persyaratan
+                  FuturePath dan Persyaratan
                 </p>
                 <p className="text-xs text-slate-500 mt-1">Info resmi syarat pendaftaran, fasilitas, dan jadwal seleksi.</p>
               </div>

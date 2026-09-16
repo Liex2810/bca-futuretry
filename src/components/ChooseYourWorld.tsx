@@ -169,7 +169,7 @@ export function ChooseYourWorld() {
 
         {/* Belum yakin? — subtle secondary CTA */}
         <div className="mt-14 text-center">
-          <Link href="/world" className="cw-link inline-flex items-center gap-2 text-sm text-slate-500 transition-colors hover:text-[#063b66]">
+          <Link href="/world" className="cw-link inline-flex min-h-11 items-center gap-2 px-3 text-sm text-slate-500 transition-colors hover:text-[#063b66]">
             Belum yakin?
             <span className="font-semibold text-[#0066ae]">Coba keduanya</span>
             <ArrowRight size={16} aria-hidden className="cw-link-arrow" />
