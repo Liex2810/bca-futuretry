@@ -3,7 +3,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { ArrowRight } from "lucide-react";
-import { Events } from "@/lib/analytics";
 
 type WorldKind = "ppbp" | "ppti";
 
@@ -98,7 +97,6 @@ function WorldSection({
           <div className="mt-7">
             <Link
               href={href}
-              onClick={() => Events.worldOpen(type === "ppbp" ? "ppbp" : "ppti")}
               className="inline-flex items-center gap-2 rounded-full bg-[#0066ae] px-7 py-3 font-[family-name:var(--font-display)] text-sm font-bold text-white transition-colors hover:bg-[#063b66]"
             >
               Lihat Detail
@@ -171,7 +169,7 @@ export function ChooseYourWorld() {
 
         {/* Belum yakin? — subtle secondary CTA */}
         <div className="mt-14 text-center">
-          <Link href="/world" className="cw-link inline-flex items-center gap-2 text-sm text-slate-500 transition-colors hover:text-[#063b66] min-h-[44px] px-3">
+          <Link href="/world" className="cw-link inline-flex items-center gap-2 text-sm text-slate-500 transition-colors hover:text-[#063b66]">
             Belum yakin?
             <span className="font-semibold text-[#0066ae]">Coba keduanya</span>
             <ArrowRight size={16} aria-hidden className="cw-link-arrow" />

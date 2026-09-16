@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { progressSummary } from "@/lib/progress";
 import { useJourney } from "./JourneyProvider";
@@ -73,13 +73,37 @@ export function Navbar() {
   const [open, setOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const [currentLang, setCurrentLang] = useState("id");
+  const [homeNavRevealed, setHomeNavRevealed] = useState(false);
   const { progress } = useJourney();
   const { done, total } = progressSummary(progress);
+  const isHome = pathname === "/";
+  const navVisible = !isHome || homeNavRevealed;
 
   const selectedLang = languages.find((l) => l.code === currentLang) || languages[0];
 
+  useEffect(() => {
+    if (!isHome) {
+      setHomeNavRevealed(false);
+      return;
+    }
+
+    setHomeNavRevealed(window.scrollY > 24);
+    const revealNavbar = () => {
+      if (window.scrollY > 24) setHomeNavRevealed(true);
+    };
+
+    window.addEventListener("scroll", revealNavbar, { passive: true });
+    return () => window.removeEventListener("scroll", revealNavbar);
+  }, [isHome]);
+
   return (
-    <header className="sticky top-0 z-50 w-full select-none">
+    <header
+      className={`sticky top-0 z-50 w-full select-none transition duration-300 ease-out ${
+        navVisible ? "translate-y-0 opacity-100" : "pointer-events-none invisible -translate-y-full opacity-0"
+      }`}
+      aria-hidden={!navVisible}
+      inert={!navVisible}
+    >
       {/* ── Geometric Winged Background Shape (Miru / Anime console style) ── */}
       <div className="absolute inset-0 w-full h-[68px] flex pointer-events-none filter drop-shadow-xs">
         
@@ -133,7 +157,7 @@ export function Navbar() {
         aria-label="Navigasi utama"
       >
         {/* Main Logo from User Assets */}
-        <Link href="/" className="shrink-0 flex items-center min-h-[44px] pr-2 transition-opacity hover:opacity-85">
+        <Link href="/" className="shrink-0 flex items-center pr-2 transition-opacity hover:opacity-85">
           <Image
             src="/horizontal-logo.png"
             alt="BCA FutureTry"
@@ -141,7 +165,7 @@ export function Navbar() {
             height={79}
             priority
             unoptimized
-            className="h-[32px] sm:h-[42px] w-auto object-contain"
+            className="h-[38px] sm:h-[42px] w-auto object-contain"
           />
         </Link>
 
@@ -174,7 +198,7 @@ export function Navbar() {
         </div>
 
         {/* Right CTA / Tracker & Language Dropdown */}
-        <div className="flex items-center gap-2 lg:gap-3">
+        <div className="flex items-center gap-3">
           {done > 0 && (
             <span
               className="hidden md:inline-block text-[11px] font-medium px-2.5 py-1 rounded-full bg-[#00c8eb]/10 text-[#0066ae] border border-[#00c8eb]/20"
@@ -195,8 +219,8 @@ export function Navbar() {
           {/* ── Language Switcher Component ── */}
           <div className="relative">
             <button
-              onClick={() => { setLangOpen(!langOpen); setOpen(false); }}
-              className="min-h-11 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white shadow-xs border border-slate-200/90 hover:border-[#0066ae] transition-colors duration-150 cursor-pointer"
+              onClick={() => setLangOpen(!langOpen)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white shadow-xs border border-slate-200/90 hover:border-[#0066ae] transition-colors duration-150 cursor-pointer"
               aria-label="Pilih Bahasa"
               aria-expanded={langOpen}
             >
@@ -240,11 +264,10 @@ export function Navbar() {
 
           {/* Mobile Hamburger Toggle */}
           <button
-            className="lg:hidden min-h-11 min-w-11 grid place-items-center p-2 text-[#063b66]"
-            onClick={() => { setOpen(!open); setLangOpen(false); }}
+            className="lg:hidden p-2 text-[#063b66]"
+            onClick={() => setOpen(!open)}
             aria-label={open ? "Tutup menu" : "Buka menu"}
             aria-expanded={open}
-            aria-controls="mobile-navigation"
           >
             {open ? <X size={22} /> : <Menu size={22} />}
           </button>
@@ -253,7 +276,7 @@ export function Navbar() {
 
       {/* Mobile Drawer Menu */}
       {open && (
-        <div id="mobile-navigation" className="absolute top-full inset-x-0 max-h-[calc(100dvh-68px)] overflow-y-auto lg:hidden border-b border-[#0066ae] bg-white px-5 py-4 space-y-1 shadow-md">
+        <div className="lg:hidden border-b border-[#0066ae] bg-white px-5 py-4 space-y-1 shadow-md">
           {links.map((l) => {
             const isActive = pathname === l.href;
             return (
@@ -261,7 +284,7 @@ export function Navbar() {
                 key={l.href}
                 href={l.href}
                 onClick={() => setOpen(false)}
-                className={`flex items-center min-h-11 py-2 text-sm tracking-wide transition-colors ${
+                className={`block py-2 text-xs tracking-wide transition-colors ${
                   isActive
                     ? "text-[#0066ae] font-bold border-l-2 border-[#0066ae] pl-2.5"
                     : "text-[#063b66] font-medium hover:text-[#0066ae]"

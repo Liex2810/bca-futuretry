@@ -12,11 +12,6 @@ import {
   Map as MapIcon,
   MessagesSquare,
   Route,
-  Phone,
-  MessageCircle,
-  Building2,
-  Globe,
-  GraduationCap,
   AlertCircle,
   Eye,
   EyeOff,
@@ -85,6 +80,14 @@ const journeySteps = [
   { icon: ArrowRight, title: "Act", desc: "Tentukan langkahmu" },
 ];
 
+const guidePositions = [
+  { x: 30, cropX: 24 },
+  { x: 40, cropX: 37 },
+  { x: 50, cropX: 50 },
+  { x: 60, cropX: 63 },
+  { x: 71, cropX: 77 },
+];
+
 function HowItWorks() {
   const lineRef = useRef<HTMLDivElement>(null);
   const [prog, setProg] = useState(0);
@@ -107,23 +110,23 @@ function HowItWorks() {
   }, []);
 
   return (
-    <section className="relative mt-12 sm:mt-16 mb-16 sm:mb-28 scroll-mt-24">
-      {/* Decorative accessory — right side */}
+    <section className="relative scroll-mt-24">
+      {/* Decorative accessory on the right */}
       <img
         src="/journey-accessory.svg"
         alt=""
         aria-hidden
         className="pointer-events-none absolute -bottom-24 -right-20 z-0 hidden select-none md:block sm:-bottom-40 sm:-right-32 w-96 xl:w-[560px]"
       />
-      {/* ── Heading ── */}
+      {/* Heading */}
       <div className="mx-auto max-w-3xl text-center mb-14">
         <h2 className="font-[family-name:var(--font-display)] text-2xl md:text-[40px] font-semibold text-[#005cab]">
           Kenali masa depanmu melalui pengalaman langsung
         </h2>
       </div>
 
-      {/* ── Route / Journey ── */}
-      <div ref={lineRef} className="journey-route relative">
+      {/* Route / Journey */}
+      <div ref={lineRef} className="relative">
         {/* Base route line */}
         <div className="absolute top-7 sm:top-8 left-[10%] right-[10%] h-[2px] bg-[#063b66]/15" />
         {/* Animated fill route (scroll progress) */}
@@ -138,7 +141,7 @@ function HowItWorks() {
         />
 
         {/* Nodes */}
-        <div className="journey-nodes relative grid grid-cols-1 sm:grid-cols-5 gap-5 sm:gap-4">
+        <div className="relative grid grid-cols-5 gap-2 sm:gap-4">
           {journeySteps.map((s) => (
             <div key={s.title} className="group relative flex flex-col items-center text-center">
               {/* Node */}
@@ -190,6 +193,7 @@ export default function Home() {
   const [track, setTrack] = useState("ALL");
   const [showRoleInfo, setShowRoleInfo] = useState(false);
   const [statusMsg, setStatusMsg] = useState("");
+  const [activeGuide, setActiveGuide] = useState<number | null>(null);
 
   const handleStart = (e: React.FormEvent) => {
     e.preventDefault();
@@ -215,7 +219,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-[#f4f7fb] text-[#062b4c]">
 
-      {/* ═══════════════ FULL-SCREEN HERO (full-page background, Yanmar style) ═══════════════ */}
+      {/* Full-screen hero */}
       <section className="relative w-full overflow-hidden bg-[#063b66] -mt-[68px]">
         {/* Background image: full from top to bottom, no cropping, pulled up under the navbar */}
         <img
@@ -226,7 +230,6 @@ export default function Home() {
         <FallingLeaves />
         {/* Center Main Logo */}
         <div className="absolute inset-x-0 top-[10%] flex flex-col items-center">
-          <h1 className="sr-only">BCA FutureTry — Coba simulasi kerja nyata PPBP &amp; PPTI sebelum memilih</h1>
           <img
             src="/main-logo.svg"
             alt="BCA FutureTry"
@@ -234,10 +237,10 @@ export default function Home() {
           />
           <Link
             href="/world"
-            className="-skew-x-12 mt-8 inline-flex items-center px-8 py-3 border border-[#0066ae] bg-white/60 backdrop-blur-sm text-[#0066ae] hover:bg-[#0066ae] hover:text-white transition-colors duration-200 min-h-[44px]"
+            className="-skew-x-12 mt-8 inline-flex items-center px-8 py-2.5 border border-[#0066ae] bg-white/60 backdrop-blur-sm text-[#0066ae] hover:bg-[#0066ae] hover:text-white transition-colors duration-200"
           >
             <span className="skew-x-12 inline-flex items-center gap-2 font-[family-name:var(--font-display)] text-sm sm:text-base font-extrabold tracking-[0.25em] uppercase">
-              Start FutureTry
+              Coba Sekarang
               <ArrowRight size={14} strokeWidth={2.5} />
             </span>
           </Link>
@@ -252,95 +255,80 @@ export default function Home() {
         />
       </section>
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-6 sm:py-8 space-y-6">
+      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:py-24">
 
-        {/* ═══════════════ HOW FUTURETRY WORKS ═══════════════ */}
+        {/* How FutureTry works */}
         <HowItWorks />
 
       </div>
 
-      {/* ═══════════════ CHOOSE YOUR WORLD (full width) ═══════════════ */}
+      {/* Choose Your World */}
       <ChooseYourWorld />
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-6 sm:py-8 space-y-6">
+      <div className="mx-auto max-w-7xl space-y-16 px-4 pb-4 pt-16 sm:px-6 lg:space-y-24 lg:pb-12 lg:pt-24">
 
-        {/* ═══════════════ ROW 1: EDUKATIPS & PORTAL LOGIN ═══════════════ */}
-        <div className="grid lg:grid-cols-12 gap-6 items-stretch">
+        {/* Edukatips and portal login */}
+        <div className="grid items-stretch gap-6 lg:grid-cols-2">
           
-          {/* ── Left Column (Edukatips & #AwasSalahJalur) ── */}
-          <div className="lg:col-span-7 xl:col-span-8 flex flex-col">
-            
-            {/* Edukatips & #AwasSalahJalur */}
-            <div className="bg-white rounded-2xl p-6 sm:p-7 shadow-xs border border-slate-200/80">
-              <div className="grid md:grid-cols-2 gap-6 md:gap-8 divide-y md:divide-y-0 md:divide-x divide-slate-100">
-                
-                {/* Column 1: Edukatips */}
-                <div className="pt-2 md:pt-0">
-                  <div className="flex items-center gap-1.5">
-                    <span className="font-extrabold text-base sm:text-lg tracking-tight text-[#0066ae]">
-                      EDUKA<span className="text-[#ff75b8]">TIPS</span>
-                    </span>
-                  </div>
-                  <Link href="/futurepath" className="inline-flex items-start min-h-[44px] block group mt-2 py-1">
-                    <h2 className="text-sm sm:text-base font-bold text-[#063b66] group-hover:text-[#0066ae] transition line-clamp-2 leading-snug">
-                      8 Tips Memilih Antara Beasiswa Bisnis (PPBP) &amp; Teknologi (PPTI)
-                    </h2>
-                  </Link>
-                  <p className="text-xs sm:text-[13px] text-slate-500 mt-2 leading-relaxed line-clamp-3">
-                    Ketahui perbedaan fokus pembelajaran intensif, kultur kerja perbankan digital, tantangan nyata di divisi IT vs Bisnis BCA, dan bagaimana menyesuaikan dengan minat karier jangka panjangmu.
-                  </p>
-                  <Link
-                    href="/futurepath"
-                    className="inline-flex items-center gap-1 text-xs font-bold text-[#0066ae] hover:text-[#063b66] mt-3 group min-h-[44px]"
-                  >
-                    Pelajari selengkapnya <ChevronRight size={14} className="group-hover:translate-x-0.5 transition" />
-                  </Link>
-                </div>
-
-                {/* Column 2: #AwasSalahJalur */}
-                <div className="pt-6 md:pt-0 md:pl-8">
-                  <div className="flex items-center gap-1.5">
-                    <ShieldAlert className="w-5 h-5 text-[#00c8eb]" />
-                    <span className="font-extrabold text-base sm:text-lg tracking-tight text-[#0066ae]">
-                      #AWAS<span className="text-[#00c8eb]">SALAHJALUR</span>
-                    </span>
-                  </div>
-                  <Link href="/world" className="inline-flex items-start min-h-[44px] block group mt-2 py-1">
-                    <h2 className="text-sm sm:text-base font-bold text-[#063b66] group-hover:text-[#0066ae] transition line-clamp-2 leading-snug">
-                      #AwasSalahJalur Kenali Potensi Nyata Sebelum Menentukan Jurusan
-                    </h2>
-                  </Link>
-                  <p className="text-xs sm:text-[13px] text-slate-500 mt-2 leading-relaxed line-clamp-3">
-                    Bukan skor tes yang menentukan kariermu, melainkan rasa senang saat menyelesaikan tantangan. Coba simulasi misi kerja nyata 5 menit tanpa rasa takut gagal atau salah langkah.
-                  </p>
-                  <Link
-                    href="/world"
-                    className="inline-flex items-center gap-1 text-xs font-bold text-[#0066ae] hover:text-[#063b66] mt-3 group min-h-[44px]"
-                  >
-                    Coba simulasi misi <ChevronRight size={14} className="group-hover:translate-x-0.5 transition" />
-                  </Link>
-                </div>
-
+          {/* Edukatips and #AwasSalahJalur */}
+          <div className="grid h-full gap-6 sm:grid-cols-2 lg:grid-cols-1 lg:grid-rows-2">
+            <article className="flex h-full flex-col justify-between rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs sm:p-7">
+              <div>
+                <span className="text-base font-extrabold tracking-tight text-[#0066ae] sm:text-lg">
+                  EDUKA<span className="text-[#ff75b8]">TIPS</span>
+                </span>
+                <Link href="/futurepath" className="group mt-3 block">
+                  <h2 className="text-lg font-bold leading-snug text-[#063b66] transition-colors group-hover:text-[#0066ae] sm:text-xl">
+                    8 Tips Memilih Beasiswa PPBP atau PPTI
+                  </h2>
+                </Link>
+                <p className="mt-3 text-sm leading-relaxed text-slate-500">
+                  Bandingkan fokus belajar, kultur kerja, dan tantangan nyata di jalur bisnis maupun teknologi agar pilihanmu terasa lebih mantap.
+                </p>
               </div>
-            </div>
+              <Link href="/futurepath" className="group mt-5 inline-flex w-fit items-center gap-1 text-sm font-bold text-[#0066ae] hover:text-[#063b66]">
+                Baca tipsnya <ChevronRight size={15} className="transition-transform group-hover:translate-x-0.5" />
+              </Link>
+            </article>
 
+            <article className="flex h-full flex-col justify-between rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs sm:p-7">
+              <div>
+                <div className="flex items-center gap-2">
+                  <ShieldAlert className="h-5 w-5 text-[#00c8eb]" />
+                  <span className="text-base font-extrabold tracking-tight text-[#0066ae] sm:text-lg">
+                    #AWAS<span className="text-[#00c8eb]">SALAHJALUR</span>
+                  </span>
+                </div>
+                <Link href="/world" className="group mt-3 block">
+                  <h2 className="text-lg font-bold leading-snug text-[#063b66] transition-colors group-hover:text-[#0066ae] sm:text-xl">
+                    Kenali Potensimu Sebelum Menentukan Jurusan
+                  </h2>
+                </Link>
+                <p className="mt-3 text-sm leading-relaxed text-slate-500">
+                  Coba misi kerja singkat tanpa takut salah. Perhatikan tantangan mana yang paling membuatmu penasaran dan menikmati prosesnya.
+                </p>
+              </div>
+              <Link href="/world" className="group mt-5 inline-flex w-fit items-center gap-1 text-sm font-bold text-[#0066ae] hover:text-[#063b66]">
+                Coba simulasinya <ChevronRight size={15} className="transition-transform group-hover:translate-x-0.5" />
+              </Link>
+            </article>
           </div>
 
-          {/* ── Right Column: Portal Login / Akses Masuk ── */}
-          <div className="lg:col-span-5 xl:col-span-4 flex flex-col">
-            <div className="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80 flex flex-col justify-between h-full">
+          {/* Portal login */}
+          <div className="flex flex-col">
+            <div className="flex h-full flex-col justify-between rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm sm:p-7">
               
               <div>
                 {/* Header */}
-                <div className="border-b border-slate-100 pb-5">
+                <div className="border-b border-slate-100 pb-4">
                   <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-[#f0f7fd] text-[#0066ae] text-xs font-bold mb-2">
-                    EXPLORER LOKAL
+                    BCA ID / PORTAL AKSES
                   </div>
                   <h2 className="text-xl sm:text-2xl font-extrabold text-[#063b66] tracking-tight">
                     Mulai Eksplorasi
                   </h2>
                   <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                    Tanpa akun atau kata sandi. Progres dan <strong>Future Card</strong> disimpan di browser ini, bukan akun BCA. Menghapus data browser atau berganti perangkat tidak membawa progresmu.
+                    Masuk untuk menyimpan progres misi &amp; mencetak <strong>Future Card</strong> milikmu.
                   </p>
                 </div>
 
@@ -351,10 +339,10 @@ export default function Home() {
                 )}
 
                 {/* Form Fields */}
-                <form onSubmit={handleStart} className="mt-5 space-y-5">
+                <form onSubmit={handleStart} className="mt-5 space-y-4">
                   <div>
                     <label htmlFor="explorer-name" className="block text-xs font-bold text-[#063b66] mb-1.5">
-                      Nama panggilan (opsional)
+                      BCA ID / Nama Explorer
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -365,9 +353,7 @@ export default function Home() {
                         type="text"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        placeholder="Contoh: Budi"
-                        maxLength={60}
-                        autoComplete="nickname"
+                        placeholder="Contoh: Budi Santoso / Siswa SMA"
                         className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#0066ae] focus:ring-1 focus:ring-[#0066ae] transition bg-white"
                       />
                     </div>
@@ -376,12 +362,12 @@ export default function Home() {
                   <div>
                     <div className="flex items-center justify-between mb-1.5">
                       <label htmlFor="explorer-track" className="block text-xs font-bold text-[#063b66]">
-                        Minat jalur eksplorasi
+                        Jalur Pilihan / Kata Sandi Minat
                       </label>
                       <button
                         type="button"
                         onClick={() => setShowRoleInfo(!showRoleInfo)}
-                        className="text-[11px] text-[#0066ae] hover:underline flex items-center gap-1 min-h-[44px] px-1"
+                        className="text-[11px] text-[#0066ae] hover:underline flex items-center gap-1"
                       >
                         {showRoleInfo ? <EyeOff size={13} /> : <Eye size={13} />}
                         {showRoleInfo ? "Tutup Info" : "Lihat Info"}
@@ -400,20 +386,20 @@ export default function Home() {
 
                     {showRoleInfo && (
                       <p className="mt-2 text-[11px] text-slate-500 bg-[#f0f7fd] p-2.5 rounded-lg border border-[#0066ae]/15 leading-relaxed">
-                        💡 Kamu bebas mengubah pilihan jalur kapan saja di dalam peta atau mencoba misi dari divisi lain tanpa batasan.
+                        Info: Kamu bebas mengubah pilihan jalur kapan saja di dalam peta atau mencoba misi dari divisi lain tanpa batasan.
                       </p>
                     )}
                   </div>
 
                   {/* Links Row */}
                   <div className="flex items-center justify-between text-xs pt-1 text-[#0066ae]">
-                    <Link href="/world" className="inline-flex items-center min-h-[44px] hover:underline font-semibold">
-                      Lihat progres lokal
+                    <Link href="/world" className="hover:underline font-semibold">
+                      Lupa Progres?
                     </Link>
                     <button
                       type="button"
                       onClick={handleResetProgress}
-                      className="inline-flex items-center min-h-[44px] hover:underline font-semibold text-slate-500 hover:text-rose-600 transition"
+                      className="hover:underline font-semibold text-slate-500 hover:text-rose-600 transition"
                     >
                       Reset Simulasi
                     </button>
@@ -424,13 +410,13 @@ export default function Home() {
                     type="submit"
                     className="w-full py-3.5 px-6 rounded-full bg-[#0066ae] hover:bg-[#063b66] text-white font-bold text-sm tracking-wide shadow-md shadow-[#0066ae]/20 hover:shadow-lg transition flex items-center justify-center gap-2 cursor-pointer mt-2"
                   >
-                    Mulai Eksplorasi
+                    Mulai Eksplorasi (Login)
                   </button>
                 </form>
 
                 <div className="mt-4 text-center text-xs text-slate-500">
                   Belum punya progres?{" "}
-                  <Link href="/world" className="inline-flex items-center min-h-[44px] font-bold text-[#0066ae] hover:underline">
+                  <Link href="/world" className="font-bold text-[#0066ae] hover:underline">
                     Mulai Langsung Tanpa Akun
                   </Link>
                 </div>
@@ -443,7 +429,7 @@ export default function Home() {
                   <p>
                     Simulasi FutureTry <strong>100% bebas skor &amp; tanpa benar-salah</strong>. Coba berbagai skenario kerja perbankan untuk menemukan peran yang paling kamu sukai.
                   </p>
-                  <Link href="/futurepath" className="inline-flex items-center min-h-[44px] font-bold text-[#b45309] hover:underline mt-1">
+                  <Link href="/futurepath" className="font-bold text-[#b45309] hover:underline mt-1 inline-block">
                     Pelajari selengkapnya.
                   </Link>
                 </div>
@@ -454,157 +440,83 @@ export default function Home() {
 
         </div>
 
-        {/* ═══════════════ ROW 2: QUICK ACTION BAR (Bottom Pills) ═══════════════ */}
-        <div className="pt-2">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-            {[
-              {
-                icon: <Phone size={18} />,
-                label: "Halo BCA 1500888",
-                href: "tel:1500888",
-                isExternal: true,
-              },
-              {
-                icon: <MessageCircle size={18} />,
-                label: "WhatsApp BCA",
-                href: "https://wa.me/628111500998",
-                isExternal: true,
-              },
-              {
-                icon: <Building2 size={18} />,
-                label: "Solusi BCA",
-                href: "https://www.bca.co.id",
-                isExternal: true,
-              },
-              {
-                icon: <Globe size={18} />,
-                label: "Website bca.co.id",
-                href: "https://www.bca.co.id",
-                isExternal: true,
-              },
-              {
-                icon: <GraduationCap size={18} />,
-                label: "Beasiswa PPBP/PPTI",
-                href: "/futurepath",
-                isExternal: false,
-              },
-              {
-                icon: <Compass size={18} />,
-                label: "Future World Map",
-                href: "/world",
-                isExternal: false,
-              },
-            ].map((action, idx) => (
-              <a
-                key={idx}
-                href={action.href}
-                target={action.isExternal ? "_blank" : undefined}
-                rel={action.isExternal ? "noopener noreferrer" : undefined}
-                className="group rounded-2xl bg-white p-3.5 sm:p-4 shadow-xs border border-slate-200/80 hover:shadow-md hover:border-[#00c8eb] hover:-translate-y-0.5 transition flex items-center gap-3"
-              >
-                <div className="w-9 h-9 rounded-xl bg-[#f0f7fd] group-hover:bg-[#0066ae] text-[#0066ae] group-hover:text-white transition flex items-center justify-center shrink-0">
-                  {action.icon}
-                </div>
-                <div className="min-w-0">
-                  <p className="font-bold text-xs sm:text-[13px] text-[#063b66] group-hover:text-[#0066ae] transition truncate">
-                    {action.label}
-                  </p>
-                </div>
-              </a>
-            ))}
-          </div>
-        </div>
+        {/* Meet the guides */}
+        <div>
+          <div className="relative left-1/2 aspect-[16/10] w-screen -translate-x-1/2 overflow-hidden bg-[#f4f7fb]">
+            <img
+              src="/meet-your-guides.png"
+              alt="Lima guide FutureTry di depan lingkungan belajar"
+              loading="lazy"
+              className={`absolute inset-x-0 bottom-0 h-auto w-full transition duration-500 ease-out ${
+                activeGuide === null
+                  ? "scale-100 opacity-[0.58] saturate-[0.8]"
+                  : "scale-[1.025] opacity-[0.28] blur-[7px] saturate-[0.65]"
+              }`}
+            />
+            <div className="pointer-events-none absolute inset-0 bg-white/10" aria-hidden />
 
-        {/* ═══════════════ ROW 3: WHAT DO YOU WANT TO TRY FIRST ═══════════════ */}
-        <div className="pt-8 sm:pt-12">
-          <div className="text-center max-w-2xl mx-auto mb-8">
-            <span className="font-mono text-xs font-bold tracking-widest text-[#0066ae] uppercase">
-              Pintu Eksplorasi
-            </span>
-            <h2 className="font-[family-name:var(--font-display)] text-2xl sm:text-3xl font-extrabold text-[#063b66] mt-1.5">
-              What do you want to <span className="text-brand-gradient">try first?</span>
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-500 mt-2">
-              Lima pintu masuk berdasarkan rasa penasaran — bukan tes kepribadian, bebas dijelajahi sesukamu.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-3 sm:gap-4">
-            {[
-              { label: "Solve a problem", desc: "Kasus nyata & keputusan kritis", to: "/world" },
-              { label: "Build something", desc: "Dari baris kode jadi aplikasi", to: "/world" },
-              { label: "Understand people", desc: "Nasabah, tim, & interaksi manusia", to: "/world" },
-              { label: "Make a decision", desc: "Pilih di tengah ketidakpastian", to: "/world" },
-              { label: "Work with data", desc: "Angka yang bercerita & pola tren", to: "/world" },
-            ].map((c) => (
-              <Link
-                key={c.label}
-                href={c.to}
-                className="group rounded-2xl border border-slate-200/80 bg-white p-5 hover:border-[#00c8eb] hover:shadow-md hover:-translate-y-1 transition flex flex-col justify-between"
-              >
-                <div>
-                  <p className="font-bold text-[#063b66] text-sm sm:text-base group-hover:text-[#0066ae] transition">
-                    {c.label}
-                  </p>
-                  <p className="text-xs text-slate-500 mt-1.5 leading-snug">
-                    {c.desc}
-                  </p>
-                </div>
-                <div className="mt-4 flex items-center gap-1 text-xs font-bold text-[#0066ae] opacity-0 group-hover:opacity-100 transition">
-                  Mulai misi <ChevronRight size={13} />
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-
-        {/* ═══════════════ ROW 4: MEET THE GUIDES ═══════════════ */}
-        <div className="pt-8 sm:pt-12">
-          <div className="text-center max-w-2xl mx-auto mb-8">
-            <span className="font-mono text-xs font-bold tracking-widest text-[#0066ae] uppercase">
-              Mentor Simulasi
-            </span>
-            <h2 className="font-[family-name:var(--font-display)] text-2xl sm:text-3xl font-extrabold text-[#063b66] mt-1.5">
-              Meet your guides
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-500 mt-2">
-              Lima karakter dengan lima sudut pandang kerja. Mereka pembuka percakapan untuk membantumu menemukan minatmu.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-            {characters.map((c) => (
-              <div
-                key={c.id}
-                className="rounded-2xl border border-slate-200/80 bg-white p-5 hover:shadow-md hover:border-[#00c8eb] hover:-translate-y-1 transition flex flex-col justify-between"
-              >
-                <div>
-                  <div
-                    className="grid place-items-center w-12 h-12 rounded-2xl text-white font-extrabold mb-3 shadow-xs"
-                    style={{ background: `linear-gradient(135deg, ${c.accent}, #063b66)` }}
-                  >
-                    {c.emojiSeed}
-                  </div>
-                  <p className="font-bold text-[#063b66] text-sm sm:text-base">{c.name}</p>
-                  <p className="text-[11px] font-mono text-[#00c8eb] font-semibold">{c.field} · {c.program}</p>
-                  <p className="text-xs text-slate-500 mt-2 leading-relaxed line-clamp-3 italic">
-                    “{c.message}”
-                  </p>
-                </div>
-                <Link
-                  href="/world"
-                  className="mt-4 pt-3 pb-1 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-[#0066ae] hover:text-[#063b66] min-h-[44px]"
-                >
-                  <span>Ikuti misi {c.name}</span>
-                  <ArrowRight size={13} />
-                </Link>
+            <div
+              className="absolute inset-x-0 top-0 z-20 h-[48%] px-4 pt-8 sm:px-6 sm:pt-12"
+              style={{
+                background:
+                  "linear-gradient(to bottom, #f4f7fb 0%, rgba(244,247,251,0.98) 24%, rgba(244,247,251,0.82) 48%, rgba(244,247,251,0.42) 72%, rgba(244,247,251,0) 100%)",
+              }}
+            >
+              <div className="mx-auto max-w-7xl text-center">
+                <h2 className="font-[family-name:var(--font-display)] text-3xl font-semibold leading-tight text-[#005cab] drop-shadow-[0_1px_0_rgba(255,255,255,0.8)] sm:text-[42px] lg:text-5xl">
+                  Kenalan dengan para guide-mu
+                </h2>
+                <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-[#063b66]/80 sm:text-base">
+                  Mereka akan menemanimu melihat dunia bisnis dan teknologi dari sudut pandang yang berbeda.
+                </p>
               </div>
-            ))}
+            </div>
+
+            {activeGuide !== null && (
+              <div className="pointer-events-none absolute bottom-7 left-1/2 z-30 h-[62%] w-[280px] -translate-x-1/2 overflow-hidden rounded-[2rem] border border-white/80 bg-white shadow-2xl sm:bottom-10 sm:w-[360px]">
+                <div
+                  className="absolute inset-0 bg-no-repeat"
+                  style={{
+                    backgroundImage: 'url("/meet-your-guides.png")',
+                    backgroundPosition: `${guidePositions[activeGuide].cropX}% 72%`,
+                    backgroundSize: "430% auto",
+                  }}
+                />
+                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#063b66]/95 via-[#063b66]/55 to-transparent px-5 pb-5 pt-16 text-white">
+                  <p className="font-[family-name:var(--font-display)] text-xl font-bold">
+                    {characters[activeGuide].name}
+                  </p>
+                  <p className="mt-0.5 text-xs text-white/80">
+                    {characters[activeGuide].field} / {characters[activeGuide].program}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            <div className="absolute inset-0 z-40 hidden lg:block">
+              {characters.map((guide, index) => (
+                <button
+                  key={guide.id}
+                  type="button"
+                  aria-label={`Lihat detail ${guide.name}`}
+                  onMouseEnter={() => setActiveGuide(index)}
+                  onMouseLeave={() => setActiveGuide(null)}
+                  onFocus={() => setActiveGuide(index)}
+                  onBlur={() => setActiveGuide(null)}
+                  className="group absolute bottom-[5%] h-[58%] w-[9%] -translate-x-1/2 cursor-zoom-in rounded-[45%] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0066ae]"
+                  style={{ left: `${guidePositions[index].x}%` }}
+                >
+                  <span className="absolute bottom-1 left-1/2 -translate-x-1/2 rounded-full bg-white/90 px-3 py-1 text-xs font-bold text-[#063b66] opacity-0 shadow-sm transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+                    {guide.name}
+                  </span>
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
-        {/* ═══════════════ ROW 5: 3 PILLARS (EXPERIENCE · REFLECT · ACT) ═══════════════ */}
-        <div className="pt-8">
+        {/* Experience, Reflect, Act */}
+        <div>
           <div className="rounded-2xl sm:rounded-3xl bg-[#063b66] text-white p-8 sm:p-12 shadow-sm">
             <div className="grid md:grid-cols-3 gap-8">
               {[
@@ -612,7 +524,7 @@ export default function Home() {
                   icon: <Compass size={24} />,
                   step: "01",
                   title: "Experience",
-                  body: "Jalankan misi 5–15 menit yang diadaptasi dari skenario kerja riil divisi IT dan Bisnis BCA.",
+                  body: "Jalankan misi 5-15 menit yang diadaptasi dari skenario kerja riil divisi IT dan Bisnis BCA.",
                 },
                 {
                   icon: <MessagesSquare size={24} />,
@@ -638,14 +550,14 @@ export default function Home() {
           </div>
         </div>
 
-        {/* ═══════════════ ROW 6: PREVIEW CARDS ═══════════════ */}
-        <div className="pt-6">
+        {/* Preview cards */}
+        <div>
           <div className="grid md:grid-cols-3 gap-4 sm:gap-6">
             <Link
               href="/world"
               className="group rounded-2xl overflow-hidden border border-slate-200/80 bg-white hover:shadow-md hover:border-[#00c8eb] transition"
             >
-              <div className="h-28 bg-[#063b66] grid place-items-center">
+              <div className="h-28 bg-gradient-to-br from-[#063b66] via-[#0066ae] to-[#00c8eb] grid place-items-center">
                 <MapIcon className="text-white/90" size={28} />
               </div>
               <div className="p-5">
@@ -660,7 +572,7 @@ export default function Home() {
               href="/stories"
               className="group rounded-2xl overflow-hidden border border-slate-200/80 bg-white hover:shadow-md hover:border-[#00c8eb] transition"
             >
-              <div className="h-28 bg-[#0066ae] grid place-items-center">
+              <div className="h-28 bg-gradient-to-br from-[#0066ae] via-[#00c8eb] to-[#8debfa] grid place-items-center">
                 <MessagesSquare className="text-white/90" size={28} />
               </div>
               <div className="p-5">
@@ -675,7 +587,7 @@ export default function Home() {
               href="/futurepath"
               className="group rounded-2xl overflow-hidden border border-slate-200/80 bg-white hover:shadow-md hover:border-[#00c8eb] transition"
             >
-              <div className="h-28 bg-[#00c8eb] grid place-items-center">
+              <div className="h-28 bg-gradient-to-br from-[#00c8eb] via-[#19d9f5] to-[#ff75b8]/70 grid place-items-center">
                 <Route className="text-white/90" size={28} />
               </div>
               <div className="p-5">
@@ -688,8 +600,8 @@ export default function Home() {
           </div>
         </div>
 
-        {/* ═══════════════ ROW 7: FINAL CTA ═══════════════ */}
-        <div className="py-12 sm:py-16 text-center max-w-3xl mx-auto">
+        {/* Final CTA */}
+        <div className="mx-auto max-w-3xl text-center">
           <h2 className="font-[family-name:var(--font-display)] text-2xl sm:text-4xl font-extrabold text-[#063b66] leading-tight">
             Your future doesn&apos;t have to be<br />
             <span className="text-brand-gradient">decided today.</span>

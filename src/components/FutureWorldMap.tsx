@@ -1,163 +1,263 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
-import { Lock, Check, Play, RotateCcw, Sparkles, X, Clock, ArrowRight, ScrollText } from "lucide-react";
-import { checkpoints, districtMeta } from "@/lib/content/map";
-import { missionById } from "@/lib/content/missions";
-import { characters } from "@/lib/content/characters";
+import { LoaderCircle } from "lucide-react";
 import { useJourney } from "@/components/JourneyProvider";
-import { FutureDistrictMap } from "@/components/FutureDistrictMap";
-import { progressSummary, journeyLog } from "@/lib/progress";
-import type { Checkpoint } from "@/types";
+
+type Coordinates = [number, number];
+type MarkerStatus = "available" | "completed" | "locked";
+
+interface MapLocation {
+  id: string;
+  name: string;
+  area: string;
+  coordinates: Coordinates;
+  missionId?: string;
+  program?: "PPTI" | "PPBP";
+  isStart?: boolean;
+}
+
+interface LeafletMap {
+  fitBounds: (bounds: unknown, options?: { padding?: [number, number]; maxZoom?: number }) => void;
+  remove: () => void;
+}
+
+interface LeafletLayer {
+  addTo: (map: LeafletMap) => LeafletLayer;
+  bindPopup: (content: string, options?: { maxWidth?: number }) => LeafletLayer;
+  on: (event: string, handler: () => void) => LeafletLayer;
+}
+
+interface LeafletApi {
+  map: (element: HTMLElement, options?: { zoomControl?: boolean; scrollWheelZoom?: boolean }) => LeafletMap;
+  tileLayer: (url: string, options: { attribution: string; maxZoom: number }) => LeafletLayer;
+  divIcon: (options: { className: string; html: string; iconSize: [number, number]; iconAnchor: [number, number]; popupAnchor: [number, number] }) => unknown;
+  marker: (coordinates: Coordinates, options: { icon: unknown; title: string; zIndexOffset?: number }) => LeafletLayer;
+  polyline: (coordinates: Coordinates[], options: { color: string; weight: number; opacity: number; dashArray?: string }) => LeafletLayer;
+  latLngBounds: (coordinates: Coordinates[]) => unknown;
+}
+
+declare global {
+  interface Window { L?: LeafletApi; }
+}
+
+const locations: MapLocation[] = [
+  { id: "cp-characters", name: "BCA Learning Institute", area: "Sentul City, Bogor", coordinates: [-6.5857007, 106.8822386], isStart: true },
+  { id: "cp-customer", name: "Customer Hall", area: "SCBD, Jakarta Selatan", coordinates: [-6.2259, 106.8095], missionId: "m-customer", program: "PPBP" },
+  { id: "cp-anomaly", name: "Security Operations", area: "Kuningan, Jakarta Selatan", coordinates: [-6.2185, 106.8303], missionId: "m-anomaly", program: "PPTI" },
+  { id: "cp-data", name: "Data Lab", area: "Thamrin, Jakarta Pusat", coordinates: [-6.1967024, 106.8224593], missionId: "m-dashboard", program: "PPTI" },
+  { id: "cp-strategy", name: "Strategy Room", area: "Cikini, Jakarta Pusat", coordinates: [-6.1901, 106.8394], missionId: "m-bizcase", program: "PPBP" },
+  { id: "cp-ux", name: "Design Studio", area: "Senayan, Jakarta Pusat", coordinates: [-6.2186, 106.8025], missionId: "m-uxfix", program: "PPTI" },
+  { id: "cp-invest", name: "Investment Desk", area: "Kota Tua, Jakarta Barat", coordinates: [-6.1352, 106.8133], missionId: "m-invest", program: "PPBP" },
+];
+
+const loadLeaflet = () => new Promise<LeafletApi>((resolve, reject) => {
+  if (window.L) return resolve(window.L);
+
+  if (!document.querySelector('link[data-leaflet="true"]')) {
+    const stylesheet = document.createElement("link");
+    stylesheet.rel = "stylesheet";
+    stylesheet.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+    stylesheet.dataset.leaflet = "true";
+    document.head.appendChild(stylesheet);
+  }
+
+  const existing = document.querySelector<HTMLScriptElement>('script[data-leaflet="true"]');
+  const script = existing ?? document.createElement("script");
+  script.addEventListener("load", () => window.L ? resolve(window.L) : reject(new Error("Leaflet tidak tersedia")), { once: true });
+  script.addEventListener("error", () => reject(new Error("Gagal memuat Leaflet")), { once: true });
+  if (!existing) {
+    script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+    script.dataset.leaflet = "true";
+    document.body.appendChild(script);
+  }
+});
+
+function markerHtml(location: MapLocation, index: number, status: MarkerStatus) {
+  const image = location.isStart
+    ? "/main-logo-white.svg"
+    : location.program === "PPTI"
+      ? "/character-ppti.png"
+      : "/character-ppbp.png";
+  const badge = status === "locked" ? "&#128274;" : status === "completed" ? "&#10003;" : String(index);
+
+  return `<div class="map-mission-marker is-${status}${location.isStart ? " is-start" : ""}">
+    <span class="map-marker-pulse"></span>
+    <span class="map-marker-art"><img src="${image}" alt="" /></span>
+    <span class="map-marker-badge">${badge}</span>
+  </div>`;
+}
 
 export function FutureWorldMap() {
-  const { progress, stateOf, reset } = useJourney();
-  const [selected, setSelected] = useState<Checkpoint | null>(null);
-  const dialogRef = useRef<HTMLDivElement>(null);
+  const mapElementRef = useRef<HTMLDivElement>(null);
+  const mapInstanceRef = useRef<LeafletMap | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const { stateOf } = useJourney();
+
   useEffect(() => {
-    if (!selected) return;
-    const trigger = document.activeElement as HTMLElement | SVGElement | null;
-    const dialog = dialogRef.current;
-    const controls = () => Array.from(dialog?.querySelectorAll<HTMLElement>('button, a[href], [tabindex="0"]') ?? []);
-    controls()[0]?.focus();
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") { e.preventDefault(); setSelected(null); }
-      if (e.key === "Tab") {
-        const items = controls(), first = items[0], last = items[items.length - 1];
-        if (e.shiftKey && (document.activeElement === first || !dialog?.contains(document.activeElement))) { e.preventDefault(); last?.focus(); }
-        else if (!e.shiftKey && (document.activeElement === last || !dialog?.contains(document.activeElement))) { e.preventDefault(); first?.focus(); }
+    let cancelled = false;
+    loadLeaflet().then((leaflet) => {
+      if (cancelled || !mapElementRef.current) return;
+      mapInstanceRef.current?.remove();
+      const map = leaflet.map(mapElementRef.current, { zoomControl: true, scrollWheelZoom: true });
+      mapInstanceRef.current = map;
+
+      leaflet.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}", {
+        attribution: "Tiles &copy; Esri",
+        maxZoom: 16,
+      }).addTo(map);
+
+      const route = locations.map((location) => location.coordinates);
+      leaflet.polyline(route, { color: "#ffffff", weight: 7, opacity: 0.9 }).addTo(map);
+      leaflet.polyline(route, { color: "#0066ae", weight: 4, opacity: 0.85, dashArray: "9 10" }).addTo(map);
+
+      locations.forEach((location, index) => {
+        const checkpointStatus = stateOf(location.id);
+        const status: MarkerStatus = location.isStart || checkpointStatus === "current" ? "available" : checkpointStatus;
+        const icon = leaflet.divIcon({ className: "", html: markerHtml(location, index, status), iconSize: [72, 82], iconAnchor: [36, 70], popupAnchor: [0, -58] });
+        const marker = leaflet.marker(location.coordinates, { icon, title: location.name, zIndexOffset: location.isStart ? 1000 : 0 }).addTo(map);
+
+        if (location.missionId && status !== "locked") {
+          marker.on("click", () => window.location.assign(`/mission/${location.missionId}`));
+        } else if (location.isStart) {
+          marker.bindPopup(`<strong>${location.name}</strong><br />${location.area}`, { maxWidth: 240 });
+        }
+      });
+
+      map.fitBounds(leaflet.latLngBounds(route), { padding: [45, 45], maxZoom: 11 });
+      setLoading(false);
+    }).catch(() => {
+      if (!cancelled) {
+        setError("Peta gagal dimuat. Periksa koneksi internet lalu muat ulang halaman.");
+        setLoading(false);
       }
+    });
+
+    return () => {
+      cancelled = true;
+      mapInstanceRef.current?.remove();
+      mapInstanceRef.current = null;
     };
-    document.addEventListener("keydown", onKey);
-    return () => { document.removeEventListener("keydown", onKey); document.body.style.overflow = previousOverflow; trigger?.focus(); };
-  }, [selected]);
-  const { done, total, percent } = progressSummary(progress);
-
-  const byId = (id: string) => checkpoints.find((c) => c.id === id)!;
-
-  // ── Journey Log + pemandu aktif (brief §8.2) ──
-  const log = journeyLog(progress);
-  const lastMission = log[0]?.mission;
-  const guideChar =
-    (lastMission ? characters.find((c) => c.program === lastMission.program) : null) ?? characters[0];
+  }, [stateOf]);
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8">
-      {/* header */}
-      <div className="flex flex-wrap items-end justify-between gap-4 mb-6">
-        <div>
-          <p className="font-mono text-xs tracking-[0.25em] text-cyan mb-1">FUTURE WORLD</p>
-          <h1 className="font-[family-name:var(--font-display)] text-3xl sm:text-4xl font-extrabold text-navy">Explore the map</h1>
-          <p className="text-navy/60 mt-1 text-sm">Klik checkpoint untuk melihat misi. Selesaikan misi untuk membuka jalur berikutnya.</p>
-        </div>
-        <div className="flex items-center gap-4">
-          <div className="text-right">
-            <p className="text-xs text-navy/50 font-mono">PROGRESS</p>
-            <p className="font-bold text-navy">{done}/{total} misi · {percent}%</p>
+    <main className="grid min-h-[calc(100vh-68px)] place-items-center bg-[#f4f6f8] p-4 sm:p-8">
+      <section className="w-full max-w-6xl overflow-hidden rounded-2xl border border-slate-200 bg-white p-2 shadow-[0_20px_55px_rgba(15,23,42,0.12)] sm:rounded-3xl sm:p-3">
+          <div className="relative h-[70vh] min-h-[480px] max-h-[720px] overflow-hidden rounded-xl bg-slate-100 sm:rounded-2xl">
+            <div ref={mapElementRef} className="absolute inset-0 z-0" aria-label="Peta checkpoint dari BCA Learning Institute menuju Jakarta" />
+            {loading && <div className="absolute inset-0 z-20 grid place-items-center bg-slate-100"><LoaderCircle size={22} className="animate-spin text-[#0066ae]" /></div>}
+            {error && <div className="absolute inset-0 z-20 grid place-items-center bg-slate-100 p-6 text-center text-sm text-slate-600">{error}</div>}
           </div>
-          <button onClick={() => { if (confirm("Reset seluruh perjalananmu? Misi yang selesai akan terkunci lagi.")) reset(); }}
-            className="inline-flex items-center gap-1.5 text-xs px-3 py-2.5 rounded-lg border border-navy/15 text-navy/70 hover:border-pink hover:text-pink transition min-h-[44px]" title="Reset progress">
-            <RotateCcw size={14} /> Reset
-          </button>
-        </div>
-      </div>
-
-      {/* progress bar */}
-      <div className="h-2 rounded-full bg-navy/10 mb-6 overflow-hidden" role="progressbar" aria-valuenow={percent} aria-valuemin={0} aria-valuemax={100}>
-        <motion.div className="h-full rounded-full bg-bcablue" initial={{ width: 0 }} animate={{ width: `${percent}%` }} transition={{ duration: 0.6 }} />
-      </div>
-
-      {/* ═══════════ MAPLIBRE FUTURE DISTRICT ═══════════ */}
-      <section className="overflow-hidden rounded-3xl border border-navy/10 bg-white shadow-xl shadow-navy/10" aria-labelledby="future-map-title">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-navy/10 px-4 py-3 sm:px-5">
-          <div><h2 id="future-map-title" className="font-bold text-navy">Future District</h2><p className="text-xs text-navy/60">Peta simulasi digital — bukan lokasi fisik BCA.</p></div>
-          <div className="flex flex-wrap gap-3 text-[11px] text-navy/65" aria-label="Legenda status"><span>● Bisa dimulai</span><span>✓ Selesai</span><span>○ Terkunci</span></div>
-        </div>
-        <FutureDistrictMap checkpoints={checkpoints} stateOf={stateOf} onSelect={setSelected} />
-        <div className="border-t border-navy/10 bg-white px-4 py-3"><p className="font-mono text-[10px] tracking-widest text-navy/45">PEMANDU KAMU</p><p className="mt-1 text-xs leading-snug text-navy/70"><b>{guideChar.name}</b> ({guideChar.program}) menemani perjalananmu{lastMission ? ` — terakhir membahas “${lastMission.title}”.` : ". Geser dan zoom peta, lalu pilih checkpoint."}</p></div>
       </section>
-
-      {/* ═══════════ JOURNEY LOG (brief §8.2) ═══════════ */}
-      <div className="mt-6 rounded-2xl border border-navy/10 bg-white p-5">
-        <p className="flex items-center gap-2 font-mono text-xs tracking-[0.25em] text-navy/50">
-          <ScrollText size={14} className="text-pink" /> JOURNEY LOG
-        </p>
-        {log.length === 0 ? (
-          <p className="text-sm text-navy/55 mt-2">Belum ada misi selesai. Klik checkpoint biru di peta, selesaikan satu misi — catatannya muncul di sini.</p>
-        ) : (
-          <ol className="mt-3 space-y-2">
-            {log.map((e) => {
-              const r = progress.reflections[e.mission.id];
-              const when = e.at ? new Date(e.at) : null;
-              return (
-                <li key={e.mission.id} className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
-                  <Check size={14} className="text-green-600 shrink-0" />
-                  <span className="font-semibold text-navy">{e.mission.title}</span>
-                  <span className={`font-mono text-[11px] ${e.mission.program === "PPTI" ? "text-cyan" : "text-bcablue"}`}>{e.mission.program} · {e.mission.role}</span>
-                  {when && <span className="text-xs text-navy/45">{when.toLocaleDateString("id-ID", { day: "numeric", month: "short" })} {when.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}</span>}
-                  {r?.enjoyed?.length ? <span className="text-xs text-navy/55">senang: {r.enjoyed.slice(0, 2).join(", ")}</span> : null}
-                </li>
-              );
-            })}
-          </ol>
-        )}
-      </div>
-
-      {/* ═══════════ CHECKPOINT POPOVER ═══════════ */}
-      <AnimatePresence>
-        {selected && (() => {
-          const mission = selected.missionId ? missionById(selected.missionId) : null;
-          const meta = districtMeta[selected.district];
-          const st = stateOf(selected.id);
-          return (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              ref={dialogRef} role="dialog" aria-modal="true" aria-label="Detail checkpoint" className="fixed inset-0 z-[60] grid place-items-center p-4 bg-navy/40 backdrop-blur-sm" onClick={() => setSelected(null)}>
-              <motion.div initial={{ y: 20, scale: 0.96 }} animate={{ y: 0, scale: 1 }} exit={{ y: 20, scale: 0.96 }}
-                onClick={(e) => e.stopPropagation()}
-                className="w-full max-w-md max-h-[calc(100dvh-32px)] rounded-3xl bg-white shadow-2xl overflow-y-auto">
-                <div className="h-2" style={{ background: meta.color }} />
-                <div className="p-6">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <p className="font-mono text-[11px] tracking-widest" style={{ color: meta.color }}>{meta.name.toUpperCase()}{meta.program ? ` · ${meta.program}` : ""}</p>
-                      <h3 className="font-[family-name:var(--font-display)] text-xl font-extrabold text-navy mt-1">{mission?.title ?? selected.label}</h3>
-                    </div>
-                    <button onClick={() => setSelected(null)} aria-label="Tutup" className="min-h-11 min-w-11 grid place-items-center shrink-0 p-1.5 rounded-lg hover:bg-navy/5 text-navy/50"><X size={18} /></button>
-                  </div>
-
-                  {mission ? (
-                    <>
-                      <p className="text-sm text-navy/70 mt-3 leading-relaxed">{mission.summary}</p>
-                      <div className="flex flex-wrap items-center gap-4 mt-4 text-xs text-navy/60">
-                        <span className="inline-flex items-center gap-1"><Clock size={13} /> {mission.duration}</span>
-                        <span className="inline-flex items-center gap-1"><Sparkles size={13} /> Role: {mission.role}</span>
-                      </div>
-                      <Link href={`/mission/${mission.id}`}
-                        className="mt-6 w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-bcablue text-white font-bold shadow-lg shadow-cyan/25 hover:-translate-y-0.5 transition">
-                        {st === "completed" ? "LIHAT HASIL / ULANGI MISI" : "ENTER MISSION"} <ArrowRight size={17} />
-                      </Link>
-                    </>
-                  ) : (
-                    <>
-                      <p className="text-sm text-navy/70 mt-3 leading-relaxed">{meta.desc}</p>
-                      <Link href={selected.district === "story" ? "/stories" : selected.district === "futurepath" ? "/futurepath" : "/world#characters"}
-                        onClick={() => setSelected(null)}
-                        className="mt-6 w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-bcablue text-white font-bold shadow-lg shadow-cyan/25 hover:-translate-y-0.5 transition">
-                        BUKA {selected.label.toUpperCase()} <ArrowRight size={17} />
-                      </Link>
-                    </>
-                  )}
-                  {st === "completed" && <p className="text-center text-xs text-green-600 mt-3 inline-flex items-center justify-center gap-1 w-full"><Check size={13} /> Misi sudah selesai — boleh diulang</p>}
-                </div>
-              </motion.div>
-            </motion.div>
-          );
-        })()}
-      </AnimatePresence>
-    </div>
+      <style jsx global>{`
+        .map-mission-marker {
+          position: relative;
+          width: 72px;
+          height: 82px;
+          cursor: pointer;
+        }
+        .map-marker-art {
+          position: absolute;
+          left: 6px;
+          top: 0;
+          display: grid;
+          width: 60px;
+          height: 60px;
+          place-items: center;
+          overflow: hidden;
+          border: 3px solid white;
+          border-radius: 20px;
+          background: linear-gradient(145deg, #ffffff, #dff5ff);
+          box-shadow: 0 10px 24px rgba(15, 48, 77, 0.28);
+          transition: transform 220ms ease, box-shadow 220ms ease;
+        }
+        .map-marker-art::after {
+          position: absolute;
+          bottom: -7px;
+          left: 22px;
+          width: 14px;
+          height: 14px;
+          content: "";
+          transform: rotate(45deg);
+          background: inherit;
+        }
+        .map-marker-art img {
+          width: 54px;
+          height: 54px;
+          object-fit: contain;
+          object-position: center top;
+          transform: translateY(5px) scale(1.2);
+        }
+        .map-marker-badge {
+          position: absolute;
+          right: 0;
+          top: -7px;
+          z-index: 2;
+          display: grid;
+          width: 25px;
+          height: 25px;
+          place-items: center;
+          border: 2px solid white;
+          border-radius: 999px;
+          background: #0066ae;
+          color: white;
+          font: 700 11px Arial, sans-serif;
+          box-shadow: 0 4px 10px rgba(15, 48, 77, 0.25);
+        }
+        .map-marker-pulse {
+          position: absolute;
+          left: 8px;
+          top: 2px;
+          width: 56px;
+          height: 56px;
+          border: 2px solid #00a9d6;
+          border-radius: 22px;
+          animation: map-marker-pulse 1.8s ease-out infinite;
+        }
+        .map-mission-marker:hover .map-marker-art {
+          transform: translateY(-5px) scale(1.06);
+          box-shadow: 0 16px 30px rgba(0, 102, 174, 0.35);
+        }
+        .map-mission-marker.is-completed .map-marker-badge {
+          background: #16815d;
+        }
+        .map-mission-marker.is-completed .map-marker-art {
+          border-color: #6ee7b7;
+        }
+        .map-mission-marker.is-locked {
+          cursor: not-allowed;
+        }
+        .map-mission-marker.is-locked .map-marker-art {
+          filter: grayscale(1);
+          opacity: 0.72;
+        }
+        .map-mission-marker.is-locked .map-marker-badge {
+          background: #64748b;
+          font-size: 12px;
+        }
+        .map-mission-marker.is-locked .map-marker-pulse,
+        .map-mission-marker.is-completed .map-marker-pulse {
+          display: none;
+        }
+        .map-mission-marker.is-start .map-marker-art {
+          border-radius: 999px;
+          background: #0066ae;
+        }
+        .map-mission-marker.is-start .map-marker-art img {
+          width: 43px;
+          height: 43px;
+          transform: none;
+        }
+        @keyframes map-marker-pulse {
+          0% { opacity: 0.75; transform: scale(0.9); }
+          75%, 100% { opacity: 0; transform: scale(1.45); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .map-marker-pulse { animation: none; }
+          .map-marker-art { transition: none; }
+        }
+      `}</style>
+    </main>
   );
 }

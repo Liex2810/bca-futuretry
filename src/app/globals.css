@@ -34,7 +34,7 @@
   --font-mono: var(--font-bca-sans), ui-monospace, monospace;
 }
 
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; overflow-x: clip; }
 
 body {
   background: var(--color-paper);
@@ -89,22 +89,6 @@ button, input, select, textarea {
   100% { transform: scale(1.9); opacity: 0; }
 }
 .pulse-ring { animation: pulse-ring 2s cubic-bezier(0.2, 0.6, 0.4, 1) infinite; transform-origin: center; }
-
-/* MapLibre fictional district — coordinates are an internal canvas, not geography. */
-.future-map-canvas { height: clamp(500px, 64vw, 690px); width: 100%; background: #cfe7d8; }
-.future-map-canvas .maplibregl-canvas { cursor: grab; }
-.future-map-canvas .maplibregl-canvas:active { cursor: grabbing; }
-.future-map-canvas .maplibregl-ctrl-group { border-radius: 12px; overflow: hidden; box-shadow: 0 4px 18px rgba(6, 59, 102, .18); }
-.future-map-marker { position: relative; min-width: 44px; min-height: 62px; border: 0; background: transparent; color: #063b66; cursor: pointer; }
-.future-map-marker:disabled { cursor: not-allowed; }
-.future-map-pin { display: grid; place-items: center; width: 42px; height: 42px; margin: 0 auto; border: 4px solid white; border-radius: 50% 50% 50% 8px; transform: rotate(-45deg); background: #0066ae; box-shadow: 0 6px 16px rgba(6,59,102,.28); }
-.future-map-pin svg { width: 21px; height: 21px; transform: rotate(45deg); fill: none; stroke: white; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
-.future-map-marker--available .future-map-pin { background: #0066ae; }
-.future-map-marker--completed .future-map-pin { background: #16854b; }
-.future-map-marker--locked .future-map-pin { background: #8496a3; box-shadow: none; }
-.future-map-label { display: block; white-space: nowrap; margin-top: 5px; padding: 4px 8px; border: 1px solid #c8d8df; border-radius: 7px; background: rgba(255,255,255,.96); font-size: 12px; font-weight: 700; line-height: 1.15; box-shadow: 0 3px 10px rgba(6,59,102,.12); }
-.future-map-marker:hover .future-map-pin, .future-map-marker:focus-visible .future-map-pin { transform: rotate(-45deg) scale(1.08); }
-@media (max-width: 639px) { .future-map-canvas { height: 560px; } }
 
 @keyframes float-slow {
   0%, 100% { transform: translateY(0); }
@@ -182,24 +166,4 @@ button, input, select, textarea {
   html { scroll-behavior: auto; }
   .pulse-ring, .float-slow { animation: none; }
   *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
-}
-
-/* Responsive composition, not a scaled-down desktop canvas. */
-.chat-launcher {
-  right: max(16px, env(safe-area-inset-right));
-  bottom: max(16px, env(safe-area-inset-bottom));
-}
-.chat-panel {
-  right: max(16px, env(safe-area-inset-right));
-  bottom: calc(88px + env(safe-area-inset-bottom));
-  width: min(380px, calc(100vw - 32px - env(safe-area-inset-right) - env(safe-area-inset-left)));
-  height: min(520px, calc(100dvh - 168px - env(safe-area-inset-bottom)));
-}
-@media (max-width: 639px) {
-  .journey-route > div:not(.journey-nodes) { display: none; }
-  .journey-nodes > div { display: grid; grid-template-columns: 56px 1fr; text-align: left; column-gap: 16px; }
-  .journey-nodes > div > div { grid-row: span 2; }
-  .journey-nodes > div > span { margin-top: 0; max-width: none; }
-  .journey-nodes > div > span:last-child { font-size: 13px; }
-  footer { padding-bottom: calc(96px + env(safe-area-inset-bottom)); }
 }
