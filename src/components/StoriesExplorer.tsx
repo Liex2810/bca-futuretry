@@ -18,11 +18,11 @@ export function StoriesExplorer({ stories }: { stories: Story[] }) {
 
   return (
     <div className="mx-auto max-w-5xl px-4 pb-10 pt-[108px] lg:pt-10">
-      <p className="font-mono text-xs tracking-[0.25em] text-cyan mb-2">REAL STORIES</p>
-      <h1 className="font-[family-name:var(--font-display)] text-3xl sm:text-4xl font-extrabold text-navy">Meet someone who&apos;s already there.</h1>
+      <p className="font-mono text-xs tracking-[0.25em] text-cyan mb-2">ILUSTRASI CERITA</p>
+      <h1 className="font-[family-name:var(--font-display)] text-3xl sm:text-4xl font-extrabold text-navy">Kenali contoh perspektifnya.</h1>
       <p className="text-navy/60 mt-3 max-w-2xl text-sm leading-relaxed">
-        Jelajahi {stories.length} perspektif dari jalur PPBP dan PPTI—mulai dari keseharian, ekspektasi versus realita, sampai bagian tersulit dan momen favorit.
-        <span className="text-navy/45"> Cerita berikut masih berupa ilustrasi demo, bukan testimoni awardee sungguhan.</span>
+        Jelajahi {stories.length} template perspektif dari jalur PPBP dan PPTI.
+        <span className="text-navy/45"> Seluruh nama dan isi memakai placeholder, bukan testimoni sungguhan.</span>
       </p>
       <div className="mt-5 flex flex-wrap gap-2" aria-label="Ringkasan koleksi cerita">
         <span className="rounded-full bg-navy px-3 py-2 text-xs font-bold text-white">{stories.length} cerita</span>
@@ -82,10 +82,10 @@ export function StoriesExplorer({ stories }: { stories: Story[] }) {
                         {/* placeholder foto/video (brief §8.5) */}
                         <div className="rounded-xl border border-dashed border-navy/20 bg-sky-soft/40 p-6 text-center">
                           <Camera size={22} className="mx-auto text-navy/35" />
-                          <p className="text-xs text-navy/50 mt-2">Foto / video “{s.name}” — slot aset, menunggu materi asli + izin publikasi.</p>
+                          <p className="text-xs text-navy/50 mt-2">(Foto / Video) — slot aset, menunggu materi asli dan izin publikasi.</p>
                         </div>
                         <section>
-                          <p className="font-mono text-[11px] tracking-widest text-navy/45 mb-2 flex items-center gap-1.5"><Sun size={13} className="text-pink" /> EXPEKTASI vs REALITA</p>
+                          <p className="font-mono text-[11px] tracking-widest text-navy/45 mb-2 flex items-center gap-1.5"><Sun size={13} className="text-pink" /> EKSPEKTASI vs REALITA</p>
                           <div className="grid sm:grid-cols-2 gap-3 text-sm">
                             <div className="rounded-xl bg-sky-soft/60 p-3.5"><p className="text-navy/50 text-xs mb-1">Kira-kira…</p><p className="text-navy/80">{s.expectationVsReality.expectation}</p></div>
                             <div className="rounded-xl bg-cyan/8 p-3.5 border border-cyan/20"><p className="text-navy/50 text-xs mb-1">Ternyata…</p><p className="text-navy/80">{s.expectationVsReality.reality}</p></div>

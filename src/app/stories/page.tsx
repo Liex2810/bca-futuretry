@@ -4,7 +4,7 @@ import { StoriesExplorer } from "@/components/StoriesExplorer";
 
 export const metadata: Metadata = {
   title: "Stories — BCA FutureTry",
-  description: "Cerita nyata awardee PPBP & PPTI: ekspektasi vs realita, keseharian, dan pelajaran mereka.",
+  description: "Kumpulan cerita ilustratif PPBP & PPTI untuk demonstrasi tampilan FutureTry.",
 };
 
 export default function StoriesPage() {

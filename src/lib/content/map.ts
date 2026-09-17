@@ -51,6 +51,6 @@ export const districtMeta: Record<string, { name: string; program: string; color
   technology: { name: "Technology & Digital", program: "PPTI", color: "#08BBD4", desc: "Security, data, dan produk digital" },
   business: { name: "Business & Banking", program: "PPBP", color: "#0D70B4", desc: "Nasabah, strategi, dan investasi" },
   character: { name: "Character Plaza", program: "", color: "#F467B0", desc: "Kenali lima pemandumu" },
-  story: { name: "Story Quarter", program: "", color: "#8CDDE7", desc: "Cerita nyata para awardee" },
-  futurepath: { name: "FuturePath Gate", program: "", color: "#2CC7DD", desc: "Informasi resmi & langkah berikutnya" },
+  story: { name: "Story Quarter", program: "", color: "#8CDDE7", desc: "Template cerita ilustratif" },
+  futurepath: { name: "FuturePath Gate", program: "", color: "#2CC7DD", desc: "Placeholder informasi program" },
 };

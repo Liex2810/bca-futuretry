@@ -258,6 +258,22 @@ const primaryStories: Story[] = [
   },
 ];
 
-export const stories: Story[] = [...primaryStories, ...moreStories];
+const illustrativeStories: Story[] = [...primaryStories, ...moreStories];
+
+const loremShort = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+const loremLong = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+
+// Identitas dan narasi belum bersumber. Pertahankan ID/program/role untuk
+// filter dan alur demo, tetapi jangan tampilkan data seolah testimoni nyata.
+export const stories: Story[] = illustrativeStories.map((story) => ({
+  ...story,
+  name: "(Nama Orang)",
+  title: "(Judul Cerita)",
+  excerpt: loremLong,
+  dayInLife: story.dayInLife.map((item) => ({ ...item, activity: loremShort })),
+  expectationVsReality: { expectation: loremShort, reality: loremLong },
+  hardestPart: loremShort,
+  favoriteMoment: loremLong,
+}));
 
 export const storyById = (id: string) => stories.find((s) => s.id === id);

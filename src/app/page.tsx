@@ -74,7 +74,7 @@ const journeySteps = [
   { icon: Compass, title: "Explore", desc: "Jelajahi peran baru" },
   { icon: Play, title: "Try", desc: "Langsung coba misinya" },
   { icon: Sparkles, title: "Discover", desc: "Refleksikan pilihanmu" },
-  { icon: Users, title: "Connect", desc: "Dengar pengalaman nyata" },
+  { icon: Users, title: "Connect", desc: "Lihat template pengalaman" },
   { icon: ArrowRight, title: "Act", desc: "Tentukan langkahmu" },
 ];
 
@@ -163,8 +163,8 @@ function HowItWorks() {
       {/* Description */}
       <div className="mx-auto max-w-3xl text-center mt-12">
         <p className="text-sm sm:text-base text-slate-500 leading-relaxed">
-          Pengalaman interaktif untuk menjelajahi peran, menyelesaikan misi, menemukan pengalaman
-          nyata dari mahasiswa, dan memahami langkah berikutnya.
+          Pengalaman interaktif untuk menjelajahi peran, menyelesaikan misi, melihat cerita
+          ilustratif, dan memahami rancangan langkah berikutnya.
         </p>
       </div>
 
@@ -542,7 +542,7 @@ export default function Home() {
                 <p className="font-bold text-[#063b66] group-hover:text-[#0066ae] transition">
                   FuturePath dan Persyaratan
                 </p>
-                <p className="text-xs text-slate-500 mt-1">Info resmi syarat pendaftaran, fasilitas, dan jadwal seleksi.</p>
+                <p className="text-xs text-slate-500 mt-1">Template informasi program, persyaratan, dan langkah berikutnya.</p>
               </div>
             </Link>
           </div>

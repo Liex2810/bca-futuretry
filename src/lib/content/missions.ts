@@ -6,7 +6,7 @@ import type { Mission } from "@/types";
 //  memberi konsekuensi naratif + skill yang dirasakan.
 // ════════════════════════════════════════════════════════════════
 
-export const missions: Mission[] = [
+const illustrativeMissions: Mission[] = [
   // ─────────────────────────── PPTI ───────────────────────────
   {
     id: "m-anomaly",
@@ -671,5 +671,29 @@ export const missions: Mission[] = [
     },
   },
 ];
+
+const loremShort = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+const loremLong = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+
+// ID/program/district dan jumlah langkah dipertahankan agar alur demo tetap
+// berfungsi. Seluruh data yang terlihat pengguna memakai placeholder.
+export const missions: Mission[] = illustrativeMissions.map((mission) => ({
+  ...mission,
+  title: "(Judul Misi)",
+  role: "(Nama Peran)",
+  summary: loremShort,
+  intro: loremLong,
+  steps: mission.steps.map((step) => ({
+    ...step,
+    narration: loremLong,
+    prompt: "(Pertanyaan Misi)",
+    choices: step.choices.map((choice, choiceIndex) => ({
+      ...choice,
+      label: `(Pilihan ${choiceIndex + 1})`,
+      detail: choice.detail ? loremShort : undefined,
+      consequence: loremLong,
+    })),
+  })),
+}));
 
 export const missionById = (id: string) => missions.find((m) => m.id === id);
