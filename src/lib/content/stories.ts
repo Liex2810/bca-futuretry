@@ -1,8 +1,9 @@
 import type { Story } from "@/types";
+import { moreStories } from "./more-stories";
 
 // Catatan: cerita di bawah adalah CONTOH/ILUSTRATIF untuk demo.
 // Sebelum produksi, ganti dengan cerita awardee asli + izin publikasi.
-export const stories: Story[] = [
+const primaryStories: Story[] = [
   {
     id: "st-reza",
     name: "Reza",
@@ -256,5 +257,7 @@ export const stories: Story[] = [
     favoriteMoment: "Argumen mitigasi tim gue mengubah keputusan akhir studi kasus.",
   },
 ];
+
+export const stories: Story[] = [...primaryStories, ...moreStories];
 
 export const storyById = (id: string) => stories.find((s) => s.id === id);
