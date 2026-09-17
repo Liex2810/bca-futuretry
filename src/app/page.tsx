@@ -436,13 +436,8 @@ export default function Home() {
               src="/meet-your-guides.png"
               alt="Lima guide FutureTry di depan lingkungan belajar"
               loading="lazy"
-              className={`absolute inset-x-0 bottom-0 h-auto w-full transition duration-500 ease-out ${
-                activeGuide === null
-                  ? "scale-100 opacity-[0.58] saturate-[0.8]"
-                  : "scale-[1.025] opacity-[0.28] blur-[7px] saturate-[0.65]"
-              }`}
+              className="absolute inset-x-0 bottom-0 h-auto w-full opacity-100 saturate-100"
             />
-            <div className="pointer-events-none absolute inset-0 bg-white/10" aria-hidden />
 
             <div
               className="absolute inset-x-0 top-0 z-20 h-[48%] px-4 pt-8 sm:px-6 sm:pt-12"
@@ -462,23 +457,18 @@ export default function Home() {
             </div>
 
             {activeGuide !== null && (
-              <div className="pointer-events-none absolute bottom-7 left-1/2 z-30 h-[62%] w-[280px] -translate-x-1/2 overflow-hidden rounded-[2rem] border border-white/80 bg-white shadow-2xl sm:bottom-10 sm:w-[360px]">
-                <div
-                  className="absolute inset-0 bg-no-repeat"
-                  style={{
-                    backgroundImage: 'url("/meet-your-guides.png")',
-                    backgroundPosition: `${guidePositions[activeGuide].cropX}% 72%`,
-                    backgroundSize: "430% auto",
-                  }}
-                />
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#063b66]/95 via-[#063b66]/55 to-transparent px-5 pb-5 pt-16 text-white">
-                  <p className="font-[family-name:var(--font-display)] text-xl font-bold">
+              <div
+                className="pointer-events-none absolute bottom-[12%] z-50 hidden w-[240px] -translate-x-1/2 rounded-2xl border border-white/90 bg-[#063b66]/95 px-4 py-3 text-white shadow-xl backdrop-blur-sm lg:block"
+                style={{ left: `${guidePositions[activeGuide].x}%` }}
+                role="status"
+                aria-live="polite"
+              >
+                  <p className="font-[family-name:var(--font-display)] text-base font-bold">
                     {characters[activeGuide].name}
                   </p>
                   <p className="mt-0.5 text-xs text-white/80">
                     {characters[activeGuide].field} / {characters[activeGuide].program}
                   </p>
-                </div>
               </div>
             )}
 
@@ -489,21 +479,20 @@ export default function Home() {
                   type="button"
                   aria-label={`Lihat detail ${guide.name}`}
                   onMouseEnter={() => setActiveGuide(index)}
-                  onMouseLeave={() => setActiveGuide(null)}
+                  onMouseLeave={(event) => {
+                    if (document.activeElement !== event.currentTarget) setActiveGuide(null);
+                  }}
                   onFocus={() => setActiveGuide(index)}
                   onBlur={() => setActiveGuide(null)}
-                  className="group absolute bottom-[5%] h-[58%] w-[9%] -translate-x-1/2 cursor-zoom-in rounded-[45%] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0066ae]"
+                  className="group absolute bottom-[5%] h-[58%] w-[9%] -translate-x-1/2 cursor-pointer rounded-[45%] bg-white/0 transition-colors hover:bg-white/10 focus-visible:bg-white/10 focus-visible:outline-none"
                   style={{ left: `${guidePositions[index].x}%` }}
                 >
-                  <span className="absolute bottom-1 left-1/2 -translate-x-1/2 rounded-full bg-white/90 px-3 py-1 text-xs font-bold text-[#063b66] opacity-0 shadow-sm transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
-                    {guide.name}
-                  </span>
                 </button>
               ))}
             </div>
             <div className="absolute inset-x-4 bottom-4 z-40 flex gap-2 overflow-x-auto pb-1 lg:hidden" aria-label="Pilih guide">
               {characters.map((guide, index) => (
-                <button key={guide.id} type="button" onClick={() => setActiveGuide(activeGuide === index ? null : index)} className="min-h-11 shrink-0 rounded-full border border-white/80 bg-white/90 px-4 text-sm font-bold text-[#063b66] shadow-sm" aria-pressed={activeGuide === index}>{guide.name}</button>
+                <button key={guide.id} type="button" onClick={() => setActiveGuide(activeGuide === index ? null : index)} className={`min-h-11 shrink-0 rounded-full border px-4 text-sm font-bold shadow-sm transition-colors ${activeGuide === index ? "border-[#0066ae] bg-[#0066ae] text-white" : "border-white/80 bg-white/90 text-[#063b66]"}`} aria-pressed={activeGuide === index}>{guide.name}</button>
               ))}
             </div>
           </div>
