@@ -145,7 +145,7 @@ export function ChatWidget() {
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 0.6 }}
         onClick={() => setOpen(!open)}
-        className="chat-launcher fixed bottom-6 right-6 z-50 grid size-14 place-items-center rounded-2xl bg-gradient-to-tr from-[#063b66] to-[#0066ae] text-white shadow-xl shadow-[#00a9d6]/30 transition hover:scale-105 hover:shadow-[#00a9d6]/50"
+        className="chat-launcher fixed bottom-6 right-6 z-50 grid size-14 place-items-center rounded-2xl bg-[#005baa] hover:bg-[#004b8d] text-white shadow-lg transition hover:scale-105"
         aria-label={open ? "Tutup Ask FutureTry" : "Buka Ask FutureTry"}
       >
         {open ? <X size={22} /> : <MessageCircleQuestion size={24} />}
@@ -164,9 +164,9 @@ export function ChatWidget() {
             aria-label="Ask FutureTry"
           >
             {/* Game RPG Header */}
-            <div className="flex shrink-0 items-center justify-between bg-gradient-to-r from-[#063b66] via-[#005baa] to-[#008caf] px-4 py-3 text-white shadow-md">
+            <div className="flex shrink-0 items-center justify-between bg-[#063b66] px-4 py-3 text-white shadow-sm">
               <div className="flex items-center gap-2.5">
-                <div className="relative size-10 shrink-0 overflow-hidden rounded-full border-2 border-cyan-300 bg-white/10 shadow-inner">
+                <div className="relative size-10 shrink-0 overflow-hidden rounded-full border-2 border-sky-300 bg-white/10 shadow-inner">
                   <img
                     src="/character-ppti.png"
                     alt="Guide Companion"
@@ -282,8 +282,8 @@ export function ChatWidget() {
               <button
                 type="submit"
                 disabled={busy || !input.trim()}
-                aria-label="Kirim"
-                className="grid size-10 shrink-0 place-items-center rounded-xl bg-gradient-to-r from-[#0066ae] to-[#00a9d6] text-white shadow-md shadow-sky-500/20 disabled:opacity-40 transition hover:scale-105"
+                className="inline-flex size-10 items-center justify-center rounded-xl bg-[#005baa] hover:bg-[#004b8d] text-white shadow-sm transition disabled:opacity-40"
+                aria-label="Kirim pertanyaan"
               >
                 <Send size={15} />
               </button>

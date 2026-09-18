@@ -349,7 +349,7 @@ export function FutureWorldMap() {
   };
 
   return (
-    <main className="min-h-[calc(100vh-68px)] bg-gradient-to-b from-[#e8f3fb] via-[#f3f7fa] to-[#e4eef6] px-4 py-6 sm:px-8 sm:py-10">
+    <main className="min-h-[calc(100vh-68px)] bg-[#f8fafc] px-4 py-6 sm:px-8 sm:py-8">
       <div className="mx-auto max-w-7xl">
         {/* Game RPG Header */}
         <header className="mb-6 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
@@ -388,9 +388,9 @@ export function FutureWorldMap() {
               </span>
             </div>
 
-            <div className="mt-1.5 h-2.5 overflow-hidden rounded-full bg-slate-100 p-0.5 border border-slate-200/60">
+            <div className="mt-1.5 h-2.5 overflow-hidden rounded-full bg-slate-100 p-0.5 border border-slate-200">
               <div
-                className="h-full rounded-full bg-gradient-to-r from-[#00a9d6] via-[#0066ae] to-emerald-500 transition-all duration-700 shadow-sm"
+                className="h-full rounded-full bg-[#005baa] transition-all duration-500"
                 style={{ width: `${Math.max(summary.percent, 8)}%` }}
               />
             </div>
@@ -520,7 +520,7 @@ export function FutureWorldMap() {
                 ) : (
                   <Link
                     href={`/mission/${selected.missionId}`}
-                    className="mt-4 group inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#0066ae] to-[#00a9d6] px-5 py-3 text-sm font-black uppercase tracking-wider text-white shadow-lg shadow-sky-500/25 transition-all hover:scale-[1.02] hover:shadow-sky-500/40"
+                    className="mt-4 group inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#005baa] hover:bg-[#004b8d] px-5 py-3 text-sm font-bold uppercase tracking-wider text-white shadow-sm transition active:scale-[0.99]"
                   >
                     <span>{selectedStatus === "completed" ? "Buka Ulang Misi" : "Mulai Quest Sekarang"}</span>
                     <ChevronRight className="size-4 transition-transform group-hover:translate-x-1" />
