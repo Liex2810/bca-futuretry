@@ -220,7 +220,7 @@ function Ask() {
         <Sparkles size={16} />
         <div>
           <p className="font-bold text-sm leading-tight">Ask FutureTry</p>
-          <p className="text-[11px] text-white/70">Bertanya soal PPBP/PPTI — tanpa prediksi, tanpa skor.</p>
+          <p className="text-[11px] text-white/70">Bertanya soal PPBP/PPTI.</p>
         </div>
       </div>
 

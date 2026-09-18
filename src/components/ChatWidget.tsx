@@ -67,7 +67,7 @@ export function ChatWidget() {
       <motion.button
         initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.6 }}
         onClick={() => setOpen(!open)}
-        className="chat-launcher fixed z-50 grid place-items-center w-14 h-14 rounded-2xl bg-bcablue text-white shadow-xl shadow-cyan/30 hover:scale-105 transition"
+        className="chat-launcher fixed bottom-6 right-6 z-50 grid place-items-center w-14 h-14 rounded-2xl bg-bcablue text-white shadow-xl shadow-cyan/30 hover:scale-105 transition"
         aria-label={open ? "Tutup Ask FutureTry" : "Buka Ask FutureTry"}
       >
         {open ? <X size={22} /> : <MessageCircleQuestion size={24} />}
@@ -78,14 +78,14 @@ export function ChatWidget() {
           <motion.aside
             initial={{ opacity: 0, y: 24, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 24, scale: 0.96 }}
             transition={{ duration: 0.2 }}
-            className="chat-panel fixed z-50 rounded-2xl bg-white border border-navy/10 shadow-2xl shadow-navy/20 flex flex-col overflow-hidden"
+            className="chat-panel fixed bottom-24 right-6 z-50 w-96 max-w-[calc(100vw-3rem)] h-[520px] max-h-[calc(100vh-8rem)] rounded-2xl bg-white border border-navy/10 shadow-2xl shadow-navy/20 flex flex-col overflow-hidden"
             role="dialog" aria-label="Ask FutureTry"
           >
             <div className="shrink-0 px-4 py-3 bg-navy text-white flex items-center gap-2">
               <Sparkles size={16} className="text-lightcyan" />
               <div>
                 <p className="font-bold text-sm leading-tight">Ask FutureTry</p>
-                <p className="text-[11px] text-lightcyan/90">Bertanya soal PPBP/PPTI — tanpa prediksi, tanpa skor.</p>
+                <p className="text-[11px] text-lightcyan/90">Bertanya soal PPBP/PPTI.</p>
               </div>
             </div>
 
