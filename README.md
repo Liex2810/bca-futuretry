@@ -1,20 +1,20 @@
-# BCA FutureTry — Try before you choose
+# FutureTry — Try before you choose
 
-Website konsep interaktif untuk **BCA FutureTry** (brief YNFEST): siswa SMA/SMK bisa
-* mencoba peran nyata di dunia kerja BCA lewat misi singkat ±5 menit,
+Website konsep interaktif untuk ** FutureTry** (brief YNFEST): siswa SMA/SMK bisa
+* mencoba peran nyata di dunia kerja  lewat misi singkat ±5 menit,
 * merefleksikan pengalamannya (tanpa skor / tanpa jawaban benar-salah),
 * membuka **Future Card** & menjelajah **FuturePath** (Learn → Ask → Check → Connect → Act).
 
-> ⚠️ **Ini proyek konsep / demo.** Bukan situs resmi BCA. Semua angka, syarat,
+> ⚠️ **Ini proyek konsep / demo.** Bukan situs resmi . Semua angka, syarat,
 > dan kutipan di `src/lib/content/` adalah placeholder yang WAJIB diverifikasi ke
-> kanal resmi BCA sebelum dipublikasikan. Cerita awardee di `stories.ts` fiktif.
+> kanal resmi  sebelum dipublikasikan. Cerita awardee di `stories.ts` fiktif.
 
 ## Stack
 
 | Layer | Teknologi |
 |---|---|
 | Framework | Next.js 16 (App Router) + TypeScript |
-| Styling | Tailwind CSS v4 (design tokens BCA di `globals.css`) |
+| Styling | Tailwind CSS v4 (design tokens  di `globals.css`) |
 | Animasi | Framer Motion |
 | Ikon | lucide-react |
 | Database (opsional) | PostgreSQL + Prisma 6 |
