@@ -17,40 +17,39 @@ vi.stubGlobal("window", {
 describe("checkpoint unlocking", () => {
   it("misi pertama tiap distrik available sejak awal", () => {
     const avail = availableMissions(emptyProgress());
-    expect(avail.has("m-anomaly")).toBe(true);
-    expect(avail.has("m-customer")).toBe(true);
+    expect(avail.has("m-dashboard")).toBe(true);
+    expect(avail.has("m-bizcase")).toBe(true);
   });
 
   it("misi kedua & ketiga LOCKED di awal", () => {
     const avail = availableMissions(emptyProgress());
-    expect(avail.has("m-dashboard")).toBe(false);
+    expect(avail.has("m-anomaly")).toBe(false);
     expect(avail.has("m-uxfix")).toBe(false);
-    expect(avail.has("m-bizcase")).toBe(false);
     expect(avail.has("m-invest")).toBe(false);
   });
 
   it("menyelesaikan misi 1 membuka misi 2 (distrik sama)", () => {
-    let p = completeMission(emptyProgress(), "m-anomaly");
+    let p = completeMission(emptyProgress(), "m-dashboard");
     const avail = availableMissions(p);
-    expect(avail.has("m-dashboard")).toBe(true);
+    expect(avail.has("m-anomaly")).toBe(true);
     expect(avail.has("m-uxfix")).toBe(false); // masih terkunci
   });
 
   it("menyelesaikan misi 2 membuka misi 3", () => {
-    let p = completeMission(emptyProgress(), "m-anomaly");
-    p = completeMission(p, "m-dashboard");
+    let p = completeMission(emptyProgress(), "m-dashboard");
+    p = completeMission(p, "m-anomaly");
     expect(availableMissions(p).has("m-uxfix")).toBe(true);
   });
 
   it("cabang paralel: menyelesaikan PPTI tidak memblokir PPBP", () => {
-    let p = completeMission(emptyProgress(), "m-anomaly");
-    expect(availableMissions(p).has("m-customer")).toBe(true); // PPBP tetap terbuka
+    let p = completeMission(emptyProgress(), "m-dashboard");
+    expect(availableMissions(p).has("m-bizcase")).toBe(true); // PPBP tetap terbuka
   });
 
   it("checkpoint state mengikuti progress", () => {
-    const p = completeMission(emptyProgress(), "m-anomaly");
-    expect(checkpointState("cp-anomaly", p)).toBe("completed");
-    expect(checkpointState("cp-data", p)).toBe("available");
+    const p = completeMission(emptyProgress(), "m-dashboard");
+    expect(checkpointState("cp-data", p)).toBe("completed");
+    expect(checkpointState("cp-anomaly", p)).toBe("available");
     expect(checkpointState("cp-ux", p)).toBe("locked");
   });
 
@@ -108,9 +107,9 @@ describe("progress summary", () => {
   it("persentase benar", () => {
     let p = emptyProgress();
     expect(progressSummary(p).percent).toBe(0);
-    p = completeMission(p, "m-anomaly");
+    p = completeMission(p, "m-dashboard");
     expect(progressSummary(p).done).toBe(1);
-    expect(progressSummary(p).total).toBe(6);
-    expect(progressSummary(p).percent).toBe(17);
+    expect(progressSummary(p).total).toBe(5);
+    expect(progressSummary(p).percent).toBe(20);
   });
 });
