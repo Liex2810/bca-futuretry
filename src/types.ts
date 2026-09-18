@@ -70,6 +70,8 @@ export interface Checkpoint {
 export interface Story {
   id: string;
   name: string;
+  profileImage: string;
+  coverImage: string;
   program: Program;
   role: string;
   title: string;
@@ -78,6 +80,7 @@ export interface Story {
   expectationVsReality: { expectation: string; reality: string };
   hardestPart: string;
   favoriteMoment: string;
+  tools: string[];
 }
 
 // ── FuturePath ──────────────────────────────────────────────────

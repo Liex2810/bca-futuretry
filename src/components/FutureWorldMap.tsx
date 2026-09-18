@@ -21,10 +21,24 @@ const locations: MapLocation[] = [
   { id: "cp-invest", name: "Investment Desk", area: "Wisma Asia, Jakarta Barat", coordinates: [-6.1891943, 106.7977565], displayCoordinates: [-6.1891943, 106.7977565], missionId: "m-invest", program: "PPBP" },
 ];
 
+function markerArtwork(location: MapLocation) {
+  if (location.isStart) return '<img src="/bca-logo.svg" alt="" />';
+
+  const icons: Record<string, string> = {
+    "cp-data": '<svg viewBox="0 0 32 32" aria-hidden="true"><ellipse cx="16" cy="8" rx="9" ry="4"/><path d="M7 8v8c0 2.2 4 4 9 4s9-1.8 9-4V8M7 16v8c0 2.2 4 4 9 4s9-1.8 9-4v-8"/></svg>',
+    "cp-anomaly": '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 13h20M10 13l3-7h6l3 7"/><path d="M9 18c0 5 3 9 7 9s7-4 7-9"/><circle cx="13" cy="19" r="1.5"/><circle cx="19" cy="19" r="1.5"/><path d="M14 24h4"/></svg>',
+    "cp-ux": '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="m20 5 7 7-12 12-7 2 2-7L20 5Z"/><path d="m17 8 7 7M8 26c-2 0-3-1-3-3 0-1.8-1-2.8-2-3"/></svg>',
+    "cp-strategy": '<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="15" cy="17" r="10"/><circle cx="15" cy="17" r="5"/><circle cx="15" cy="17" r="1.5"/><path d="m18 14 9-9M21 5h6v6"/></svg>',
+    "cp-invest": '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 27V7M5 27h23"/><path d="m8 22 6-7 5 4 8-10"/><path d="M21 9h6v6"/></svg>',
+  };
+
+  return icons[location.id] ?? icons["cp-strategy"];
+}
+
 function markerHtml(location: MapLocation, index: number, status: MarkerStatus) {
-  const image = location.isStart ? "/main-logo-white.svg" : location.program === "PPTI" ? "/character-ppti.png" : "/character-ppbp.png";
   const badge = status === "locked" ? "•" : status === "completed" ? "✓" : String(index);
-  return `<div class="map-mission-marker is-${status}${location.isStart ? " is-start" : ""}" aria-hidden="true"><span class="map-marker-pulse"></span><span class="map-marker-art"><img src="${image}" alt="" /></span><span class="map-marker-badge">${badge}</span></div>`;
+  const badgeHtml = location.isStart ? "" : `<span class="map-marker-badge">${badge}</span>`;
+  return `<div class="map-mission-marker is-${status}${location.isStart ? " is-start" : ""} is-${location.program?.toLowerCase() ?? "bli"}" aria-hidden="true"><span class="map-marker-pulse"></span><span class="map-marker-art">${markerArtwork(location)}</span>${badgeHtml}</div>`;
 }
 
 export function FutureWorldMap() {
@@ -91,7 +105,7 @@ export function FutureWorldMap() {
           </aside>
         </section>
       </div>
-      <style jsx global>{`.leaflet-control-zoom a{width:44px!important;height:44px!important;line-height:44px!important;font-size:22px!important}.map-mission-marker{position:relative;width:56px;height:56px;cursor:pointer}.map-marker-art{position:absolute;left:4px;top:0;display:grid;width:48px;height:48px;place-items:center;overflow:hidden;border:3px solid white;border-radius:16px;background:#e8f7ff;box-shadow:0 8px 20px rgba(15,48,77,.25)}.map-marker-art img{width:44px;height:44px;object-fit:contain;object-position:center top;transform:translateY(4px) scale(1.15)}.map-marker-badge{position:absolute;right:0;top:-5px;z-index:2;display:grid;width:24px;height:24px;place-items:center;border:2px solid white;border-radius:99px;background:#0066ae;color:white;font:700 11px Arial}.map-marker-pulse{position:absolute;left:7px;top:2px;width:50px;height:50px;border:2px solid #00a9d6;border-radius:20px;animation:map-marker-pulse 1.8s ease-out infinite}.is-completed .map-marker-badge{background:#16815d}.is-locked .map-marker-art{filter:grayscale(1);opacity:.68}.is-locked .map-marker-badge{background:#64748b}.is-locked .map-marker-pulse,.is-completed .map-marker-pulse{display:none}.is-start .map-marker-art{border-radius:99px;background:#0066ae}.is-start .map-marker-art img{width:40px;height:40px;transform:none}@keyframes map-marker-pulse{0%{opacity:.75;transform:scale(.9)}100%{opacity:0;transform:scale(1.4)}}@media(prefers-reduced-motion:reduce){.map-marker-pulse{animation:none}}`}</style>
+      <style jsx global>{`.leaflet-control-zoom a{width:44px!important;height:44px!important;line-height:44px!important;font-size:22px!important}.map-mission-marker{position:relative;width:56px;height:56px;cursor:pointer}.map-marker-art{position:absolute;left:4px;top:0;display:grid;width:48px;height:48px;place-items:center;overflow:hidden;border:3px solid white;border-radius:16px;background:#e8f7ff;color:#0066ae;box-shadow:0 8px 20px rgba(15,48,77,.25)}.map-marker-art svg{width:30px;height:30px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.is-ppti .map-marker-art{background:#e5faff;color:#008caf}.is-ppbp .map-marker-art{background:#e8f2fb;color:#00528c}.map-marker-badge{position:absolute;right:0;top:-5px;z-index:2;display:grid;width:24px;height:24px;place-items:center;border:2px solid white;border-radius:99px;background:#0066ae;color:white;font:700 11px Arial}.map-marker-pulse{position:absolute;left:7px;top:2px;width:50px;height:50px;border:2px solid #00a9d6;border-radius:20px;animation:map-marker-pulse 1.8s ease-out infinite}.is-completed .map-marker-badge{background:#16815d}.is-locked .map-marker-art{filter:grayscale(1);opacity:.68}.is-locked .map-marker-badge{background:#64748b}.is-locked .map-marker-pulse,.is-completed .map-marker-pulse{display:none}.is-start .map-marker-art{border-radius:99px;background:white}.is-start .map-marker-art img{width:38px;height:auto;object-fit:contain}@keyframes map-marker-pulse{0%{opacity:.75;transform:scale(.9)}100%{opacity:0;transform:scale(1.4)}}@media(prefers-reduced-motion:reduce){.map-marker-pulse{animation:none}}`}</style>
     </main>
   );
 }
