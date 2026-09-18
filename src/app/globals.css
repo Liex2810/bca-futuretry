@@ -54,7 +54,7 @@ button, input, select, textarea {
 .transition-colors,
 .transition-opacity,
 .transition-transform {
-  transition-duration: 800ms !important;
+  transition-duration: 300ms !important;
   transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
 

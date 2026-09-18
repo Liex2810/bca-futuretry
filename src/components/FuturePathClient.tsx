@@ -289,7 +289,7 @@ function Check() {
             </div>
             <h2 className="font-[family-name:var(--font-display)] text-3xl font-bold leading-tight text-[#005cab]">Program Pendidikan<br />Teknik Informatika</h2>
             <p className="mt-3 text-sm text-slate-500">Beasiswa BCA untuk lulusan SMA / SMK</p>
-            <div className="mt-6 grid grid-cols-3 gap-4">
+            <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
               {[
                 { label: "Experience Level", value: "Fresh Graduate" },
                 { label: "Job Pipeline", value: "Beasiswa" },
@@ -304,7 +304,7 @@ function Check() {
           </div>
 
           {/* Description */}
-          <div className="rounded-2xl border border-slate-200 bg-white p-7 shadow-sm">
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-7 shadow-sm">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-xl bg-[#0066ae]/10 flex items-center justify-center">
                 <BookOpen size={18} className="text-[#0066ae]" />
@@ -408,7 +408,7 @@ function Check() {
             </div>
             <h2 className="font-[family-name:var(--font-display)] text-3xl font-bold leading-tight text-[#005cab]">Program Pendidikan<br />Bisnis dan Perbankan</h2>
             <p className="mt-3 text-sm text-slate-500">Beasiswa BCA untuk lulusan SMA / SMK</p>
-            <div className="mt-6 grid grid-cols-3 gap-4">
+            <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
               {[
                 { label: "Experience Level", value: "Fresh Graduate" },
                 { label: "Job Pipeline", value: "Beasiswa" },
@@ -422,7 +422,7 @@ function Check() {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-white p-7 shadow-sm">
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-7 shadow-sm">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-xl bg-[#0066ae]/10 flex items-center justify-center">
                 <BookOpen size={18} className="text-[#0066ae]" />

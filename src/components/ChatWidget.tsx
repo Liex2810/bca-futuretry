@@ -78,7 +78,7 @@ export function ChatWidget() {
           <motion.aside
             initial={{ opacity: 0, y: 24, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 24, scale: 0.96 }}
             transition={{ duration: 0.2 }}
-            className="chat-panel fixed bottom-24 right-6 z-50 w-96 max-w-[calc(100vw-3rem)] h-[520px] max-h-[calc(100vh-8rem)] rounded-2xl bg-white border border-navy/10 shadow-2xl shadow-navy/20 flex flex-col overflow-hidden"
+            className="chat-panel fixed bottom-20 right-4 sm:bottom-24 sm:right-6 z-50 w-[calc(100vw-2rem)] max-w-96 h-[50vh] max-h-[520px] min-h-[280px] rounded-2xl bg-white border border-navy/10 shadow-2xl shadow-navy/20 flex flex-col overflow-hidden"
             role="dialog" aria-label="Ask FutureTry"
           >
             <div className="shrink-0 px-4 py-3 bg-navy text-white flex items-center gap-2">

@@ -145,7 +145,7 @@ function HowItWorks() {
         />
 
         {/* Nodes */}
-        <div className="relative grid grid-cols-5 gap-2 sm:gap-4">
+        <div className="relative grid grid-cols-3 gap-2 sm:grid-cols-5 sm:gap-4">
           {journeySteps.map((s) => (
             <div key={s.title} className="group relative flex flex-col items-center text-center">
               {/* Node */}
@@ -178,7 +178,7 @@ function HowItWorks() {
       <div className="relative mt-12 text-center">
         <Link
           href="/world"
-          className="-skew-x-12 inline-flex items-center px-8 py-2.5 border border-[#0066ae] bg-white/60 backdrop-blur-sm text-[#0066ae] hover:bg-[#0066ae] hover:text-white transition-colors duration-200"
+          className="-skew-x-12 inline-flex min-h-11 items-center px-8 py-2.5 border border-[#0066ae] bg-white/60 backdrop-blur-sm text-[#0066ae] hover:bg-[#0066ae] hover:text-white transition-colors duration-200"
         >
           <span className="skew-x-12 inline-flex items-center gap-2 font-[family-name:var(--font-display)] text-sm sm:text-base font-extrabold tracking-[0.25em] uppercase">
             Mulai Jelajahi
@@ -310,7 +310,7 @@ export default function Home() {
           <img
             src="/main-logo.svg"
             alt="BCA FutureTry"
-            className="w-full max-w-[806px] object-contain drop-shadow-lg px-8"
+            className="w-full max-w-[806px] object-contain drop-shadow-lg px-4 sm:px-8"
           />
           <Link
             href="/world"
@@ -512,7 +512,7 @@ export default function Home() {
 
         {/* Meet the guides */}
         <div>
-          <div className="relative left-1/2 h-[620px] w-screen -translate-x-1/2 overflow-hidden bg-[#f4f7fb] sm:aspect-[16/10] sm:h-auto">
+          <div className="relative left-1/2 min-h-[480px] h-[80vh] max-h-[620px] w-screen -translate-x-1/2 overflow-hidden bg-[#f4f7fb] sm:aspect-[16/10] sm:h-auto sm:min-h-0">
             <img
               src="/meet-your-guides.png"
               alt="Lima guide FutureTry di depan lingkungan belajar"

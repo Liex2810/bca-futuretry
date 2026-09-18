@@ -135,7 +135,7 @@ export function MissionPlayer({ mission }: { mission: Mission }) {
         {phase === "intro" && (
           <motion.div key="intro" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }}>
             <p className="font-mono text-xs tracking-widest text-cyan mb-2">MISSION BRIEF</p>
-            <h1 className="font-[family-name:var(--font-display)] text-3xl font-extrabold text-navy">{mission.title}</h1>
+            <h1 className="font-[family-name:var(--font-display)] text-2xl sm:text-3xl font-extrabold text-navy">{mission.title}</h1>
             <p className="inline-flex items-center gap-1.5 text-xs text-navy/55 mt-2"><Clock size={13} /> {mission.duration} · tanpa jawaban benar/salah</p>
             <div className="mt-6 rounded-2xl border border-navy/10 bg-white p-6 space-y-4">
               <p className="text-navy/80 leading-relaxed whitespace-pre-line">{mission.intro}</p>
