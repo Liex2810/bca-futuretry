@@ -75,13 +75,13 @@ export function StoriesExplorer({ stories }: { stories: Story[] }) {
         <p className="mt-2 text-sm text-slate-500">Coba program atau divisi lain untuk menemukan cerita.</p>
         <button onClick={() => { setProg("ALL"); setRole("ALL"); }} className="mt-4 min-h-11 min-w-11 rounded-full bg-[#0066ae] px-5 font-bold text-white hover:bg-[#063b66]">Reset filter</button>
       </section>}
-      <div className="mt-6 grid grid-cols-1 gap-4">
+      <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
         {visible.map((s) => {
           const isOpen = open === s.id;
           return (
             <motion.article key={s.id} layout="position"
               transition={{ layout: { duration: 0.34, ease: [0.25, 1, 0.5, 1] } }}
-              className={`overflow-hidden rounded-2xl border bg-white transition ${isOpen ? "border-[#0066ae] shadow-lg shadow-[#0066ae]/10" : "border-slate-200 hover:border-[#0066ae]/50 hover:shadow-md"}`}>
+              className={`overflow-hidden rounded-2xl border bg-white transition ${isOpen ? "border-[#0066ae] shadow-lg shadow-[#0066ae]/10 sm:col-span-2" : "border-slate-200 hover:border-[#0066ae]/50 hover:shadow-md"}`}>
               <button onClick={() => setOpen(isOpen ? null : s.id)} className="w-full text-left" aria-expanded={isOpen}>
                 {isOpen ? (
                   <div>
