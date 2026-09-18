@@ -577,16 +577,16 @@ function Act() {
   const done = progress.completedMissions.length;
   const total = missions.length;
   return (
-    <div className="space-y-3 max-w-lg flex flex-col items-end">
-      <Link href="/world" className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white p-5 hover:border-[#0066ae] transition group">
+    <div className="space-y-3 w-full items-stretch">
+      <Link href="/world" className="flex w-full items-center justify-between rounded-2xl border border-slate-200 bg-white p-5 hover:border-[#0066ae] transition group">
         <div><p className="font-bold text-[#005cab]">Explore more</p><p className="text-xs text-slate-450 mt-0.5">{done}/{total} misi selesai — sisa {total - done} menunggumu.</p></div>
         <ArrowRight size={18} className="text-navy/30 group-hover:text-[#0066ae] transition" />
       </Link>
-      <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white p-5">
+      <div className="flex w-full items-center justify-between rounded-2xl border border-slate-200 bg-white p-5">
         <div><p className="font-bold text-navy">Save my journey</p><p className="text-xs text-navy/55 mt-0.5">Progresmu otomatis tersimpan di perangkat ini — tanpa akun.</p></div>
         <CheckCircle2 size={18} className="text-green-500" />
       </div>
-      <a href="https://www.bca.co.id" target="_blank" rel="noopener noreferrer" className="flex items-center justify-between rounded-2xl bg-navy p-5 text-white hover:shadow-lg hover:shadow-bcablue/25 transition group">
+      <a href="https://www.bca.co.id" target="_blank" rel="noopener noreferrer" className="flex w-full items-center justify-between rounded-2xl bg-navy p-5 text-white hover:shadow-lg hover:shadow-bcablue/25 transition group">
         <div><p className="font-bold">Apply officially →</p><p className="text-xs text-white/70 mt-0.5">Pendaftaran resmi hanya melalui kanal BCA.</p></div>
         <ArrowRight size={18} className="group-hover:translate-x-1 transition" />
       </a>
