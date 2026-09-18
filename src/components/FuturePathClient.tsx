@@ -577,7 +577,7 @@ function Act() {
   const done = progress.completedMissions.length;
   const total = missions.length;
   return (
-    <div className="space-y-3 max-w-lg">
+    <div className="space-y-3 max-w-lg flex flex-col items-end">
       <Link href="/world" className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white p-5 hover:border-[#0066ae] transition group">
         <div><p className="font-bold text-[#005cab]">Explore more</p><p className="text-xs text-slate-450 mt-0.5">{done}/{total} misi selesai — sisa {total - done} menunggumu.</p></div>
         <ArrowRight size={18} className="text-navy/30 group-hover:text-[#0066ae] transition" />
