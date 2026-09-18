@@ -180,3 +180,134 @@ button, input, select, textarea {
   .pulse-ring, .float-slow, .guide-character-reveal { animation: none; }
   *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
 }
+
+/* ════════════════════════════════════════════════════════════════
+   Leaflet Mission Map Markers
+   ════════════════════════════════════════════════════════════════ */
+.leaflet-control-zoom a {
+  width: 36px !important;
+  height: 36px !important;
+  line-height: 36px !important;
+  font-size: 16px !important;
+  color: #063b66 !important;
+}
+
+.map-mission-marker {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  cursor: pointer;
+}
+
+.map-marker-art {
+  position: absolute;
+  left: 2px;
+  top: 0;
+  display: grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  overflow: hidden;
+  border: 3px solid #ffffff;
+  border-radius: 16px;
+  background: #e8f7ff;
+  color: #0066ae;
+  box-shadow: 0 4px 14px rgba(15, 48, 77, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.map-mission-marker:hover .map-marker-art {
+  transform: scale(1.08);
+  box-shadow: 0 8px 20px rgba(15, 48, 77, 0.3);
+}
+
+.map-marker-art svg {
+  width: 26px;
+  height: 26px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.is-ppti .map-marker-art {
+  background: #e5faff;
+  color: #008caf;
+}
+
+.is-ppbp .map-marker-art {
+  background: #e8f2fb;
+  color: #00528c;
+}
+
+.map-marker-badge {
+  position: absolute;
+  right: -2px;
+  top: -4px;
+  z-index: 2;
+  display: grid;
+  width: 22px;
+  height: 22px;
+  place-items: center;
+  border: 2px solid #ffffff;
+  border-radius: 9999px;
+  background: #0066ae;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+.map-marker-pulse {
+  position: absolute;
+  left: 2px;
+  top: 0;
+  width: 48px;
+  height: 48px;
+  border: 2px solid #00a9d6;
+  border-radius: 16px;
+  animation: map-marker-pulse 2s ease-out infinite;
+  pointer-events: none;
+}
+
+.is-completed .map-marker-badge {
+  background: #10b981;
+}
+
+.is-locked .map-marker-art {
+  filter: grayscale(1);
+  opacity: 0.65;
+}
+
+.is-locked .map-marker-badge {
+  background: #64748b;
+}
+
+.is-locked .map-marker-pulse,
+.is-completed .map-marker-pulse {
+  display: none;
+}
+
+.is-start .map-marker-art {
+  border-radius: 9999px;
+  background: #ffffff;
+  padding: 6px;
+}
+
+.is-start .map-marker-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+@keyframes map-marker-pulse {
+  0% {
+    opacity: 0.8;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.35);
+  }
+}
