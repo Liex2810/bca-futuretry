@@ -530,7 +530,7 @@ function Connect() {
       <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
         <CheckCircle2 size={36} className="mx-auto text-cyan" />
         <h3 className="font-[family-name:var(--font-display)] text-xl font-extrabold text-[#005cab] mt-3">Pesan Terkirim</h3>
-        <p className="text-sm text-slate-500 mt-2 max-w-sm mx-auto">Pesanmu telah dikirim ke awardee. Mereka akan segera membalas ceritanya.</p>
+        <p className="text-sm text-slate-500 mt-2 max-w-sm mx-auto">Pesanmu telah dikirim. Awardee akan segera membalas ceritanya.</p>
         <button onClick={() => setSent(false)} className="min-h-11 mt-4 px-5 py-2 rounded-xl border border-[#0066ae] text-[#0066ae] text-sm font-bold hover:bg-[#0066ae] hover:text-white transition">Kirim pesan lain</button>
       </div>
     );
@@ -543,34 +543,50 @@ function Connect() {
             <UserRound size={18} className="text-cyan" />
           </div>
           <div>
+            <p className="font-[family-name:var(--font-display)] text-xs font-bold tracking-[0.2em] text-[#0066ae]">CERITA AWARDEE</p>
             <h3 className="font-[family-name:var(--font-display)] text-xl font-bold text-[#005cab]">Connect with Awardee</h3>
             <p className="text-xs text-slate-400">Dengar langsung dari yang menjalani</p>
           </div>
         </div>
-        <p className="text-sm text-slate-600 mt-3">Kirim pesan kepada alumni yang sudah menjalani program ini. Mereka akan berbagi pengalaman langsung.</p>
+        <p className="text-sm text-slate-600 mt-3">Dapatkan insight langsung dari alumni yang sudah menjalani program ini.</p>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2">
-        {awardees.map((a: Story) => (
-          <div key={a.id} className="rounded-2xl border border-slate-200 bg-white p-5 hover:border-[#0066ae]/30 transition">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-[#f4f7fb] overflow-hidden flex items-center justify-center">
-                <span className="font-bold text-[#0066ae] text-lg">{a.name[0]}</span>
+        {awardees.map((a) => (
+          <div key={a.id} className="overflow-hidden rounded-2xl border border-slate-200 bg-white hover:border-[#0066ae]/50 hover:shadow-md transition">
+            <Link href={`/stories/${a.id}`} className="w-full text-left">
+              <div className="p-5">
+                <div className="flex items-center gap-4">
+                  <div className="h-20 w-20 shrink-0 rounded-full border-2 border-white bg-[#f4f7fb] overflow-hidden flex items-center justify-center shadow-md">
+                    <span className="font-bold text-[#0066ae] text-xl">{a.name[0]}</span>
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="mb-1 flex items-center gap-2">
+                      <p className="font-[family-name:var(--font-display)] text-lg font-semibold text-[#063b66]">{a.name}</p>
+                      <span className="rounded-full bg-[#f0f7fd] px-2 py-0.5 text-[10px] font-bold text-[#0066ae]">{a.program}</span>
+                    </div>
+                    <p className="text-xs font-semibold text-[#063b66]/75">{a.role}</p>
+                    <p className="mt-1 text-xs text-slate-400">Awardee</p>
+                  </div>
+                </div>
+                <p className="mt-4 font-[family-name:var(--font-display)] font-semibold text-[#063b66]">{a.title}</p>
+                <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-slate-600">{a.excerpt}</p>
+                <span className="mt-4 inline-flex text-xs font-bold text-[#0066ae]">Lihat profil &amp; cerita →</span>
               </div>
-              <div>
-                <p className="font-bold text-sm text-[#005cab]">{a.name}</p>
-                <p className="text-xs text-slate-400">{a.program} · {a.role}</p>
-              </div>
-            </div>
-            <p className="text-xs text-slate-500 mt-3 leading-relaxed italic">"{a.excerpt.slice(0, 80)}..."</p>
+            </Link>
           </div>
         ))}
       </div>
 
+      <Link href="/stories" className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white p-5 hover:border-[#0066ae] transition group">
+        <div><p className="font-bold text-[#005cab]">Lihat semua Cerita Awardee</p><p className="text-xs text-slate-450 mt-0.5">Cerita lengkap dari para alumni PPBP dan PPTI.</p></div>
+        <ArrowRight size={18} className="text-navy/30 group-hover:text-[#0066ae] group-hover:translate-x-0.5 transition" />
+      </Link>
+
       <form onSubmit={(e) => { e.preventDefault(); setSent(true); }} className="rounded-2xl border border-slate-200 bg-white p-7 shadow-sm space-y-4">
         <div>
-          <label className="block text-sm font-bold text-[#005cab] mb-2" htmlFor="q">Pesanmu</label>
-          <textarea id="q" required value={q} onChange={(e) => setQ(e.target.value)} rows={4} maxLength={800}
+          <label className="block text-sm font-bold text-[#005cab] mb-2" htmlFor="q">Kirim pesan</label>
+          <textarea id="q" required value={q} onChange={(e) => setQ(e.target.value)} rows={3} maxLength={800}
             placeholder="Tulis apa yang ingin kamu tanyakan..."
             className="w-full px-4 py-3 rounded-xl bg-[#f4f7fb] border border-slate-200 text-sm focus:outline-none focus:border-[#0066ae] resize-none" />
         </div>
