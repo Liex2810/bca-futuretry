@@ -517,7 +517,7 @@ export default function Home() {
               src="/meet-your-guides.png"
               alt="Lima guide FutureTry di depan lingkungan belajar"
               loading="lazy"
-              className={`absolute inset-0 h-full w-full object-cover object-center transition-all duration-500 sm:inset-x-0 sm:bottom-0 sm:top-auto sm:h-auto sm:object-contain ${
+              className={`absolute inset-0 h-full w-full object-contain object-bottom transition-all duration-500 ${
                 activeGuide === null
                   ? "scale-100 opacity-100 saturate-100"
                   : "scale-[1.02] opacity-20 blur-[3px] saturate-50"
@@ -532,10 +532,10 @@ export default function Home() {
             />
 
             <div
-              className="absolute inset-x-0 top-0 z-50 h-[42%] px-4 pt-8 sm:px-6 sm:pt-12"
+              className="absolute inset-x-0 top-0 z-50 h-[32%] px-4 pt-6 sm:h-[42%] sm:px-6 sm:pt-12"
               style={{
                 background:
-                  "linear-gradient(to bottom, #f4f7fb 0%, rgba(244,247,251,0.98) 24%, rgba(244,247,251,0.82) 48%, rgba(244,247,251,0.42) 72%, rgba(244,247,251,0) 100%)",
+                  "linear-gradient(to bottom, #f4f7fb 0%, rgba(244,247,251,0.98) 30%, rgba(244,247,251,0.6) 60%, rgba(244,247,251,0) 100%)",
               }}
             >
               <div className="mx-auto max-w-7xl text-center">
