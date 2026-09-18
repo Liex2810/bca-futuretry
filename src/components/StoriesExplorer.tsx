@@ -19,37 +19,37 @@ export function StoriesExplorer({ stories }: { stories: Story[] }) {
   );
 
   return (
-    <div className="mx-auto max-w-5xl px-4 pb-10 pt-[108px] lg:pt-10">
-      <div className="relative rounded-2xl overflow-hidden min-h-[360px] sm:min-h-[410px]">
+    <div className="pb-10">
+      <section className="relative isolate -mt-[68px] pt-[68px] min-h-[428px] overflow-hidden sm:min-h-[478px]">
         <Image
           src="/stories-bg.png"
           alt="Cerita Awardee"
           fill
           priority
           sizes="100vw"
-          className="object-cover object-center opacity-90 saturate-100"
+          className="-z-20 object-cover object-center opacity-90 saturate-100"
         />
         <div
-          className="absolute inset-0"
+          className="absolute inset-0 -z-10"
           style={{
             background:
               "linear-gradient(90deg, rgba(244,247,251,0.96) 0%, rgba(244,247,251,0.88) 30%, rgba(244,247,251,0.52) 54%, rgba(244,247,251,0.08) 100%)",
           }}
         />
-        <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-b from-transparent to-[#f4f7fb]" />
+        <div className="absolute inset-x-0 bottom-0 -z-10 h-28 bg-gradient-to-b from-transparent to-[#f4f7fb]" />
 
-        <div className="relative z-10 flex min-h-[360px] max-w-2xl items-center px-6 pb-12 pt-10 sm:min-h-[410px] sm:px-8">
-          <div>
+        <div className="mx-auto flex min-h-[360px] max-w-5xl items-center px-4 pb-14 pt-12 sm:min-h-[410px] sm:pb-16">
+          <div className="max-w-2xl">
             <p className="mb-2 font-[family-name:var(--font-display)] text-xs font-bold tracking-[0.2em] text-[#0066ae]">CERITA PARA AWARDEE</p>
             <h1 className="font-[family-name:var(--font-display)] text-3xl font-semibold leading-tight text-[#005cab] drop-shadow-[0_1px_0_rgba(255,255,255,0.9)] sm:text-[42px]">Beragam perjalanan, satu langkah menuju masa depan.</h1>
-            <p className="mt-3 text-sm leading-relaxed text-[#063b66]/85 sm:text-base">
+            <p className="mt-3 max-w-xl text-sm leading-relaxed text-[#063b66]/85 sm:text-base">
               Dengarkan pengalaman para awardee PPBP dan PPTI saat belajar, beradaptasi, dan menemukan bidang yang paling sesuai dengan mereka.
             </p>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div className="mt-8">
+      <div className="mx-auto max-w-5xl px-4 mt-8">
         <Filter size={15} className="text-[#0066ae]/60" />
         {(["ALL", "PPBP", "PPTI"] as Prog[]).map((p) => (
           <button key={p} onClick={() => { setProg(p); setRole("ALL"); }} aria-pressed={prog === p}
