@@ -512,7 +512,7 @@ export default function Home() {
 
         {/* Meet the guides */}
         <div>
-          <div className="relative left-1/2 min-h-[480px] h-[80vh] max-h-[620px] w-screen -translate-x-1/2 overflow-hidden bg-[#f4f7fb] sm:aspect-[16/10] sm:h-auto sm:min-h-0">
+          <div className="relative left-1/2 min-h-[600px] h-[90vh] max-h-[780px] w-screen -translate-x-1/2 overflow-hidden bg-[#f4f7fb] sm:aspect-[16/10] sm:h-auto sm:min-h-0">
             <img
               src="/meet-your-guides.png"
               alt="Lima guide FutureTry di depan lingkungan belajar"
