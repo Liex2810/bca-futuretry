@@ -96,6 +96,19 @@ button, input, select, textarea {
 }
 .float-slow { animation: float-slow 5s ease-in-out infinite; }
 
+@keyframes guide-reveal {
+  from { opacity: 0; transform: translateX(-50%) translateY(24px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+.guide-character-reveal { animation: guide-reveal 420ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+.carousel-scroller {
+  scrollbar-width: none;
+  overscroll-behavior-inline: contain;
+  touch-action: pan-x pan-y;
+}
+.carousel-scroller::-webkit-scrollbar { display: none; }
+
 /* ════════════════════════════════════════════════════════════════
    Falling leaves (hero background)
    ════════════════════════════════════════════════════════════════ */
@@ -164,6 +177,6 @@ button, input, select, textarea {
 /* Hormati reduced motion (kualiti requirement) */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .pulse-ring, .float-slow { animation: none; }
+  .pulse-ring, .float-slow, .guide-character-reveal { animation: none; }
   *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
 }

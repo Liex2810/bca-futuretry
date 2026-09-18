@@ -9,9 +9,6 @@ import { ChooseYourWorld } from "@/components/ChooseYourWorld";
 import {
   ArrowRight,
   Compass,
-  Map as MapIcon,
-  MessagesSquare,
-  Route,
   AlertCircle,
   User,
   ShieldAlert,
@@ -79,11 +76,20 @@ const journeySteps = [
 ];
 
 const guidePositions = [
-  { x: 30, cropX: 24 },
-  { x: 40, cropX: 37 },
-  { x: 50, cropX: 50 },
-  { x: 60, cropX: 63 },
-  { x: 71, cropX: 77 },
+  { x: 27, image: "/guides/fino.png" },
+  { x: 37, image: "/guides/elia.png" },
+  { x: 50, image: "/guides/seno.png" },
+  { x: 63, image: "/guides/esha.png" },
+  { x: 75, image: "/guides/adit.png" },
+];
+
+const carouselImages = [
+  { src: "/carousel/ryn-8659.jpg", alt: "Keseruan peserta dalam kegiatan FutureTry" },
+  { src: "/carousel/img-9121.jpg", alt: "Peserta FutureTry mengikuti kegiatan bersama" },
+  { src: "/carousel/dscf5220.jpg", alt: "Momen peserta selama rangkaian FutureTry" },
+  { src: "/carousel/dscf5441.jpg", alt: "Suasana kegiatan peserta FutureTry" },
+  { src: "/carousel/dscf5332.jpg", alt: "Kolaborasi peserta dalam kegiatan FutureTry" },
+  { src: "/carousel/dsc-9428.jpg", alt: "Pengalaman peserta bersama FutureTry" },
 ];
 
 function HowItWorks() {
@@ -184,6 +190,78 @@ function HowItWorks() {
   );
 }
 
+function PhotoCarousel() {
+  const scrollerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const scroller = scrollerRef.current;
+    if (!scroller || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    let animationFrame = 0;
+    let previousTime = performance.now();
+    let initialized = false;
+    let scrollPosition = 0;
+
+    const animate = (time: number) => {
+      const elapsed = Math.min(time - previousTime, 50);
+      const firstImage = scroller.children[0] as HTMLElement | undefined;
+      const middleCopy = scroller.children[carouselImages.length] as HTMLElement | undefined;
+      const finalCopy = scroller.children[carouselImages.length * 2] as HTMLElement | undefined;
+      const loopWidth = middleCopy && finalCopy ? finalCopy.offsetLeft - middleCopy.offsetLeft : 0;
+
+      if (!initialized && firstImage && middleCopy && loopWidth) {
+        scrollPosition = middleCopy.offsetLeft - firstImage.offsetLeft;
+        scroller.scrollLeft = scrollPosition;
+        initialized = true;
+      }
+
+      if (initialized) {
+        scrollPosition += elapsed * 0.04;
+        if (scrollPosition >= loopWidth * 2) scrollPosition -= loopWidth;
+        scroller.scrollLeft = scrollPosition;
+      }
+
+      previousTime = time;
+      animationFrame = requestAnimationFrame(animate);
+    };
+
+    animationFrame = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animationFrame);
+  }, []);
+
+  return (
+    <section
+      className="relative left-1/2 w-screen -translate-x-1/2 py-8 sm:py-12"
+      aria-label="Galeri kegiatan FutureTry"
+    >
+      <div
+        ref={scrollerRef}
+        className="carousel-scroller pointer-events-none flex gap-3 overflow-hidden px-4 sm:gap-5 sm:px-6 lg:px-[max(2rem,calc((100vw-80rem)/2))]"
+      >
+        {[...carouselImages, ...carouselImages, ...carouselImages].map((image, index) => {
+          const duplicate = index < carouselImages.length || index >= carouselImages.length * 2;
+          return (
+            <figure
+              key={`${image.src}-${Math.floor(index / carouselImages.length)}`}
+              aria-hidden={duplicate || undefined}
+              className="relative aspect-[3/2] w-[63vw] max-w-[390px] shrink-0 overflow-hidden bg-[#dcecf6] shadow-[0_18px_50px_-28px_rgba(6,59,102,0.55)]"
+            >
+              <img
+                src={image.src}
+                alt={duplicate ? "" : image.alt}
+                loading="lazy"
+                draggable={false}
+                className="h-full w-full select-none object-cover"
+              />
+              <span className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-white/40" />
+            </figure>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
 export default function Home() {
   const router = useRouter();
   const { reset } = useJourney();
@@ -220,14 +298,15 @@ export default function Home() {
       {/* Full-screen hero */}
       <section className="relative w-full overflow-hidden bg-[#063b66] -mt-[68px]">
         <h1 className="sr-only">BCA FutureTry — coba pengalaman PPBP dan PPTI sebelum menentukan pilihan</h1>
-        {/* Background image: full from top to bottom, no cropping, pulled up under the navbar */}
+        {/* Shift upward slightly to trim excess sky and keep the hero compact. */}
         <img
           src="/hero-bg.png"
           alt="BCA FutureTry"
-          className="relative w-full h-auto block"
+          className="relative -mt-[clamp(48px,10vw,160px)] block h-auto w-full"
         />
+        <FallingLeaves />
         {/* Center Main Logo */}
-        <div className="absolute inset-x-0 top-[10%] flex flex-col items-center">
+        <div className="absolute inset-x-0 top-[8%] flex flex-col items-center">
           <img
             src="/main-logo.svg"
             alt="BCA FutureTry"
@@ -245,7 +324,7 @@ export default function Home() {
         </div>
         {/* Gradient transition at the bottom of the image into the page background */}
         <div
-          className="absolute inset-x-0 bottom-0 h-96 pointer-events-none"
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-[32rem] sm:h-[38rem]"
           style={{
             background:
               "linear-gradient(to bottom, rgba(244,247,251,0) 0%, rgba(244,247,251,0.35) 40%, rgba(244,247,251,0.75) 70%, rgba(244,247,251,1) 100%)",
@@ -263,7 +342,7 @@ export default function Home() {
       {/* Choose Your World */}
       <ChooseYourWorld />
 
-      <div className="mx-auto max-w-7xl space-y-16 px-4 pb-4 pt-16 sm:px-6 lg:space-y-24 lg:pb-12 lg:pt-24">
+      <div className="mx-auto max-w-7xl space-y-16 px-4 pt-16 sm:px-6 lg:space-y-24 lg:pt-24">
 
         {/* Edukatips and portal login */}
         <div className="grid items-stretch gap-6 lg:grid-cols-2">
@@ -429,18 +508,31 @@ export default function Home() {
 
         </div>
 
+        <PhotoCarousel />
+
         {/* Meet the guides */}
         <div>
-          <div className="relative left-1/2 aspect-[16/10] w-screen -translate-x-1/2 overflow-hidden bg-[#f4f7fb]">
+          <div className="relative left-1/2 h-[620px] w-screen -translate-x-1/2 overflow-hidden bg-[#f4f7fb] sm:aspect-[16/10] sm:h-auto">
             <img
               src="/meet-your-guides.png"
               alt="Lima guide FutureTry di depan lingkungan belajar"
               loading="lazy"
-              className="absolute inset-x-0 bottom-0 h-auto w-full opacity-100 saturate-100"
+              className={`absolute inset-0 h-full w-full object-cover object-center transition-all duration-500 sm:inset-x-0 sm:bottom-0 sm:top-auto sm:h-auto sm:object-contain ${
+                activeGuide === null
+                  ? "scale-100 opacity-100 saturate-100"
+                  : "scale-[1.02] opacity-20 blur-[3px] saturate-50"
+              }`}
+            />
+
+              <div
+              aria-hidden="true"
+                className={`pointer-events-none absolute inset-0 z-10 bg-[#d9eef2]/55 transition-opacity duration-500 ${
+                activeGuide === null ? "opacity-0" : "opacity-55"
+              }`}
             />
 
             <div
-              className="absolute inset-x-0 top-0 z-20 h-[48%] px-4 pt-8 sm:px-6 sm:pt-12"
+              className="absolute inset-x-0 top-0 z-50 h-[42%] px-4 pt-8 sm:px-6 sm:pt-12"
               style={{
                 background:
                   "linear-gradient(to bottom, #f4f7fb 0%, rgba(244,247,251,0.98) 24%, rgba(244,247,251,0.82) 48%, rgba(244,247,251,0.42) 72%, rgba(244,247,251,0) 100%)",
@@ -457,19 +549,31 @@ export default function Home() {
             </div>
 
             {activeGuide !== null && (
-              <div
-                className="pointer-events-none absolute bottom-[12%] z-50 hidden w-[240px] -translate-x-1/2 rounded-2xl border border-white/90 bg-[#063b66]/95 px-4 py-3 text-white shadow-xl backdrop-blur-sm lg:block"
-                style={{ left: `${guidePositions[activeGuide].x}%` }}
-                role="status"
-                aria-live="polite"
-              >
-                  <p className="font-[family-name:var(--font-display)] text-base font-bold">
+              <>
+                <img
+                  key={guidePositions[activeGuide].image}
+                  src={guidePositions[activeGuide].image}
+                  alt={characters[activeGuide].name}
+                  className="guide-character-reveal pointer-events-none absolute top-[28%] z-30 h-[72%] w-[48%] object-contain object-bottom sm:h-[74%] sm:w-[40%]"
+                  style={{ left: `${guidePositions[activeGuide].x}%`, transform: "translateX(-50%)" }}
+                />
+                <div
+                  className="guide-info-reveal pointer-events-none absolute bottom-5 z-40 w-[min(78vw,280px)] -translate-x-1/2 rounded-2xl border border-white/90 bg-white/90 p-4 text-[#063b66] shadow-xl backdrop-blur-md sm:bottom-8 sm:w-[min(26vw,300px)] sm:p-5"
+                  style={{ left: `${guidePositions[activeGuide].x}%` }}
+                  role="status"
+                  aria-live="polite"
+                >
+                  <span className="inline-flex rounded-full bg-[#0066ae] px-3 py-1 text-[11px] font-bold tracking-[0.16em] text-white">
+                    {characters[activeGuide].program}
+                  </span>
+                  <p className="mt-3 font-[family-name:var(--font-display)] text-3xl font-bold sm:text-4xl">
                     {characters[activeGuide].name}
                   </p>
-                  <p className="mt-0.5 text-xs text-white/80">
-                    {characters[activeGuide].field} / {characters[activeGuide].program}
+                  <p className="mt-1 text-sm font-semibold leading-relaxed text-[#0066ae] sm:text-base">
+                    {characters[activeGuide].field}
                   </p>
-              </div>
+                </div>
+              </>
             )}
 
             <div className="absolute inset-0 z-40 hidden lg:block">
@@ -484,6 +588,7 @@ export default function Home() {
                   }}
                   onFocus={() => setActiveGuide(index)}
                   onBlur={() => setActiveGuide(null)}
+                  onClick={() => router.push(`/world?guide=${guide.id}`)}
                   className="group absolute bottom-[5%] h-[58%] w-[9%] -translate-x-1/2 cursor-pointer rounded-[45%] bg-white/0 transition-colors hover:bg-white/10 focus-visible:bg-white/10 focus-visible:outline-none"
                   style={{ left: `${guidePositions[index].x}%` }}
                 >
@@ -492,84 +597,9 @@ export default function Home() {
             </div>
             <div className="absolute inset-x-4 bottom-4 z-40 flex gap-2 overflow-x-auto pb-1 lg:hidden" aria-label="Pilih guide">
               {characters.map((guide, index) => (
-                <button key={guide.id} type="button" onClick={() => setActiveGuide(activeGuide === index ? null : index)} className={`min-h-11 shrink-0 rounded-full border px-4 text-sm font-bold shadow-sm transition-colors ${activeGuide === index ? "border-[#0066ae] bg-[#0066ae] text-white" : "border-white/80 bg-white/90 text-[#063b66]"}`} aria-pressed={activeGuide === index}>{guide.name}</button>
+                <button key={guide.id} type="button" onClick={() => router.push(`/world?guide=${guide.id}`)} className={`min-h-11 shrink-0 rounded-full border px-4 text-sm font-bold shadow-sm transition-colors ${activeGuide === index ? "border-[#0066ae] bg-[#0066ae] text-white" : "border-white/80 bg-white/90 text-[#063b66]"}`} aria-pressed={activeGuide === index}>{guide.name}</button>
               ))}
             </div>
-          </div>
-        </div>
-
-        {/* Preview cards */}
-        <div>
-          <div className="grid md:grid-cols-3 gap-4 sm:gap-6">
-            <Link
-              href="/world"
-              className="group rounded-2xl overflow-hidden border border-slate-200/80 bg-white hover:shadow-md hover:border-[#00c8eb] transition"
-            >
-              <div className="h-28 bg-gradient-to-br from-[#063b66] via-[#0066ae] to-[#00c8eb] grid place-items-center">
-                <MapIcon className="text-white/90" size={28} />
-              </div>
-              <div className="p-5">
-                <p className="font-bold text-[#063b66] group-hover:text-[#0066ae] transition">
-                  Peta Misi FutureTry
-                </p>
-                <p className="text-xs text-slate-500 mt-1">Ikuti perjalanan, buka checkpoint, dan coba misi interaktif.</p>
-              </div>
-            </Link>
-
-            <Link
-              href="/stories"
-              className="group rounded-2xl overflow-hidden border border-slate-200/80 bg-white hover:shadow-md hover:border-[#00c8eb] transition"
-            >
-              <div className="h-28 bg-gradient-to-br from-[#0066ae] via-[#00c8eb] to-[#8debfa] grid place-items-center">
-                <MessagesSquare className="text-white/90" size={28} />
-              </div>
-              <div className="p-5">
-                <p className="font-bold text-[#063b66] group-hover:text-[#0066ae] transition">
-                  Cerita Para Awardee
-                </p>
-                <p className="text-xs text-slate-500 mt-1">Ekspektasi vs realita beasiswa, diceritakan langsung oleh mahasiswa.</p>
-              </div>
-            </Link>
-
-            <Link
-              href="/futurepath"
-              className="group rounded-2xl overflow-hidden border border-slate-200/80 bg-white hover:shadow-md hover:border-[#00c8eb] transition"
-            >
-              <div className="h-28 bg-gradient-to-br from-[#00c8eb] via-[#19d9f5] to-[#ff75b8]/70 grid place-items-center">
-                <Route className="text-white/90" size={28} />
-              </div>
-              <div className="p-5">
-                <p className="font-bold text-[#063b66] group-hover:text-[#0066ae] transition">
-                  FuturePath dan Persyaratan
-                </p>
-                <p className="text-xs text-slate-500 mt-1">Template informasi program, persyaratan, dan langkah berikutnya.</p>
-              </div>
-            </Link>
-          </div>
-        </div>
-
-        {/* Final CTA */}
-        <div className="mx-auto max-w-3xl text-center">
-          <h2 className="font-[family-name:var(--font-display)] text-2xl sm:text-4xl font-extrabold text-[#063b66] leading-tight">
-            Your future doesn&apos;t have to be<br />
-            <span className="text-brand-gradient">decided today.</span>
-          </h2>
-          <p className="text-slate-500 text-sm sm:text-base mt-3">
-            Tetapi kamu bisa mulai mencobanya hari ini.
-          </p>
-          <div className="mt-7 flex flex-wrap justify-center gap-3">
-            <Link
-              href="/world"
-              className="px-7 py-3.5 rounded-full bg-[#0066ae] hover:bg-[#063b66] text-white font-bold text-xs sm:text-sm shadow-md shadow-[#0066ae]/20 transition -translate-y-px"
-            >
-              MULAI EKSPLORASI SEKARANG
-            </Link>
-            <Link
-              href="/futurepath"
-              className="px-7 py-3.5 rounded-full border border-slate-300 text-[#063b66] font-bold text-xs sm:text-sm hover:border-[#0066ae] hover:text-[#0066ae] transition"
-            >
-              CEK PERSYARATAN BEASISWA
-            </Link>
           </div>
         </div>
 

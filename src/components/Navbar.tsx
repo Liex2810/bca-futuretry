@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Menu, X } from "lucide-react";
+import { ChevronDown, Menu, X } from "lucide-react";
 import { progressSummary } from "@/lib/progress";
 import { useJourney } from "./JourneyProvider";
 
@@ -71,25 +71,32 @@ const languages = [
 export function Navbar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [langOpen, setLangOpen] = useState(false);
+  const [currentLang, setCurrentLang] = useState("id");
   const [homeNavRevealed, setHomeNavRevealed] = useState(false);
   const { progress } = useJourney();
   const { done, total } = progressSummary(progress);
   const isHome = pathname === "/";
   const navVisible = !isHome || homeNavRevealed;
+  const selectedLang = languages.find((language) => language.code === currentLang) ?? languages[0];
 
   useEffect(() => {
-    if (!isHome) {
-      setHomeNavRevealed(false);
-      return;
-    }
+    const syncFrame = requestAnimationFrame(() => {
+      if (!isHome) setHomeNavRevealed(false);
+      else if (window.scrollY > 24) setHomeNavRevealed(true);
+    });
 
-    setHomeNavRevealed(window.scrollY > 24);
+    if (!isHome) return () => cancelAnimationFrame(syncFrame);
+
     const revealNavbar = () => {
       if (window.scrollY > 24) setHomeNavRevealed(true);
     };
 
     window.addEventListener("scroll", revealNavbar, { passive: true });
-    return () => window.removeEventListener("scroll", revealNavbar);
+    return () => {
+      cancelAnimationFrame(syncFrame);
+      window.removeEventListener("scroll", revealNavbar);
+    };
   }, [isHome]);
 
   return (
@@ -203,11 +210,46 @@ export function Navbar() {
               {done}/{total} Selesai ✓
             </span>
           )}
+
+          <div className="relative hidden sm:block">
+            <button
+              type="button"
+              onClick={() => setLangOpen((value) => !value)}
+              className="inline-flex min-h-10 items-center gap-1.5 rounded-full border border-[#0066ae] px-4 py-1.5 text-[11px] font-medium tracking-wider text-[#0066ae] transition-colors duration-150 hover:bg-[#0066ae] hover:text-white"
+              aria-expanded={langOpen}
+              aria-haspopup="listbox"
+              aria-label="Pilih bahasa"
+            >
+              {selectedLang.flag}
+              <span>{selectedLang.short}</span>
+              <ChevronDown size={14} className={`transition-transform ${langOpen ? "rotate-180" : ""}`} />
+            </button>
+            {langOpen && (
+              <div className="absolute right-0 top-full z-50 mt-2 w-48 rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl" role="listbox" aria-label="Pilihan bahasa">
+                {languages.map((language) => (
+                  <button
+                    key={language.code}
+                    type="button"
+                    role="option"
+                    aria-selected={currentLang === language.code}
+                    onClick={() => {
+                      setCurrentLang(language.code);
+                      setLangOpen(false);
+                    }}
+                    className={`flex min-h-10 w-full items-center gap-2 rounded-lg px-3 text-left text-xs transition-colors ${currentLang === language.code ? "bg-sky-50 font-bold text-[#0066ae]" : "text-[#063b66] hover:bg-slate-50"}`}
+                  >
+                    {language.flag}
+                    <span>{language.label}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
           
           {/* Clean BCA Pill CTA Button */}
           <Link
             href="/world"
-            className="hidden min-h-11 sm:inline-flex items-center px-5 py-2 rounded-full border border-[#0066ae] text-[#0066ae] hover:bg-[#0066ae] hover:text-white font-medium text-xs tracking-wider transition-colors duration-150"
+            className="hidden min-h-10 items-center rounded-full border border-[#0066ae] px-4 py-1.5 text-[11px] font-medium tracking-wider text-[#0066ae] transition-colors duration-150 hover:bg-[#0066ae] hover:text-white sm:inline-flex"
           >
             MULAI SEKARANG
           </Link>
@@ -244,7 +286,23 @@ export function Navbar() {
               </Link>
             );
           })}
-          <div className="pt-2 border-t border-slate-100">
+          <div className="border-t border-slate-100 pt-2">
+            <div className="mb-2 flex min-h-11 items-center justify-between py-2">
+              <span className="text-sm font-medium tracking-wide text-[#063b66]">BAHASA</span>
+              <div className="flex gap-1">
+                {languages.map((language) => (
+                  <button
+                    key={language.code}
+                    type="button"
+                    onClick={() => setCurrentLang(language.code)}
+                    className={`relative min-h-9 px-2 text-[11px] font-medium tracking-wide transition-colors ${currentLang === language.code ? "text-[#0066ae] after:absolute after:inset-x-2 after:bottom-0 after:h-0.5 after:bg-[#0066ae]" : "text-[#063b66] hover:text-[#0066ae]"}`}
+                    aria-label={language.label}
+                  >
+                    {language.short}
+                  </button>
+                ))}
+              </div>
+            </div>
             <Link
               href="/world"
               onClick={() => setOpen(false)}

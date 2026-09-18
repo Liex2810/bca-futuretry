@@ -18,8 +18,8 @@ export const STORAGE_KEY = "futuretry.journe…t.v1";
 
 // Urutan misi per distrik (index 0 = terbuka sejak awal)
 export const districtMissionOrder: Record<string, string[]> = {
-  technology: ["m-anomaly", "m-dashboard", "m-uxfix"],
-  business: ["m-customer", "m-bizcase", "m-invest"],
+  technology: ["m-dashboard", "m-anomaly", "m-uxfix"],
+  business: ["m-bizcase", "m-invest"],
 };
 
 export const emptyProgress = (): JourneyProgress => ({
@@ -35,7 +35,7 @@ export function availableMissions(progress: JourneyProgress): Set<string> {
   const avail = new Set<string>();
   for (const order of Object.values(districtMissionOrder)) {
     for (let i = 0; i < order.length; i++) {
-      if (i === 0 || done.has(order[i - 1])) avail.add(order[i]);
+      if (i === 0 || order.slice(0, i).every((missionId) => done.has(missionId))) avail.add(order[i]);
     }
   }
   return avail;
@@ -81,8 +81,9 @@ export function resetProgress(): JourneyProgress {
 
 /** Ringkasan utk progress indicator. */
 export function progressSummary(progress: JourneyProgress) {
-  const total = missions.length;
-  const done = progress.completedMissions.length;
+  const journeyMissionIds = new Set(Object.values(districtMissionOrder).flat());
+  const total = journeyMissionIds.size;
+  const done = progress.completedMissions.filter((id) => journeyMissionIds.has(id)).length;
   return { done, total, percent: total ? Math.round((done / total) * 100) : 0 };
 }
 

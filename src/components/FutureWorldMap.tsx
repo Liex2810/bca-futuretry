@@ -4,7 +4,7 @@ import "leaflet/dist/leaflet.css";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Map as LeafletMap, Marker } from "leaflet";
-import { Check, ChevronRight, LoaderCircle, LockKeyhole, MapPinned, RotateCcw } from "lucide-react";
+import { Check, ChevronRight, LoaderCircle, LockKeyhole, RotateCcw } from "lucide-react";
 import { useJourney } from "./JourneyProvider";
 import { progressSummary } from "@/lib/progress";
 
@@ -13,13 +13,12 @@ type Coordinates = [number, number];
 interface MapLocation { id: string; name: string; area: string; coordinates: Coordinates; displayCoordinates: Coordinates; missionId?: string; program?: "PPTI" | "PPBP"; isStart?: boolean }
 
 const locations: MapLocation[] = [
-  { id: "cp-characters", name: "BCA Learning Institute", area: "Sentul City, Bogor", coordinates: [-6.5857, 106.8822], displayCoordinates: [-6.5857, 106.8822], isStart: true },
-  { id: "cp-customer", name: "Customer Hall", area: "SCBD, Jakarta Selatan", coordinates: [-6.2259, 106.8095], displayCoordinates: [-6.505, 106.81], missionId: "m-customer", program: "PPBP" },
-  { id: "cp-anomaly", name: "Security Operations", area: "Kuningan, Jakarta Selatan", coordinates: [-6.2185, 106.8303], displayCoordinates: [-6.44, 106.9], missionId: "m-anomaly", program: "PPTI" },
-  { id: "cp-data", name: "Data Lab", area: "Thamrin, Jakarta Pusat", coordinates: [-6.1967, 106.8225], displayCoordinates: [-6.37, 106.81], missionId: "m-dashboard", program: "PPTI" },
-  { id: "cp-strategy", name: "Strategy Room", area: "Cikini, Jakarta Pusat", coordinates: [-6.1901, 106.8394], displayCoordinates: [-6.3, 106.9], missionId: "m-bizcase", program: "PPBP" },
-  { id: "cp-ux", name: "Design Studio", area: "Senayan, Jakarta Pusat", coordinates: [-6.2186, 106.8025], displayCoordinates: [-6.23, 106.81], missionId: "m-uxfix", program: "PPTI" },
-  { id: "cp-invest", name: "Investment Desk", area: "Kota Tua, Jakarta Barat", coordinates: [-6.1352, 106.8133], displayCoordinates: [-6.15, 106.89], missionId: "m-invest", program: "PPBP" },
+  { id: "cp-characters", name: "BCA Learning Institute", area: "Sentul City, Bogor", coordinates: [-6.5857007, 106.8822386], displayCoordinates: [-6.5857007, 106.8822386], isStart: true },
+  { id: "cp-data", name: "Data Lab", area: "Cibitung, Bekasi", coordinates: [-6.2618245, 107.0837982], displayCoordinates: [-6.2618245, 107.0837982], missionId: "m-dashboard", program: "PPTI" },
+  { id: "cp-anomaly", name: "Security Operations", area: "Grand Indonesia, Jakarta Pusat", coordinates: [-6.1957601, 106.8214547], displayCoordinates: [-6.1957601, 106.8214547], missionId: "m-anomaly", program: "PPTI" },
+  { id: "cp-ux", name: "Design Studio", area: "Landmark Pluit, Jakarta Utara", coordinates: [-6.1244714, 106.7995216], displayCoordinates: [-6.1244714, 106.7995216], missionId: "m-uxfix", program: "PPTI" },
+  { id: "cp-strategy", name: "Strategy Room", area: "Foresta, Tangerang Selatan", coordinates: [-6.2882326, 106.6437145], displayCoordinates: [-6.2882326, 106.6437145], missionId: "m-bizcase", program: "PPBP" },
+  { id: "cp-invest", name: "Investment Desk", area: "Wisma Asia, Jakarta Barat", coordinates: [-6.1891943, 106.7977565], displayCoordinates: [-6.1891943, 106.7977565], missionId: "m-invest", program: "PPBP" },
 ];
 
 function markerHtml(location: MapLocation, index: number, status: MarkerStatus) {
@@ -34,7 +33,7 @@ export function FutureWorldMap() {
   const markerRefs = useRef(new Map<string, Marker>());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [selectedId, setSelectedId] = useState("cp-customer");
+  const [selectedId, setSelectedId] = useState("cp-data");
   const { stateOf, progress, reset } = useJourney();
   const summary = progressSummary(progress);
   const selected = locations.find((item) => item.id === selectedId) ?? locations[1];
@@ -44,25 +43,33 @@ export function FutureWorldMap() {
 
   useEffect(() => {
     let cancelled = false;
+    const markers = markerRefs.current;
     import("leaflet").then((leaflet) => {
       if (cancelled || !mapElementRef.current) return;
-      mapInstanceRef.current?.remove(); markerRefs.current.clear();
+      mapInstanceRef.current?.remove(); markers.clear();
       const map = leaflet.map(mapElementRef.current, { zoomControl: true, scrollWheelZoom: false });
       mapInstanceRef.current = map;
       leaflet.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}", { attribution: "Tiles &copy; Esri", maxZoom: 16 }).addTo(map);
-      const route = locations.map((location) => location.displayCoordinates);
-      leaflet.polyline(route, { color: "#fff", weight: 7, opacity: 0.9 }).addTo(map);
-      leaflet.polyline(route, { color: "#00528c", weight: 5, opacity: 0.95, dashArray: "9 9" }).addTo(map);
-      locations.slice(1).forEach((location) => leaflet.polyline([location.coordinates, location.displayCoordinates], { color: "#7c9db5", weight: 1, opacity: 0.55, dashArray: "3 5" }).addTo(map));
-      statuses.forEach(({ location, status }, index) => {
-        const icon = leaflet.divIcon({ className: "", html: markerHtml(location, index, status), iconSize: [56, 56], iconAnchor: [28, 48] });
-        const marker = leaflet.marker(location.displayCoordinates, { icon, title: `${location.name} — ${status}`, zIndexOffset: location.isStart ? 1000 : 0 }).addTo(map);
-        marker.on("click", () => setSelectedId(location.id)); markerRefs.current.set(location.id, marker);
+      const start = locations[0].displayCoordinates;
+      const routes = [
+        { program: "PPTI", color: "#00a9d6", points: [start, ...locations.filter((location) => location.program === "PPTI").map((location) => location.displayCoordinates)] },
+        { program: "PPBP", color: "#00528c", points: [start, ...locations.filter((location) => location.program === "PPBP").map((location) => location.displayCoordinates)] },
+      ];
+      routes.forEach((route) => {
+        leaflet.polyline(route.points, { color: "#fff", weight: 8, opacity: 0.95 }).addTo(map);
+        leaflet.polyline(route.points, { color: route.color, weight: 5, opacity: 0.95, dashArray: "9 9" }).addTo(map);
       });
-      map.fitBounds(leaflet.latLngBounds(route), { padding: [45, 45], maxZoom: 11 });
+      statuses.forEach(({ location, status }) => {
+        const branchIndex = location.isStart ? 0 : locations.filter((item) => item.program === location.program).findIndex((item) => item.id === location.id) + 1;
+        const icon = leaflet.divIcon({ className: "", html: markerHtml(location, branchIndex, status), iconSize: [56, 56], iconAnchor: [28, 48] });
+        const marker = leaflet.marker(location.displayCoordinates, { icon, title: `${location.name} — ${status}`, zIndexOffset: location.isStart ? 1000 : 0 }).addTo(map);
+        marker.on("click", () => setSelectedId(location.id)); markers.set(location.id, marker);
+      });
+      const bounds = locations.map((location) => location.coordinates);
+      map.fitBounds(leaflet.latLngBounds(bounds), { padding: [45, 45], maxZoom: 11 });
       setLoading(false);
     }).catch(() => { if (!cancelled) { setError("Peta gagal dimuat. Coba muat ulang halaman."); setLoading(false); } });
-    return () => { cancelled = true; mapInstanceRef.current?.remove(); mapInstanceRef.current = null; markerRefs.current.clear(); };
+    return () => { cancelled = true; mapInstanceRef.current?.remove(); mapInstanceRef.current = null; markers.clear(); };
   }, [statuses]);
 
   const selectMission = (id: string) => { setSelectedId(id); const marker = markerRefs.current.get(id); if (marker && mapInstanceRef.current) mapInstanceRef.current.panTo(marker.getLatLng()); };
@@ -71,12 +78,12 @@ export function FutureWorldMap() {
     <main className="min-h-[calc(100vh-68px)] bg-[#f4f6f8] px-4 py-6 sm:px-8 sm:py-10">
       <div className="mx-auto max-w-7xl">
         <header className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div><p className="text-sm font-bold uppercase tracking-[0.18em] text-[#0066ae]">Eksplorasi Misi</p><h1 className="mt-1 text-3xl font-extrabold text-[#063b66] sm:text-4xl">Peta Misi FutureTry</h1><p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-600 sm:text-base">Pilih checkpoint yang tersedia, selesaikan misinya, lalu buka perjalanan berikutnya. Lokasi pada peta digunakan sebagai konteks simulasi.</p></div>
+          <div><p className="text-sm font-bold uppercase tracking-[0.18em] text-[#0066ae]">Eksplorasi Misi</p><h1 className="mt-1 text-3xl font-extrabold text-[#063b66] sm:text-4xl">Peta Misi FutureTry</h1><p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-600 sm:text-base">Mulai dari BCA Learning Institute, lalu jelajahi cabang PPTI atau PPBP. Selesaikan checkpoint secara berurutan pada masing-masing jalur.</p></div>
           <div className="min-w-52 rounded-2xl border border-slate-200 bg-white p-4"><div className="flex justify-between text-sm font-bold text-[#063b66]"><span>Progress</span><span>{summary.done}/{summary.total}</span></div><div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-100"><div className="h-full rounded-full bg-[#0066ae] transition-all" style={{ width: `${summary.percent}%` }} /></div></div>
         </header>
-        <div className="mb-4 flex flex-wrap gap-2 text-xs font-semibold text-slate-600" aria-label="Legenda status checkpoint"><span className="rounded-full bg-sky-50 px-3 py-2 text-[#0066ae]">● Tersedia</span><span className="rounded-full bg-emerald-50 px-3 py-2 text-emerald-700">✓ Selesai</span><span className="rounded-full bg-slate-200 px-3 py-2">● Terkunci</span></div>
+        <div className="mb-4 flex flex-wrap gap-2 text-xs font-semibold text-slate-600" aria-label="Legenda jalur dan status checkpoint"><span className="rounded-full bg-cyan-50 px-3 py-2 text-[#008caf]">PPTI</span><span className="rounded-full bg-sky-50 px-3 py-2 text-[#00528c]">PPBP</span><span className="rounded-full bg-sky-50 px-3 py-2 text-[#0066ae]">● Tersedia</span><span className="rounded-full bg-emerald-50 px-3 py-2 text-emerald-700">✓ Selesai</span><span className="rounded-full bg-slate-200 px-3 py-2">● Terkunci</span></div>
         <section className="grid overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_20px_55px_rgba(15,23,42,0.10)] lg:grid-cols-[minmax(0,1fr)_340px]">
-          <div className="relative h-[55vh] min-h-[440px] bg-slate-100 lg:h-[680px]"><div ref={mapElementRef} className="absolute inset-0 z-0" aria-label="Peta perjalanan misi dari Sentul menuju Jakarta" />{loading && <div className="absolute inset-0 z-20 grid place-items-center bg-slate-100"><LoaderCircle className="animate-spin text-[#0066ae]" /></div>}{error && <div className="absolute inset-0 z-20 grid place-items-center p-6 text-center text-sm text-slate-600">{error}</div>}</div>
+          <div className="relative h-[55vh] min-h-[440px] bg-slate-100 lg:h-[680px]"><div ref={mapElementRef} className="absolute inset-0 z-0" aria-label="Peta dua cabang perjalanan PPTI dan PPBP dari BCA Learning Institute" />{loading && <div className="absolute inset-0 z-20 grid place-items-center bg-slate-100"><LoaderCircle className="animate-spin text-[#0066ae]" /></div>}{error && <div className="absolute inset-0 z-20 grid place-items-center p-6 text-center text-sm text-slate-600">{error}</div>}</div>
           <aside className="border-t border-slate-200 lg:border-l lg:border-t-0" aria-label="Daftar checkpoint">
             <div className="border-b border-slate-200 p-5"><p className="text-xs font-bold uppercase tracking-wider text-[#0066ae]">Checkpoint dipilih</p><h2 className="mt-1 text-xl font-extrabold text-[#063b66]">{selected.name}</h2><p className="mt-1 text-sm text-slate-500">{selected.area}</p>{selected.isStart ? <p className="mt-4 rounded-xl bg-sky-50 p-3 text-sm text-[#063b66]">Titik awal perjalanan FutureTry.</p> : selectedStatus === "locked" ? <p className="mt-4 flex gap-2 rounded-xl bg-slate-100 p-3 text-sm text-slate-600"><LockKeyhole className="mt-0.5 size-4 shrink-0" />Selesaikan checkpoint sebelumnya pada jalur {selected.program}.</p> : <Link href={`/mission/${selected.missionId}`} className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-[#0066ae] px-5 py-3 text-sm font-bold text-white hover:bg-[#063b66]">{selectedStatus === "completed" ? "Lihat kembali misi" : "Mulai misi"}<ChevronRight className="size-4" /></Link>}</div>
             <div className="p-3">{statuses.slice(1).map(({ location, status }, index) => <button key={location.id} type="button" onClick={() => selectMission(location.id)} className={`mb-2 flex min-h-14 w-full items-center gap-3 rounded-xl border p-3 text-left transition ${selectedId === location.id ? status === "locked" ? "border-slate-300 bg-slate-100" : "border-[#0066ae] bg-sky-50" : "border-transparent hover:bg-slate-50"}`} aria-label={`${location.name}, ${status === "locked" ? "terkunci" : status === "completed" ? "selesai" : "tersedia"}`}><span className={`grid size-9 shrink-0 place-items-center rounded-full font-bold ${status === "completed" ? "bg-emerald-100 text-emerald-700" : status === "locked" ? "bg-slate-200 text-slate-500" : "bg-[#0066ae] text-white"}`}>{status === "completed" ? <Check className="size-4" /> : status === "locked" ? <LockKeyhole className="size-4" /> : index + 1}</span><span className="min-w-0"><span className="block truncate text-sm font-bold text-[#063b66]">{location.name}</span><span className="text-xs text-slate-500">{location.program} · {location.area}</span></span></button>)}</div>
