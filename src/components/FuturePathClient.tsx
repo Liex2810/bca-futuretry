@@ -6,6 +6,8 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, BookOpen, CheckCircle2, HelpCircle, Send, UserRound, XCircle, Sparkles } from "lucide-react";
 import { eligibilityRules, faqs } from "@/lib/content/futurepath";
+import { stories } from "@/lib/content/stories";
+import type { Story } from "@/types";
 import { useJourney } from "@/components/JourneyProvider";
 import { missions } from "@/lib/content/missions";
 import { Events } from "@/lib/analytics";
@@ -521,37 +523,62 @@ function Check() {
 // ── CONNECT ──────────────────────────────────────────────────────
 function Connect() {
   const [sent, setSent] = useState(false);
-  const [to, setTo] = useState("Awardee");
   const [q, setQ] = useState("");
+  const awardees = stories.slice(0, 3);
   if (sent) {
     return (
-      <div className="rounded-2xl border border-cyan/30 bg-sky-soft p-8 text-center">
+      <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
         <CheckCircle2 size={36} className="mx-auto text-cyan" />
-        <h3 className="font-[family-name:var(--font-display)] text-xl font-extrabold text-navy mt-3">Terkirim (demo)</h3>
-        <p className="text-sm text-navy/60 mt-2 max-w-sm mx-auto">Di versi produksi, pesan ini diteruskan ke pool awardee/counselor. Untuk sekarang, anggap ini proof-of-concept — pertanyaanmu tidak ke mana-mana. 😄</p>
-        <button onClick={() => setSent(false)} className="min-h-11 min-w-11 px-3 mt-4 text-sm font-bold text-bcablue hover:underline">Kirim pertanyaan lain</button>
+        <h3 className="font-[family-name:var(--font-display)] text-xl font-extrabold text-[#005cab] mt-3">Pesan Terkirim</h3>
+        <p className="text-sm text-slate-500 mt-2 max-w-sm mx-auto">Pesanmu telah dikirim ke awardee. Mereka akan segera membalas ceritanya.</p>
+        <button onClick={() => setSent(false)} className="min-h-11 mt-4 px-5 py-2 rounded-xl border border-[#0066ae] text-[#0066ae] text-sm font-bold hover:bg-[#0066ae] hover:text-white transition">Kirim pesan lain</button>
       </div>
     );
   }
   return (
-    <form onSubmit={(e) => { e.preventDefault(); setSent(true); }} className="rounded-2xl border border-navy/10 bg-white p-6 max-w-lg">
-      <p className="font-[family-name:var(--font-display)] text-lg font-extrabold text-navy">Some questions are better answered by someone who&apos;s been there.</p>
-      <div className="mt-5">
-        <label className="block text-sm font-bold text-navy mb-2" htmlFor="who">Mau bicara dengan siapa?</label>
-        <select id="who" value={to} onChange={(e) => setTo(e.target.value)} className="w-full px-4 py-3 rounded-xl bg-white border border-navy/15 text-sm focus:outline-none focus:border-cyan">
-          <option>Awardee</option><option>Guru BK / Counselor</option><option>Recruiter</option>
-        </select>
+    <div className="space-y-5">
+      <div className="rounded-2xl border border-slate-200 bg-white p-7 shadow-sm">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="w-10 h-10 rounded-xl bg-cyan-50 flex items-center justify-center">
+            <UserRound size={18} className="text-cyan" />
+          </div>
+          <div>
+            <h3 className="font-[family-name:var(--font-display)] text-xl font-bold text-[#005cab]">Connect with Awardee</h3>
+            <p className="text-xs text-slate-400">Dengar langsung dari yang menjalani</p>
+          </div>
+        </div>
+        <p className="text-sm text-slate-600 mt-3">Kirim pesan kepada alumni yang sudah menjalani program ini. Mereka akan berbagi pengalaman langsung.</p>
       </div>
-      <div className="mt-4">
-        <label className="block text-sm font-bold text-navy mb-2" htmlFor="q">Pertanyaanmu</label>
-        <textarea id="q" required value={q} onChange={(e) => setQ(e.target.value)} rows={4} maxLength={800}
-          placeholder="misal: apa yang paling bikin kaget di bulan pertama PPTI?"
-          className="w-full px-4 py-3 rounded-xl bg-white border border-navy/15 text-sm focus:outline-none focus:border-cyan resize-none" />
+
+      <div className="grid gap-3 sm:grid-cols-2">
+        {awardees.map((a: Story) => (
+          <div key={a.id} className="rounded-2xl border border-slate-200 bg-white p-5 hover:border-[#0066ae]/30 transition">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-full bg-[#f4f7fb] overflow-hidden flex items-center justify-center">
+                <span className="font-bold text-[#0066ae] text-lg">{a.name[0]}</span>
+              </div>
+              <div>
+                <p className="font-bold text-sm text-[#005cab]">{a.name}</p>
+                <p className="text-xs text-slate-400">{a.program} · {a.role}</p>
+              </div>
+            </div>
+            <p className="text-xs text-slate-500 mt-3 leading-relaxed italic">"{a.excerpt.slice(0, 80)}..."</p>
+          </div>
+        ))}
       </div>
-      <button type="submit" className="mt-5 w-full px-6 py-3.5 rounded-2xl bg-bcablue text-white font-bold shadow-lg shadow-cyan/25 hover:-translate-y-0.5 transition">
-        KIRIM PERTANYAAN
-      </button>
-    </form>
+
+      <form onSubmit={(e) => { e.preventDefault(); setSent(true); }} className="rounded-2xl border border-slate-200 bg-white p-7 shadow-sm space-y-4">
+        <div>
+          <label className="block text-sm font-bold text-[#005cab] mb-2" htmlFor="q">Pesanmu</label>
+          <textarea id="q" required value={q} onChange={(e) => setQ(e.target.value)} rows={4} maxLength={800}
+            placeholder="Tulis apa yang ingin kamu tanyakan..."
+            className="w-full px-4 py-3 rounded-xl bg-[#f4f7fb] border border-slate-200 text-sm focus:outline-none focus:border-[#0066ae] resize-none" />
+        </div>
+        <button type="submit" className="w-full px-6 py-3.5 rounded-2xl bg-[#0066ae] text-white font-bold shadow-sm hover:bg-[#005cab] transition">
+          KIRIM PESAN
+        </button>
+      </form>
+    </div>
   );
 }
 
@@ -562,15 +589,11 @@ function Act() {
   const total = missions.length;
   return (
     <div className="space-y-3 max-w-lg">
-      <Link href="/world" className="flex items-center justify-between rounded-2xl border border-navy/10 bg-white p-5 hover:border-cyan transition group">
-        <div><p className="font-bold text-navy">Explore more</p><p className="text-xs text-navy/55 mt-0.5">{done}/{total} misi selesai — sisa {total - done} menunggumu.</p></div>
-        <ArrowRight size={18} className="text-navy/40 group-hover:text-cyan transition" />
+      <Link href="/world" className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white p-5 hover:border-[#0066ae] transition group">
+        <div><p className="font-bold text-[#005cab]">Explore more</p><p className="text-xs text-slate-450 mt-0.5">{done}/{total} misi selesai — sisa {total - done} menunggumu.</p></div>
+        <ArrowRight size={18} className="text-navy/30 group-hover:text-[#0066ae] transition" />
       </Link>
-      <Link href="/stories" className="flex items-center justify-between rounded-2xl border border-navy/10 bg-white p-5 hover:border-cyan transition group">
-        <div><p className="font-bold text-navy">Talk to an awardee</p><p className="text-xs text-navy/55 mt-0.5">Dengar langsung dari yang menjalani.</p></div>
-        <ArrowRight size={18} className="text-navy/40 group-hover:text-cyan transition" />
-      </Link>
-      <div className="flex items-center justify-between rounded-2xl border border-navy/10 bg-white p-5">
+      <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white p-5">
         <div><p className="font-bold text-navy">Save my journey</p><p className="text-xs text-navy/55 mt-0.5">Progresmu otomatis tersimpan di perangkat ini — tanpa akun.</p></div>
         <CheckCircle2 size={18} className="text-green-500" />
       </div>
