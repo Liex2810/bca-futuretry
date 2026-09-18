@@ -22,8 +22,8 @@ return (
     <div className="pb-10 lg:pt-10">
       <div className="relative w-screen mx-auto overflow-hidden" style={{ minHeight: 478 }}>
         <Image src="/stories-bg.png" alt="Cerita Awardee" fill className="object-cover object-center opacity-90 saturate-100" />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#f4f7fb]" />
-        <div className="max-w-5xl mx-auto px-4 p-6 sm:p-8">
+        <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#f4f7fb] to-transparent" />
+        <div className="relative z-10 max-w-5xl mx-auto px-4 p-6 sm:p-8 rounded-2xl bg-[#f4f7fb]/90">
           <p className="mb-2 font-[family-name:var(--font-display)] text-xs font-bold tracking-[0.2em] text-[#0066ae]">CERITA PARA AWARDEE</p>
           <h1 className="font-[family-name:var(--font-display)] text-3xl font-semibold leading-tight text-[#005cab] sm:text-[42px]">Beragam perjalanan, satu langkah menuju masa depan.</h1>
           <p className="mt-3 max-w-2xl text-sm leading-relaxed text-[#063b66]/80 sm:text-base">
