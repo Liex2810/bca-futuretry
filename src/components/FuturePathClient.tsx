@@ -537,7 +537,7 @@ function Connect() {
   }
   return (
     <div className="space-y-5">
-      <div className="rounded-2xl border border-slate-200 bg-white p-7 shadow-sm">
+<div className="rounded-2xl border border-slate-200 bg-white p-7 shadow-sm">
         <div className="flex items-center gap-3 mb-2">
           <div className="w-10 h-10 rounded-xl bg-cyan-50 flex items-center justify-center">
             <UserRound size={18} className="text-cyan" />
@@ -549,33 +549,6 @@ function Connect() {
           </div>
         </div>
         <p className="text-sm text-slate-600 mt-3">Dapatkan insight langsung dari alumni yang sudah menjalani program ini.</p>
-      </div>
-
-      <div className="grid gap-3 sm:grid-cols-2">
-        {awardees.map((a) => (
-          <div key={a.id} className="overflow-hidden rounded-2xl border border-slate-200 bg-white hover:border-[#0066ae]/50 hover:shadow-md transition">
-            <Link href={`/stories/${a.id}`} className="w-full text-left">
-              <div className="p-5">
-                <div className="flex items-center gap-4">
-                  <div className="h-20 w-20 shrink-0 rounded-full border-2 border-white bg-[#f4f7fb] overflow-hidden flex items-center justify-center shadow-md">
-                    <span className="font-bold text-[#0066ae] text-xl">{a.name[0]}</span>
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="mb-1 flex items-center gap-2">
-                      <p className="font-[family-name:var(--font-display)] text-lg font-semibold text-[#063b66]">{a.name}</p>
-                      <span className="rounded-full bg-[#f0f7fd] px-2 py-0.5 text-[10px] font-bold text-[#0066ae]">{a.program}</span>
-                    </div>
-                    <p className="text-xs font-semibold text-[#063b66]/75">{a.role}</p>
-                    <p className="mt-1 text-xs text-slate-400">Awardee</p>
-                  </div>
-                </div>
-                <p className="mt-4 font-[family-name:var(--font-display)] font-semibold text-[#063b66]">{a.title}</p>
-                <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-slate-600">{a.excerpt}</p>
-                <span className="mt-4 inline-flex text-xs font-bold text-[#0066ae]">Lihat profil &amp; cerita →</span>
-              </div>
-            </Link>
-          </div>
-        ))}
       </div>
 
       <Link href="/stories" className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white p-5 hover:border-[#0066ae] transition group">
