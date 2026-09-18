@@ -517,7 +517,7 @@ export default function Home() {
               src="/meet-your-guides.png"
               alt="Lima guide FutureTry di depan lingkungan belajar"
               loading="lazy"
-              className={`absolute inset-0 h-full w-full object-contain object-bottom transition-all duration-500 ${
+              className={`absolute inset-0 h-full w-full object-cover object-bottom transition-all duration-500 ${
                 activeGuide === null
                   ? "scale-100 opacity-100 saturate-100"
                   : "scale-[1.02] opacity-20 blur-[3px] saturate-50"
