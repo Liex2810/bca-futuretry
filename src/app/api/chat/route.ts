@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
   const { message, history = [], sessionId } = parsed.data;
 
   try {
-    const reply = await askFutureTry(message, history);
+    const reply = await askFutureTry(message, history, sessionId);
 
     if (dbEnabled && sessionId) {
       try {

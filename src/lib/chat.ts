@@ -34,6 +34,13 @@ export function retrieve(question: string): { answer: string; source: string } |
     const score = hits / Math.max(1, words.size) + hits * 0.5;
     if (hits > 0 && (!best || score > best.score)) best = { answer: f.answer, source: f.source, score };
   }
+  for (const k of knowledgeBase) {
+    const words = new Set(normalize(k.topic));
+    let hits = 0;
+    for (const w of q) if (words.has(w)) hits++;
+    const score = hits / Math.max(1, words.size) + hits * 0.5;
+    if (hits > 0 && (!best || score > best.score)) best = { answer: k.answer, source: k.source, score };
+  }
   if (best) return { answer: best.answer, source: best.source };
   // fallback: topik mission
   const m = missions.find((mm) => normalize(mm.title).some((w) => q.has(w)) || normalize(mm.role).some((w) => q.has(w)));
@@ -52,10 +59,48 @@ function mockReply(question: string): ChatReply {
   }
   return {
     content:
-      "Aku belum punya jawaban terverifikasi untuk itu. Yang bisa aku bantu sekarang: info bedanya PPBP & PPTI, isi misi, kehidupan program, dan langkah berikutnya. Untuk pertanyaan spesifik (syarat resmi, jadwal seleksi), cek FuturePath → Check atau tanya langsung ke manusia lewat FuturePath → Connect — mereka yang paling jujur jawabnya.",
+      "Aku belum punya jawaban terverifikasi untuk pertanyaan spesifik itu. Yang bisa aku bantu jelaskan: info perbedaan PPBP & PPTI, kurikulum IT, kehidupan asrama di BLI Sentul, dan tahapan seleksi. Kamu juga bisa cek FuturePath → Check atau hubungi kanal resmi BCA di karir.bca.co.id.",
     sources: ["Kebijakan FutureTry"],
     mode: "mock",
   };
+}
+
+// ── n8n webhook mode (jika laptop / workflow aktif) ─────────────
+async function tryN8n(question: string, sessionId?: string): Promise<ChatReply | null> {
+  const n8nUrl =
+    process.env.N8N_WEBHOOK_URL ||
+    (process.env.NODE_ENV !== "production" ? "http://127.0.0.1:5678/webhook/bot-cs-9router" : undefined);
+  if (!n8nUrl) return null;
+
+  try {
+    const res = await fetch(n8nUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chatInput: question,
+        pesan: question,
+        message: question,
+        sessionId: sessionId || "web-user",
+      }),
+      signal: AbortSignal.timeout(9000), // timeout 9s agar cukup waktu bagi LLM 9Router
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    const content = data?.balasan || data?.reply || data?.output || data?.message || data?.text;
+    if (content && typeof content === "string" && content.trim().length > 0) {
+      if (content.includes("sistem lagi gangguan") || content.includes("lagi gangguan")) {
+        return null;
+      }
+      return {
+        content: content.trim(),
+        sources: ["n8n Bot CS (Live)"],
+        mode: "ai",
+      };
+    }
+  } catch {
+    // n8n offline / timeout / laptop mati — otomatis fallback ke step berikutnya
+  }
+  return null;
 }
 
 // ── AI mode (kalau env terisi) ──────────────────────────────────
@@ -91,7 +136,16 @@ async function aiReply(question: string, history: { role: string; content: strin
   return { content, sources: ["Knowledge base FutureTry"], mode: "ai" };
 }
 
-export async function askFutureTry(question: string, history: { role: string; content: string }[] = []): Promise<ChatReply> {
+export async function askFutureTry(
+  question: string,
+  history: { role: string; content: string }[] = [],
+  sessionId?: string
+): Promise<ChatReply> {
+  // 1. Coba hubungi n8n jika aktif (laptop menyala)
+  const n8n = await tryN8n(question, sessionId);
+  if (n8n) return n8n;
+
+  // 2. Coba Cloud AI jika provider aktif
   const aiReady = Boolean(process.env.AI_BASE_URL && process.env.AI_API_KEY && process.env.AI_MODEL);
   if (aiReady) {
     try {
@@ -100,5 +154,7 @@ export async function askFutureTry(question: string, history: { role: string; co
       console.error("AI gagal, fallback ke mock:", e instanceof Error ? e.message : e);
     }
   }
+
+  // 3. Fallback mandiri 24/7: Knowledge Base lokal
   return mockReply(question);
 }
