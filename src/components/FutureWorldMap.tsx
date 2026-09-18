@@ -103,7 +103,7 @@ const locations: MapLocation[] = [
 ];
 
 function markerArtwork(location: MapLocation) {
-  if (location.isStart) return '<img src="/bca-logo.svg" alt="BLI HQ" />';
+  if (location.isStart) return '<img src="/character-ppti.png" alt="BLI HQ" style="width: 100%; height: 100%; object-fit: cover;" />';
 
   const icons: Record<string, string> = {
     "cp-data":
@@ -221,13 +221,15 @@ export function FutureWorldMap() {
         const map = leaflet.map(mapElementRef.current, { zoomControl: true, scrollWheelZoom: false });
         mapInstanceRef.current = map;
 
-        // Tile layer CartoDB Voyager: Tampilan bergaya adventure game map yang cerah & memikat!
+        // Tile layer Esri World Street Map: Peta jernih, kaya warna, bebas watermark & tanpa API key!
         leaflet
-          .tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
-            attribution: '&copy; <a href="https://carto.com/">CARTO</a> &copy; OpenStreetMap contributors',
-            maxZoom: 18,
-            subdomains: "abcd",
-          })
+          .tileLayer(
+            "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
+            {
+              attribution: "Tiles &copy; Esri",
+              maxZoom: 17,
+            }
+          )
           .addTo(map);
 
         const start = locations[0].displayCoordinates;
