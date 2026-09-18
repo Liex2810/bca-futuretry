@@ -49,39 +49,44 @@ export function StoriesExplorer({ stories }: { stories: Story[] }) {
         </div>
       </section>
 
-      <div className="mx-auto max-w-5xl px-4 mt-8">
-        <Filter size={15} className="text-[#0066ae]/60" />
-        {(["ALL", "PPBP", "PPTI"] as Prog[]).map((p) => (
-          <button key={p} onClick={() => { setProg(p); setRole("ALL"); }} aria-pressed={prog === p}
-            className={`min-h-11 rounded-full border px-4 py-1.5 text-sm font-bold transition-colors ${prog === p ? "border-[#0066ae] bg-[#0066ae] text-white" : "border-slate-200 bg-white text-[#063b66]/70 hover:border-[#0066ae] hover:text-[#0066ae]"}`}>
-            {p === "ALL" ? "Semua" : p}
-          </button>
-        ))}
-        <div className="flex basis-full items-center gap-2 mt-3 flex-wrap" role="group" aria-label="Filter divisi">
-          <UserRound size={15} className="text-[#0066ae]/60" />
-          {roles.map((r) => (
-            <button key={r} onClick={() => setRole(r)} aria-pressed={role === r}
-              className={`min-h-11 rounded-full border px-3 py-1 text-xs font-semibold transition-colors ${role === r ? "border-[#0066ae] bg-[#f0f7fd] text-[#0066ae]" : "border-slate-200 bg-white text-[#063b66]/65 hover:border-[#0066ae] hover:text-[#0066ae]"}`}>
-              {r === "ALL" ? "Semua Divisi" : r}
-            </button>
-          ))}
+      <div className="mx-auto max-w-5xl px-4 mt-8 space-y-6">
+        <div>
+          <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Filter program">
+            <Filter size={15} className="text-[#0066ae]/60" />
+            {(["ALL", "PPBP", "PPTI"] as Prog[]).map((p) => (
+              <button key={p} onClick={() => { setProg(p); setRole("ALL"); }} aria-pressed={prog === p}
+                className={`min-h-11 rounded-full border px-4 py-1.5 text-sm font-bold transition-colors ${prog === p ? "border-[#0066ae] bg-[#0066ae] text-white" : "border-slate-200 bg-white text-[#063b66]/70 hover:border-[#0066ae] hover:text-[#0066ae]"}`}>
+                {p === "ALL" ? "Semua" : p}
+              </button>
+            ))}
+          </div>
+          <div className="flex items-center gap-2 mt-3 flex-wrap" role="group" aria-label="Filter divisi">
+            <UserRound size={15} className="text-[#0066ae]/60" />
+            {roles.map((r) => (
+              <button key={r} onClick={() => setRole(r)} aria-pressed={role === r}
+                className={`min-h-11 rounded-full border px-3 py-1 text-xs font-semibold transition-colors ${role === r ? "border-[#0066ae] bg-[#f0f7fd] text-[#0066ae]" : "border-slate-200 bg-white text-[#063b66]/65 hover:border-[#0066ae] hover:text-[#0066ae]"}`}>
+                {r === "ALL" ? "Semua Divisi" : r}
+              </button>
+            ))}
+          </div>
+          <div className="mt-3">
+            <span aria-live="polite" className="text-xs font-medium text-[#063b66]/50">{visible.length} cerita</span>
+          </div>
         </div>
-        <span aria-live="polite" className="text-xs font-medium text-[#063b66]/50">{visible.length} cerita</span>
-      </div>
 
-      {/* list */}
-      {visible.length === 0 && <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm" role="status">
-        <h2 className="font-[family-name:var(--font-display)] font-semibold text-[#063b66]">Belum ada cerita untuk kombinasi filter ini</h2>
-        <p className="mt-2 text-sm text-slate-500">Coba program atau divisi lain untuk menemukan cerita.</p>
-        <button onClick={() => { setProg("ALL"); setRole("ALL"); }} className="mt-4 min-h-11 min-w-11 rounded-full bg-[#0066ae] px-5 font-bold text-white hover:bg-[#063b66]">Reset filter</button>
-      </section>}
-      <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {visible.map((s) => {
-          const isOpen = open === s.id;
-          return (
-            <motion.article key={s.id} layout="position"
-              transition={{ layout: { duration: 0.34, ease: [0.25, 1, 0.5, 1] } }}
-              className={`overflow-hidden rounded-2xl border bg-white transition ${isOpen ? "border-[#0066ae] shadow-lg shadow-[#0066ae]/10 sm:col-span-2" : "border-slate-200 hover:border-[#0066ae]/50 hover:shadow-md"}`}>
+        {/* list */}
+        {visible.length === 0 && <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm" role="status">
+          <h2 className="font-[family-name:var(--font-display)] font-semibold text-[#063b66]">Belum ada cerita untuk kombinasi filter ini</h2>
+          <p className="mt-2 text-sm text-slate-500">Coba program atau divisi lain untuk menemukan cerita.</p>
+          <button onClick={() => { setProg("ALL"); setRole("ALL"); }} className="mt-4 min-h-11 min-w-11 rounded-full bg-[#0066ae] px-5 font-bold text-white hover:bg-[#063b66]">Reset filter</button>
+        </section>}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {visible.map((s) => {
+            const isOpen = open === s.id;
+            return (
+              <motion.article key={s.id} layout="position"
+                transition={{ layout: { duration: 0.34, ease: [0.25, 1, 0.5, 1] } }}
+                className={`overflow-hidden rounded-2xl border bg-white transition ${isOpen ? "border-[#0066ae] shadow-lg shadow-[#0066ae]/10 sm:col-span-2" : "border-slate-200 hover:border-[#0066ae]/50 hover:shadow-md"}`}>
               <button onClick={() => setOpen(isOpen ? null : s.id)} className="w-full text-left" aria-expanded={isOpen}>
                 {isOpen ? (
                   <div>
@@ -166,9 +171,9 @@ export function StoriesExplorer({ stories }: { stories: Story[] }) {
                 )}
               </AnimatePresence>
             </motion.article>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
-    </div>
   );
 }
