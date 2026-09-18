@@ -175,5 +175,6 @@ export function StoriesExplorer({ stories }: { stories: Story[] }) {
           })}
         </div>
       </div>
+    </div>
   );
 }
