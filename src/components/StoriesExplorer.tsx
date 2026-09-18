@@ -19,12 +19,18 @@ export function StoriesExplorer({ stories }: { stories: Story[] }) {
   );
 
   return (
-    <div className="mx-auto max-w-5xl px-4 pb-10 pt-[108px] lg:pt-10">
-      <p className="mb-2 font-[family-name:var(--font-display)] text-xs font-bold tracking-[0.2em] text-[#0066ae]">CERITA PARA AWARDEE</p>
-      <h1 className="font-[family-name:var(--font-display)] text-3xl font-semibold leading-tight text-[#005cab] sm:text-[42px]">Beragam perjalanan, satu langkah menuju masa depan.</h1>
-      <p className="mt-3 max-w-2xl text-sm leading-relaxed text-[#063b66]/80 sm:text-base">
-        Dengarkan pengalaman para awardee PPBP dan PPTI saat belajar, beradaptasi, dan menemukan bidang yang paling sesuai dengan mereka.
-      </p>
+    <div className="mx-auto max-w-5xl px-4 pb-10 lg:pt-10">
+      <div className="relative rounded-2xl overflow-hidden min-h-[428px] sm:min-h-[478px]">
+        <Image src="/stories-bg.png" alt="Cerita Awardee" fill priority sizes="100vw" className="object-cover object-center opacity-90 saturate-100" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#f4f7fb]/30 via-[#f4f7fb]/70 to-[#f4f7fb]" />
+        <div className="relative p-6 sm:p-8">
+          <p className="mb-2 font-[family-name:var(--font-display)] text-xs font-bold tracking-[0.2em] text-[#0066ae]">CERITA PARA AWARDEE</p>
+          <h1 className="font-[family-name:var(--font-display)] text-3xl font-semibold leading-tight text-[#005cab] sm:text-[42px]">Beragam perjalanan, satu langkah menuju masa depan.</h1>
+          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-[#063b66]/80 sm:text-base">
+            Dengarkan pengalaman para awardee PPBP dan PPTI saat belajar, beradaptasi, dan menemukan bidang yang paling sesuai dengan mereka.
+          </p>
+        </div>
+      </div>
 
       {/* filter */}
       <div className="flex flex-wrap items-center gap-2 mt-8" role="group" aria-label="Filter program">
